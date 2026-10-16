@@ -14,6 +14,24 @@ cd EgoShift
 python -m pip install -e .
 ```
 
+The core package has **no required dependencies**. It imports numpy, scipy and
+Pillow lazily, inside the functions that need them, so scoring and auditing
+work without any of them installed.
+
+To run the test suite you need pytest, and the image and geometry tests skip
+unless the lazy dependencies are present. Both are declared as extras:
+
+```shell
+python -m pip install -e ".[test,full]"
+```
+
+| Extra | Brings | Needed for |
+|:---|:---|:---|
+| `test` | pytest | `make test`, `make check` |
+| `full` | numpy, scipy, Pillow | the image and geometry tests; otherwise they skip |
+
+This is the exact install CI uses.
+
 Verify the install:
 
 ```shell
@@ -22,9 +40,11 @@ make check
 
 That runs the unit suite, the end-to-end smoke test on the bundled fixture, and
 the support cross-check that compares the two independent implementations of
-`S(z)`. A clean run ends with `150 passed, 4 skipped` and exit status 0. The
-four skips are tests that assert properties of generated tracker documents,
-which are produced in the private working tree and are not shipped here.
+`S(z)`. A clean run ends with `150 passed, 4 skipped` and exit status 0. The four
+skips are tests that assert properties of generated tracker documents, which
+are produced in the private working tree and are not shipped here. If you
+installed without the `full` extra, expect further skips in the image and
+geometry tests.
 
 ## 2. Pinned environment
 

@@ -64,7 +64,8 @@ Python 3.10 or newer. The core package has no simulator dependency — it scores
 ```shell
 git clone https://github.com/UTSA-VIRLab/EgoShift.git
 cd EgoShift
-python -m pip install -e .
+python -m pip install -e .          # core: no required dependencies
+python -m pip install -e ".[test,full]"   # + pytest, numpy, scipy, Pillow
 make check
 ```
 

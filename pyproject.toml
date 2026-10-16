@@ -10,6 +10,13 @@ readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = []
 
+# The core package imports numpy, scipy and Pillow lazily, inside the
+# functions that need them, so scoring and auditing work without any of them.
+# `full` installs them so the image and geometry paths run rather than skip.
+[project.optional-dependencies]
+test = ["pytest>=7"]
+full = ["numpy>=1.23", "scipy>=1.9", "pillow>=9"]
+
 [project.scripts]
 egoshift = "egoshift.cli:main"
 

@@ -15,5 +15,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: python -m pip install -e .
+      # `test` brings pytest: the suite mixes unittest.TestCase classes with
+      # pytest-style module-level tests, and `unittest discover` collects zero
+      # tests from the latter without reporting it. `full` brings numpy, scipy
+      # and Pillow so the image and geometry tests run instead of skipping.
+      - run: python -m pip install -e ".[test,full]"
       - run: make check
