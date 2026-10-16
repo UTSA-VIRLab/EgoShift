@@ -1,0 +1,13 @@
+EgoShift Benchmark — Licence Terms
+
+1. Annotations, questions, labels, bounding boxes, scene metadata, and all
+   other original content of this artifact:
+   Creative Commons Attribution 4.0 International (CC-BY-4.0)
+   https://creativecommons.org/licenses/by/4.0/
+
+2. Rendered frames are derivative works of the AI2-THOR simulator asset
+   library and ProcTHOR-10k house specifications, both distributed under the
+   Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
+   and are redistributed here under those terms. See NOTICE for attribution.
+
+3. The hidden test split is not part of any public release.

@@ -1,0 +1,10 @@
+This artifact contains images rendered with:
+
+  AI2-THOR (Allen Institute for AI) — Apache-2.0
+    Kolve et al., "AI2-THOR: An Interactive 3D Environment for Visual AI"
+  ProcTHOR-10k (Allen Institute for AI) — Apache-2.0
+    Deitke et al., "ProcTHOR: Large-Scale Embodied AI Using Procedural
+    Generation", NeurIPS 2022
+
+All 3D assets appearing in rendered frames are from the AI2-THOR built-in
+asset library (provenance sweep: audits/asset_license_inventory.json).

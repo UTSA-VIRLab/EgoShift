@@ -1,0 +1,146 @@
+{
+  "schema_version": "0.1.0",
+  "bearing_convention": "positive_is_to_the_right",
+  "boundary_policy": "positive_measure_overlap_only",
+  "configurations": [
+    {
+      "id": "predeclared_center_ray_source_cone_66_5868",
+      "source_bearing_half_width_degrees": 66.58677555362947,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "expected_support_sizes_by_rotation": {"30": 2, "60": 2, "90": 3, "120": 2, "180": 3}
+    },
+    {
+      "id": "narrow_source_cone_45_fail_fast",
+      "source_bearing_half_width_degrees": 45.0,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "purpose": "negative control expected to expose deterministic action cells"
+    },
+    {
+      "id": "moderate_source_cone_55",
+      "source_bearing_half_width_degrees": 55.0,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "purpose": "moderate source-envelope sensitivity expected to preserve proposed support sizes"
+    },
+    {
+      "id": "calibration_limit_source_cone_70",
+      "source_bearing_half_width_degrees": 70.0,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"]
+    },
+    {
+      "id": "nominal_maximal_source_cone_75",
+      "source_bearing_half_width_degrees": 75.0,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "purpose": "largest nominal cone, included to expose loss of plus/minus-five-degree action-calibration robustness"
+    },
+    {
+      "id": "wide_source_cone_75_1",
+      "source_bearing_half_width_degrees": 75.1,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "purpose": "positive-measure transition immediately above a 75-degree half-width"
+    },
+    {
+      "id": "zones_shifted_clockwise_15",
+      "source_bearing_half_width_degrees": 66.58677555362947,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 15.0,
+        "to the right": 105.0,
+        "behind": 195.0,
+        "to the left": -75.0
+      },
+      "rotations_degrees": [30, 60, 90, 120, 180],
+      "turn_directions": ["left", "right"],
+      "purpose": "boundary-placement sensitivity"
+    },
+    {
+      "id": "action_calibration_minus_5",
+      "source_bearing_half_width_degrees": 66.58677555362947,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [25, 55, 85, 115, 175],
+      "turn_directions": ["left", "right"],
+      "purpose": "minus-five-degree action calibration sensitivity"
+    },
+    {
+      "id": "action_calibration_plus_5",
+      "source_bearing_half_width_degrees": 66.58677555362947,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [35, 65, 95, 125, 185],
+      "turn_directions": ["left", "right"],
+      "purpose": "plus-five-degree action calibration sensitivity"
+    },
+    {
+      "id": "alternative_actions_45_90_135",
+      "source_bearing_half_width_degrees": 66.58677555362947,
+      "zone_width_degrees": 90.0,
+      "zone_centers_degrees": {
+        "in front": 0.0,
+        "to the right": 90.0,
+        "behind": 180.0,
+        "to the left": -90.0
+      },
+      "rotations_degrees": [45, 90, 135],
+      "turn_directions": ["left", "right"],
+      "purpose": "alternative action-set sensitivity"
+    }
+  ]
+}

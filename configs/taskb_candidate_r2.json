@@ -1,0 +1,141 @@
+{
+ "schema_version": "0.1.0",
+ "construction_id": "egoshift-taskb-candidate-r2-static-v3-certified",
+ "candidate_id": "egoshift-candidate-r2",
+ "seed": "egoshift-taskb-candidate-r2-selection-v1",
+ "status": "frozen-certified",
+ "geometry": {
+  "source_bearing_half_width_degrees": 66.58677555362947,
+  "source_bearing_boundary_policy": "strict",
+  "minimum_visible_pixels": 2500,
+  "minimum_reservoir_silhouette_coverage": 0.8,
+  "minimum_whole_box_boundary_margin_degrees": 15.0,
+  "same_type_visible_pixel_threshold": 30,
+  "same_type_visible_count": 1,
+  "minimum_targeted_mask_edge_margin_pixels": 2,
+  "render_vertical_fov_degrees": 120.0
+ },
+ "actions": {
+  "rotations_degrees": [
+   30,
+   60,
+   90,
+   120,
+   180
+  ],
+  "presented_turn_directions": [
+   "left",
+   "right"
+  ],
+  "answer_labels": [
+   "in front",
+   "to the right",
+   "behind",
+   "to the left"
+  ],
+  "support_derivation": "egoshift.support.analytic_support",
+  "finite_balance_policy": "Within each split and presented action cell, every supported label receives floor(n/k) or ceil(n/k) items; deterministic SHA-256 ordering assigns the remainder.",
+  "rotation_180_policy": "Source rows are assigned without reuse to separately presented left and right cells; the two 180-degree actions have the same analytic support but remain distinct prompts."
+ },
+ "splits": {
+  "hidden_test": {
+   "items_per_action_cell": 135,
+   "total_items": 1098,
+   "maximum_per_physical_component": 2,
+   "maximum_per_source_frame": 1,
+   "maximum_per_target_object": 1,
+   "maximum_single_target_category_items": 55,
+   "requires_never_outcome_exposed_component": true,
+   "items_per_action_cell_by_rotation": {
+    "30": 135,
+    "60": 135,
+    "90": 117,
+    "120": 134,
+    "180": 28
+   }
+  },
+  "public_dev": {
+   "items_per_action_cell": 54,
+   "total_items": 440,
+   "maximum_per_physical_component": 2,
+   "maximum_per_source_frame": 1,
+   "maximum_per_target_object": 1,
+   "maximum_single_target_category_items": 22,
+   "requires_never_outcome_exposed_component": false,
+   "items_per_action_cell_by_rotation": {
+    "30": 54,
+    "60": 54,
+    "90": 47,
+    "120": 54,
+    "180": 11
+   }
+  },
+  "tuning_dev": {
+   "items_per_action_cell": 78,
+   "total_items": 592,
+   "maximum_per_physical_component": 2,
+   "maximum_per_source_frame": 1,
+   "maximum_per_target_object": 1,
+   "maximum_single_target_category_items": 30,
+   "requires_never_outcome_exposed_component": false,
+   "items_per_action_cell_by_rotation": {
+    "30": 78,
+    "60": 77,
+    "90": 51,
+    "120": 76,
+    "180": 14
+   }
+  }
+ },
+ "selection": {
+  "solver": "binary_mixed_integer_program",
+  "hard_constraints_may_not_be_weakened_on_infeasibility": true,
+  "quality_order": [
+   "larger whole-box boundary margin",
+   "larger silhouette coverage when defined",
+   "more visible target pixels",
+   "SHA-256 stable tie break"
+  ],
+  "exact_rgb_content_duplicates": "forbidden globally across all Task-B splits"
+ },
+ "presentation": {
+  "task_family": "B",
+  "format": "mcq",
+  "public_question_fields": [
+   "id",
+   "task_family",
+   "format",
+   "frames",
+   "question",
+   "options"
+  ],
+  "opaque_id_prefix": "eb2_",
+  "public_asset_prefix": "assets/task_b",
+  "option_policy": "deterministic and answer-position-balanced within split/action/answer strata",
+  "question_template": "In View 1 you can see the {category}. Staying in place, you turn {turn} by {rotation} degrees. Relative to the way you are now facing, where is the {category}?"
+ },
+ "separation": {
+  "development_answers_are_separate_from_questions": true,
+  "hidden_gold_is_private": true,
+  "private_provenance_includes_source_and_geometry": true,
+  "forbidden_public_fields": [
+   "answer",
+   "answer_index",
+   "scene_id",
+   "physical_scene_component_id",
+   "target_oid",
+   "target_type",
+   "source_kind",
+   "source_line",
+   "geometry_evidence",
+   "metadata",
+   "provenance"
+  ]
+ },
+ "downstream_release_blockers": [
+  "S06 shortcut audit",
+  "S07 independent item-quality and human-verification gate",
+  "final release freeze and license authorization"
+ ],
+ "allocation_note": "MILP-certified 2026-08-22 on reservoir+r2c+r2f under split_roles_v3: binary search plus greedy refinement over per-rotation cell sizes, exact solver with all caps and content dedup, role order hidden->tuning->public with cross-role asset-hash exclusion. Evidence: work/candidate_r2/audits/taskb_certified_allocation_v3.json"
+}

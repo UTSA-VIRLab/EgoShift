@@ -1,0 +1,27 @@
+<!-- EgoShift Task C: the "How to decide" panel shown on every
+     screen of the annotator survey.
+     EDIT THIS FILE FREELY, then rebuild the package. The plain-text
+     version sent to the models is derived from this file by stripping
+     tags, so the two can never disagree.
+     Tags you can use: <b>bold</b> <i>italic</i> <p>paragraph</p>
+     <ol><li>numbered</li></ol> <ul><li>bulleted</li></ul>
+     <span class="muted">smaller grey note</span> -->
+<b>How to decide</b>
+<p>View 1 boxes the object. Look at View 2 and ask, in order:</p>
+<ol>
+<li><b>Can you see any part of it?</b> If yes &mdash; even a small part &mdash;
+    it is <b>Visible</b>.</li>
+<li>If you cannot see it: <b>is View 2 still showing the part of the room
+    where the object was?</b> Use the furniture and walls around the box in
+    View 1 as landmarks.
+    <ul>
+    <li>That part of the room is <i>not</i> in View 2 &mdash; the camera has
+        turned or moved away from it &rarr; <b>Out of View</b>.</li>
+    <li>That part of the room <i>is</i> in View 2, but something bulky now
+        stands where the object was &rarr; <b>Occluded</b>.</li>
+    </ul></li>
+</ol>
+<span class="muted">Out of View and Occluded both mean you cannot see it; the
+difference is where the camera points. Ask "is the object's spot on screen?"
+&mdash; spot on screen but object hidden: Occluded; spot itself off screen:
+Out of View.</span>

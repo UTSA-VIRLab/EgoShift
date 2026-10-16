@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "egoshift-benchmark"
+version = "0.1.0"
+description = "Reproducibility core for the EgoShift benchmark"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = []
+
+[project.scripts]
+egoshift = "egoshift.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

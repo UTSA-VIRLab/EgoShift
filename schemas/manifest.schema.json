@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/egoshift/manifest.schema.json",
+  "title": "EgoShift content-addressed dataset manifest",
+  "type": "object",
+  "required": ["schema_version", "manifest_id", "dataset_version", "status", "files", "tasks", "provenance"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "manifest_id": {"type": "string", "minLength": 1},
+    "dataset_version": {"type": "string", "minLength": 1},
+    "status": {"type": "string"},
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "media_type", "records"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "media_type": {"type": "string"},
+          "records": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": true
+      }
+    },
+    "tasks": {"type": "object", "minProperties": 1},
+    "provenance": {"type": "object"}
+  },
+  "additionalProperties": true
+}
+

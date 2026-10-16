@@ -1,0 +1,37 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+build/
+dist/
+results/
+
+
+# Never publish. Defence in depth: these paths do not exist in this repo and
+# must not be created in it. Human-study intake, the pseudonym map and the
+# institutional record live only in the private working tree.
+work/
+incoming/
+*_PRIVATE.json
+rater_pseudonyms*
+human_study*/
+SHARE_WITH_ANNOTATORS*
+docs/admin/
+
+# Credentials
+.env
+*.pem
+*.key
+service_account*.json
+
+# Large local artifacts
+data/
+cache/
+outputs/
+ai2thor/
+frames/
+*.pt
+*.pth
+*.ckpt
+work_dirs/

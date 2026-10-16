@@ -1,0 +1,29 @@
+<svg viewBox="0 0 360 330" role="img"
+     aria-label="Overhead map: the four answer zones around the direction you now face">
+  <desc>Zones are measured from the direction you are now facing: in front is
+  less than 45 degrees off-centre; to the right is 45 to 135 degrees to the
+  right; to the left is 45 to 135 degrees to the left; behind is more than 135
+  degrees either way.</desc>
+
+  <text x="180" y="20" fill="#6ea8ff" font-size="13" font-weight="600"
+        text-anchor="middle">the way you are NOW facing</text>
+  <line x1="180" y1="172" x2="180" y2="48" stroke="#6ea8ff" stroke-width="3"/>
+  <polygon points="180,36 173,52 187,52" fill="#6ea8ff"/>
+
+  <path d="M180,172 L102.2,94.2 A110,110 0 0,1 257.8,94.2 Z" fill="#1c3d5a"/>
+  <path d="M180,172 L257.8,94.2 A110,110 0 0,1 257.8,249.8 Z" fill="#1c4a3d"/>
+  <path d="M180,172 L257.8,249.8 A110,110 0 0,1 102.2,249.8 Z" fill="#4a2f1c"/>
+  <path d="M180,172 L102.2,249.8 A110,110 0 0,1 102.2,94.2 Z" fill="#3d1c4a"/>
+
+  <circle cx="180" cy="172" r="110" fill="none" stroke="#8fa4d4" stroke-width="2"/>
+  <line x1="102.2" y1="94.2" x2="257.8" y2="249.8" stroke="#8fa4d4" stroke-width="2"/>
+  <line x1="257.8" y1="94.2" x2="102.2" y2="249.8" stroke="#8fa4d4" stroke-width="2"/>
+
+  <text x="180" y="120" fill="#edf1ff" font-size="17" font-weight="700" text-anchor="middle">IN FRONT</text>
+  <text x="242" y="179" fill="#edf1ff" font-size="17" font-weight="700" text-anchor="middle">RIGHT</text>
+  <text x="180" y="238" fill="#edf1ff" font-size="17" font-weight="700" text-anchor="middle">BEHIND</text>
+  <text x="118" y="179" fill="#edf1ff" font-size="17" font-weight="700" text-anchor="middle">LEFT</text>
+
+  <circle cx="180" cy="172" r="5" fill="#edf1ff"/>
+  <text x="180" y="320" fill="#a9b3d9" font-size="12" text-anchor="middle">You are the dot in the middle, facing the arrow.</text>
+</svg>

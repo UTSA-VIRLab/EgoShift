@@ -1,0 +1,33 @@
+{
+  "extra_ids": [],
+  "missing_ids": [],
+  "overall": {
+    "accuracy": 0.6666666666666666,
+    "correct": 4,
+    "extra_predictions": 0,
+    "incorrect": 1,
+    "incorrect_total": 2,
+    "items": 6,
+    "parse_failures": 1,
+    "valid_predictions": 5
+  },
+  "tasks": {
+    "B": {
+      "accuracy": 0.75,
+      "correct": 3,
+      "incorrect": 1,
+      "incorrect_total": 1,
+      "items": 4,
+      "valid_predictions": 4
+    },
+    "C": {
+      "accuracy": 0.5,
+      "correct": 1,
+      "incorrect_total": 1,
+      "items": 2,
+      "parse_failures": 1,
+      "valid_predictions": 1
+    }
+  }
+}
+

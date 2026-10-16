@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://egoshift.example/schemas/exposure_ledger.schema.json",
+  "title": "EgoShift reviewed historical-exposure ledger",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "audit_id",
+    "status",
+    "complete",
+    "pass",
+    "manifest_sha256",
+    "reviewed_manifest_count",
+    "exposure_files"
+  ],
+  "properties": {
+    "audit_id": {"const": "egoshift_historical_exposure_ledger"},
+    "status": {"const": "complete_reviewed"},
+    "complete": {"const": true},
+    "pass": {"const": true},
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reviewed_manifest_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "exposure_files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+ "schema_version": "0.1.0",
+ "construction_id": "egoshift-taskc-candidate-r2-v10-human-visible-floor",
+ "candidate_id": "egoshift-candidate-r2",
+ "seed": "egoshift-taskc-candidate-r2-selection-v1",
+ "status": "frozen-certified",
+ "classes": [
+  "visible",
+  "out_of_fov",
+  "occluded"
+ ],
+ "splits": {
+  "hidden_test": {
+   "items_per_class": 1950,
+   "total_items": 5850,
+   "requires_never_outcome_exposed_component": true
+  },
+  "public_dev": {
+   "items_per_class": 1235,
+   "total_items": 3705,
+   "requires_never_outcome_exposed_component": false
+  },
+  "tuning_dev": {
+   "items_per_class": 1240,
+   "total_items": 3720,
+   "requires_never_outcome_exposed_component": false
+  }
+ },
+ "uniqueness": {
+  "one_row_per_physical_component_target_and_class": true,
+  "target_matched_triples_share_one_view_one": true,
+  "every_released_target_covers_all_three_classes": true,
+  "note": "Replaces DC-6. Each physical target contributes exactly one item per class, and the three rows share one View-1 image byte for byte, so neither object identity nor View 1 carries information about the answer. The earlier one-item-per-target rule was the leak, not the guard: it made a target's single class its signature.",
+  "view_two_content_unique_across_all_items": true,
+  "view_one_content_shared_only_within_one_target": true
+ },
+ "evidence": {
+  "gold_derivation": "live_exact_mask_and_geometry_replay",
+  "view1_overlay_required": true,
+  "view1_overlay_evidence_type": "exact_instance_mask_replay",
+  "structural_occluders_forbidden": true,
+  "minimum_visible_target_pixels": 300
+ },
+ "presentation": {
+  "task_family": "C",
+  "format": "mcq",
+  "public_question_fields": [
+   "id",
+   "task_family",
+   "format",
+   "frames",
+   "question",
+   "options"
+  ],
+  "opaque_id_prefix": "ec2_",
+  "public_asset_prefix": "assets/task_c",
+  "option_policy": "deterministic and answer-position-balanced within split/class strata",
+  "canonical_options": [
+   "Visible \u2014 It is visible in the current view, either fully or partially.",
+   "Out of View \u2014 It is not in frame because the camera is not directed toward it.",
+   "Occluded \u2014 It is in frame but completely hidden by another object."
+  ]
+ },
+ "separation": {
+  "development_answers_are_separate_from_questions": true,
+  "hidden_gold_is_private": true,
+  "private_provenance_includes_source_and_geometry": true,
+  "forbidden_public_fields": [
+   "answer",
+   "answer_index",
+   "answer_class",
+   "candidate_answer_class",
+   "candidate_role",
+   "scene_id",
+   "physical_scene_component_id",
+   "target_oid",
+   "target_type",
+   "source_step",
+   "target_step",
+   "metadata",
+   "provenance",
+   "_candidate_source"
+  ]
+ },
+ "downstream_release_blockers": [
+  "S06 shortcut audit",
+  "S06 independent item-quality and human-verification gate",
+  "final release freeze and license authorization"
+ ],
+ "allocation_note": "Certified 2026-08-25 (v10). v9 with the visible floor raised from 30 to 300 View-2 pixels: at 30px the 'Visible' label was logically right and perceptually impossible, and every visible-class error a real rater made was an item showing under 300 pixels. 633 sliver rows were dropped at intake; a dropped visible row removes its whole target-matched triple, so the pool is a strict subset of v9 (13275 of 14235 rows) and every structural guarantee is inherited: all rows sit in byte-identical View-1 triples, target-identity oracle exactly 1/3, View 2 unique. Evidence: work/candidate_r2/audits/taskc_source_v10.json"
+}

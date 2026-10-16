@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/egoshift/prediction.schema.json",
+  "title": "EgoShift prediction row",
+  "type": "object",
+  "required": ["id", "prediction"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "prediction": {"type": ["string", "null"]},
+    "raw_response": {"type": ["string", "null"]},
+    "status": {"enum": ["ok", "refusal", "error", "missing"]}
+  },
+  "additionalProperties": true
+}
+

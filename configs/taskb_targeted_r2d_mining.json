@@ -1,0 +1,136 @@
+{
+  "cell_extension_note": "r2c base: two hidden-deficient cells added after role regeneration from the exhaustive exposure ledger (90:left:'in front' and 90:right:'behind', both reachable from the (-66.587,-45) source-bearing window, desired -55.0). Geometry and gates unchanged from r2b.",
+  "cells": [
+    {
+      "answer": "to the left",
+      "bearing_jitters_degrees": [
+        -0.582,
+        -0.291,
+        0.0,
+        0.291,
+        0.582
+      ],
+      "desired_source_bearing_degrees": 63.092,
+      "rotation_degrees": 180,
+      "target_bbox_width_pixels": 24.0,
+      "turn": "any"
+    },
+    {
+      "answer": "to the right",
+      "bearing_jitters_degrees": [
+        -0.57,
+        -0.285,
+        0.0,
+        0.285,
+        0.57
+      ],
+      "desired_source_bearing_degrees": -63.104,
+      "rotation_degrees": 180,
+      "target_bbox_width_pixels": 24.0,
+      "turn": "any"
+    },
+    {
+      "answer": "in front",
+      "bearing_jitters_degrees": [
+        -0.57,
+        -0.285,
+        0.0,
+        0.285,
+        0.57
+      ],
+      "desired_source_bearing_degrees": -63.104,
+      "rotation_degrees": 90,
+      "target_bbox_width_pixels": 24.0,
+      "turn": "left"
+    },
+    {
+      "answer": "behind",
+      "bearing_jitters_degrees": [
+        -0.57,
+        -0.285,
+        0.0,
+        0.285,
+        0.57
+      ],
+      "desired_source_bearing_degrees": -63.104,
+      "rotation_degrees": 90,
+      "target_bbox_width_pixels": 24.0,
+      "turn": "right"
+    }
+  ],
+  "distance_range_meters": [
+    0.8,
+    5.5
+  ],
+  "gates": {
+    "excluded_target_types": [
+      "wall",
+      "floor",
+      "ceiling",
+      "room",
+      "door",
+      "window"
+    ],
+    "minimum_bbox_height_pixels": 20,
+    "minimum_bbox_width_pixels": 20,
+    "minimum_mask_edge_margin_pixels": 2,
+    "minimum_visible_pixels": 2500,
+    "minimum_whole_box_post_zone_margin_degrees": 15.0,
+    "same_type_visible_count": 1,
+    "same_type_visible_pixel_threshold": 30,
+    "source_bearing_half_width_degrees": 66.58677555362947
+  },
+  "maximum_objects_per_scene": 80,
+  "maximum_positions_per_object_cell": 10,
+  "maximum_render_attempts_per_scene": 900,
+  "maximum_rows_per_physical_component": 2,
+  "mining_id": "egoshift-taskb-targeted-r2d-scarce-cell-escalation",
+  "quota_basis": {
+    "buffer_rows": 9,
+    "candidate_items_per_presented_action": {
+      "hidden_test": 78,
+      "public_dev": 12,
+      "tuning_dev": 20
+    },
+    "minimum_fresh_rows_before_caps": 113,
+    "qualified_reservoir_sha256": "ac74032c6b1ba49c7b75c5229ca830f714837182a2a98e78b06cf7ad2587d801",
+    "qualified_reservoir_source": "work/candidate_r2/sources/taskb_reservoir_geometry_b665868.jsonl",
+    "requested_rows_before_merge_and_selection": 122,
+    "split_roles_binding": {
+      "exposure_manifest_sha256": "2230b01af59d38b728eece4307df076c9ea244c239cd905dc6b73016028c1198",
+      "path": "work/candidate_r2/audits/split_roles_v2.json",
+      "sha256": "95a78a48d3ef48aa1d183b5681b981d8c69bc9ebde51e491201a973660cbca0f"
+    }
+  },
+  "render": {
+    "camera_horizon_degrees": 30.0,
+    "height": 480,
+    "vertical_fov_degrees": 120.0,
+    "width": 640
+  },
+  "schema_version": "0.2.0",
+  "search_effort_note": "Search effort and aiming only. Every gate in `gates`, the per-component and per-split caps, and the finite-target contract are byte-identical to the base configuration; only where and how hard the miner looks changed.",
+  "seed": "egoshift-taskb-targeted-r2-pose-v1",
+  "supersedes_operationally": "release/configs/taskb_targeted_r2c_mining.json",
+  "supersession_reason": "Roles were regenerated from the exhaustive reviewed historical-exposure ledger; every r2b per-cell target derived from the invalidated three-file ledger is void. Targets here are recomputed from the corrected reservoir under the new roles with the same padding policy (shortfall + max(2, 15%) rounded up to even).",
+  "target_rows_per_role_and_cell": {
+    "hidden_test": {
+      "180:any:to the left": 54,
+      "180:any:to the right": 52,
+      "90:left:in front": 8,
+      "90:right:behind": 8
+    },
+    "public_dev": {
+      "180:any:to the left": 0,
+      "180:any:to the right": 0,
+      "90:left:in front": 0,
+      "90:right:behind": 0
+    },
+    "tuning_dev": {
+      "180:any:to the left": 0,
+      "180:any:to the right": 0,
+      "90:left:in front": 0,
+      "90:right:behind": 0
+    }
+  }
+}

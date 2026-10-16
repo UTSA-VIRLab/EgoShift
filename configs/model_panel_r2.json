@@ -1,0 +1,520 @@
+{
+  "schema_version": "0.1.0",
+  "panel_id": "egoshift-r2-panel",
+  "note": "API ids move fast and this file was written 2026-08-24. Nothing here is trusted until release/tools/verify_model_ids.py resolves each entry against the live provider API and writes the resolved id back. An entry that cannot be resolved is dropped from the panel WITH a recorded access-failure, never silently omitted.",
+  "peer_panel_sizes_verified": {
+    "MMSI-Bench": 37,
+    "SCOPE": 26,
+    "MindCube": 17,
+    "SITE": 9,
+    "OmniSpatial": 6,
+    "CVT-Bench": 5
+  },
+  "tiers": {
+    "1_frontier_api": "Current proprietary frontier, Aug 2026. Published peer-comparison metadata remain in the machine-readable configuration but are intentionally omitted from the live tracker tables.",
+    "2_reasoning": "Explicit reasoning variants. MMSI-Bench found reasoning accuracy lags multiple-choice by 8-10 points, and mental rotation is exactly where chain-of-thought should help, so a paper claiming models cannot do this without letting one think will not survive review.",
+    "3_open_large": "Open-weight at scale, run locally. Free apart from disk and time.",
+    "4_open_small": "Open-weight small/mid, already cached locally. Cheap scaling-curve points.",
+    "5_spatial_specialist": "Required category (plan section 10.1): at least one 2026 spatial-specialised model, or a documented access failure per model."
+  },
+  "models": [
+    {
+      "name": "Gemini-2.5-Pro",
+      "family": "google",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gemini-2.5-pro"
+      ],
+      "peer_score": {
+        "MMSI-Bench": 36.9
+      },
+      "note": "UNAVAILABLE 2026-08-25: API returns 404, 'no longer available to new users'. Listed by models.list() but not callable. Recorded as a documented access failure."
+    },
+    {
+      "name": "Claude-3.7-Sonnet",
+      "family": "anthropic",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "claude-3-7-sonnet-latest",
+        "claude-3-7-sonnet-20250219"
+      ],
+      "peer_score": {
+        "MMSI-Bench": 30.2
+      },
+      "note": "RETIRED 2026-08-25: not served by the Anthropic API. Recorded as a documented access failure. Not replaced -- MMSI-Bench publishes no score for any currently served Claude, so no substitute preserves this tier's comparability property."
+    },
+    {
+      "name": "Qwen2.5-VL-72B",
+      "family": "local",
+      "tier": "3_open_large",
+      "id_candidates": [
+        "Qwen/Qwen2.5-VL-72B-Instruct"
+      ],
+      "peer_score": {
+        "MMSI-Bench": 30.7
+      },
+      "download_gb": 150
+    },
+    {
+      "name": "GPT-5.6 Sol",
+      "family": "openai",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gpt-5.6-sol",
+        "gpt-5.6"
+      ]
+    },
+    {
+      "name": "GPT-5.1",
+      "family": "openai",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gpt-5.1"
+      ]
+    },
+    {
+      "name": "Claude Opus 5",
+      "family": "anthropic",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "claude-opus-5",
+        "claude-opus-5-latest"
+      ]
+    },
+    {
+      "name": "Claude Sonnet 5",
+      "family": "anthropic",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "claude-sonnet-5",
+        "claude-sonnet-5-latest"
+      ]
+    },
+    {
+      "name": "Gemini 3 Pro",
+      "family": "google",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gemini-3.1-pro-preview",
+        "gemini-3-pro-preview",
+        "gemini-3-pro"
+      ],
+      "note": "Thinks by default; measured ~1,900 billed thought tokens per call. No separate reasoning row: default and thinking_level=high were indistinguishable in a live probe."
+    },
+    {
+      "name": "Gemini 3 Flash",
+      "family": "google",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3-flash-preview"
+      ]
+    },
+    {
+      "name": "GPT-5.6 Sol (thinking)",
+      "family": "openai",
+      "tier": "2_reasoning",
+      "id_candidates": [
+        "gpt-5.6-sol",
+        "gpt-5.6"
+      ],
+      "params": {
+        "reasoning_effort": "high"
+      }
+    },
+    {
+      "name": "Claude Opus 5 (extended)",
+      "family": "anthropic",
+      "tier": "2_reasoning",
+      "id_candidates": [
+        "claude-opus-5",
+        "claude-opus-5-latest"
+      ],
+      "params": {
+        "thinking": true,
+        "effort": "high"
+      },
+      "note": "Adaptive thinking at effort=high. budget_tokens is removed on Opus 5 (400)."
+    },
+    {
+      "name": "InternVL3-78B",
+      "family": "local",
+      "tier": "3_open_large",
+      "id_candidates": [
+        "OpenGVLab/InternVL3-78B-hf",
+        "OpenGVLab/InternVL3-78B"
+      ],
+      "download_gb": 160,
+      "note": "Use the -hf conversion: the raw OpenGVLab repo ships a custom InternVLChatConfig that AutoModelForImageTextToText cannot map (the working Tier-5 InternVL3 entries are all -hf too).",
+      "peer_score": {
+        "MMSI-Bench": 28.5
+      }
+    },
+    {
+      "name": "Qwen2.5-VL-32B",
+      "family": "local",
+      "tier": "3_open_large",
+      "id_candidates": [
+        "Qwen/Qwen2.5-VL-32B-Instruct"
+      ],
+      "download_gb": 65
+    },
+    {
+      "name": "InternVL3-38B",
+      "family": "local",
+      "tier": "3_open_large",
+      "id_candidates": [
+        "OpenGVLab/InternVL3-38B-hf",
+        "OpenGVLab/InternVL3-38B"
+      ],
+      "download_gb": 78,
+      "note": "Use the -hf conversion: the raw OpenGVLab repo ships a custom InternVLChatConfig that AutoModelForImageTextToText cannot map (the working Tier-5 InternVL3 entries are all -hf too)."
+    },
+    {
+      "name": "InternVL3-14B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "OpenGVLab/InternVL3-14B-hf"
+      ],
+      "cached": true
+    },
+    {
+      "name": "Qwen3-VL-8B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "Qwen/Qwen3-VL-8B-Instruct"
+      ],
+      "cached": true
+    },
+    {
+      "name": "InternVL3-8B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "OpenGVLab/InternVL3-8B-hf"
+      ],
+      "cached": true,
+      "peer_score": {
+        "MMSI-Bench": 25.7
+      }
+    },
+    {
+      "name": "Qwen2.5-VL-7B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "Qwen/Qwen2.5-VL-7B-Instruct"
+      ],
+      "cached": true,
+      "peer_score": {
+        "MMSI-Bench": 25.9
+      }
+    },
+    {
+      "name": "Qwen2-VL-7B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "Qwen/Qwen2-VL-7B-Instruct"
+      ],
+      "cached": true
+    },
+    {
+      "name": "LLaVA-OneVision-7B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "llava-hf/llava-onevision-qwen2-7b-ov-hf"
+      ],
+      "cached": true,
+      "peer_score": {
+        "MMSI-Bench": 24.5
+      }
+    },
+    {
+      "name": "LLaVA-1.6-Mistral-7B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "llava-hf/llava-v1.6-mistral-7b-hf"
+      ],
+      "cached": true
+    },
+    {
+      "name": "Idefics3-8B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "HuggingFaceM4/Idefics3-8B-Llama3"
+      ],
+      "cached": true
+    },
+    {
+      "name": "Qwen2.5-VL-3B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "Qwen/Qwen2.5-VL-3B-Instruct"
+      ],
+      "cached": true,
+      "peer_score": {
+        "MMSI-Bench": 26.5
+      }
+    },
+    {
+      "name": "InternVL3-2B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "OpenGVLab/InternVL3-2B-hf"
+      ],
+      "cached": true,
+      "peer_score": {
+        "MMSI-Bench": 25.3
+      }
+    },
+    {
+      "name": "Qwen2-VL-2B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "Qwen/Qwen2-VL-2B-Instruct"
+      ],
+      "cached": true
+    },
+    {
+      "name": "SmolVLM-Instruct",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "HuggingFaceTB/SmolVLM-Instruct"
+      ],
+      "cached": true
+    },
+    {
+      "name": "SpaceMind",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "MikeDuke/SpaceMind"
+      ],
+      "note": "CVPR 2026. Weights ARE public at MikeDuke/SpaceMind (17.8 GB); the GitHub README's 'weights TODO' is stale. internvl_chat architecture with an auto_map exposing AutoModel/AutoModelForCausalLM -- not AutoModelForImageTextToText, so the loader needs an internvl_chat branch.",
+      "access_failure": "Weights ARE public (MikeDuke/SpaceMind, 17.8 GB, 4 safetensors shards). Not loadable as published: config.json declares auto_map -> configuration_internvl_chat.py, and that file is absent from the repo (18 files, no .py), so trust_remote_code loading fails with OSError. Running it requires the modeling code from github.com/RealMikeDuke/SpaceMind plus separate InternVL3-8B and VGGT checkpoints per its README. Verified 2026-08-25."
+    },
+    {
+      "name": "3DThinker",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "jankin123/3DThinker-Mindcube"
+      ],
+      "note": "CVPR 2026. Released checkpoint is the STAGE-1 model fine-tuned on MindCube over Qwen2.5-VL-3B, not the full pipeline: the paper's VGGT-grounded 3D mentaling is applied at inference and is not part of this checkpoint. Standard Qwen2_5_VLForConditionalGeneration, so it loads with the existing path. Report it as the released artifact, not as full 3DThinker.",
+      "access_failure": "Weights ARE public (jankin123/3DThinker-Mindcube, 18.9 GB). Loads as a standard Qwen2_5_VLForConditionalGeneration, but 28 of 852 tensors -- the projector_model/fusion_model stack that implements the paper's 3D mentaling -- are UNEXPECTED to that architecture and are silently discarded. The processor also ships no chat template. Evaluating it via the standard path would measure the fine-tuned backbone with the paper's distinctive component removed, so it is not reported as 3DThinker. Verified 2026-08-25."
+    },
+    {
+      "name": "Claude Haiku 4.5",
+      "family": "anthropic",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "claude-haiku-4-5",
+        "claude-haiku-4-5-20251001"
+      ],
+      "note": "cheap proprietary scaling point (~$1/$5 per Mtok)"
+    },
+    {
+      "name": "Gemini 3 Flash Lite",
+      "family": "google",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "gemini-3.1-flash-lite",
+        "gemini-3.1-flash-lite-preview"
+      ],
+      "note": "cheapest current Gemini; low end of the Google scaling curve"
+    },
+    {
+      "name": "Claude Fable 5",
+      "family": "anthropic",
+      "tier": "1_frontier_api",
+      "id_candidates": [
+        "claude-fable-5"
+      ],
+      "params": {
+        "thinking": true,
+        "effort": "high"
+      }
+    },
+    {
+      "name": "SenseNova-SI-1.2-InternVL3-8B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "sensenova/SenseNova-SI-1.2-InternVL3-8B"
+      ],
+      "cached": null,
+      "note": "spatial specialist; paired backbone in this panel: InternVL3-8B",
+      "paired_backbone": "InternVL3-8B",
+      "peer_score": {
+        "MMSI-Bench": 42.6
+      },
+      "access_failure": "Weights ARE public and cached (14.8 GiB), but the checkpoint ships its own InternVL-chat code written against transformers ~4.3x and will not load under the panel's transformers 5.5.0. Two distinct incompatibilities, verified 2026-08-25: modeling_intern_vit.py builds its drop-path schedule with torch.linspace(...).item() inside the meta-device init context (RuntimeError: Tensor.item() cannot be called on meta tensors), and once that is bypassed InternVLChatModel lacks all_tied_weights_keys, an attribute transformers 5 requires. This is a property of the whole internvl_chat line, not one checkpoint: SenseNova-SI 1.1/1.2/1.3/1.5-InternVL3-8B all declare model_type=internvl_chat with vendored code, and no -hf conversion is published. Not evaluated rather than evaluated through rewritten model code. Superseded in the panel by SenseNova-SI-1.3-Qwen3-VL-8B (newer, loads natively)."
+    },
+    {
+      "name": "SenseNova-SI-1.1-Qwen3-VL-8B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "sensenova/SenseNova-SI-1.1-Qwen3-VL-8B"
+      ],
+      "cached": null,
+      "note": "spatial specialist; paired backbone in this panel: Qwen3-VL-8B",
+      "paired_backbone": "Qwen3-VL-8B",
+      "peer_score": {
+        "MMSI-Bench": 38.1
+      }
+    },
+    {
+      "name": "SenseNova-SI-1.1-Qwen2.5-VL-7B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "sensenova/SenseNova-SI-1.1-Qwen2.5-VL-7B"
+      ],
+      "cached": null,
+      "note": "spatial specialist; paired backbone in this panel: Qwen2.5-VL-7B",
+      "paired_backbone": "Qwen2.5-VL-7B",
+      "peer_score": {
+        "MMSI-Bench": 32.8
+      }
+    },
+    {
+      "name": "SenseNova-SI-1.1-Qwen2.5-VL-3B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "sensenova/SenseNova-SI-1.1-Qwen2.5-VL-3B"
+      ],
+      "cached": null,
+      "note": "spatial specialist; paired backbone in this panel: Qwen2.5-VL-3B",
+      "paired_backbone": "Qwen2.5-VL-3B"
+    },
+    {
+      "name": "Llama-3.2-11B-Vision",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "meta-llama/Llama-3.2-11B-Vision-Instruct"
+      ],
+      "peer_score": {
+        "MMSI-Bench": 25.4
+      },
+      "note": "most-downloaded open VLM absent from the panel",
+      "access_failure": "Gated repo. Token is valid and repo metadata resolves, but config.json returns 401 GatedRepoError (gated=manual): this account has not been granted access by Meta. Verified 2026-08-25 by a live hub probe, not just a listing. Re-runnable once access is approved at huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct."
+    },
+    {
+      "name": "DeepSeek-VL2-Small",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "deepseek-ai/deepseek-vl2-small"
+      ],
+      "peer_score": {
+        "MMSI-Bench": 28.6
+      },
+      "note": "strongest non-Qwen/InternVL open model on MMSI-Bench",
+      "access_failure": "Architecture unsupported by the pinned stack. config.json declares model_type='deepseek_vl_v2' with architectures=null and an empty auto_map, so trust_remote_code has no code to load; transformers 5.5.0 ships deepseek_vl and deepseek_vl_hybrid but not deepseek_vl_v2. Loading it needs DeepSeek's own deepseek_vl2 package (targets transformers 4.38), which conflicts with the panel's environment. Verified 2026-08-25 from the hub config."
+    },
+    {
+      "name": "QVQ-72B-Preview",
+      "family": "local",
+      "tier": "2_reasoning",
+      "id_candidates": [
+        "Qwen/QVQ-72B-Preview"
+      ],
+      "max_new_tokens": 8192,
+      "generation_note": "Official QVQ Transformers quickstart allowance; required because the checkpoint emits visual reasoning before its final answer.",
+      "access_failure": "Evaluation infeasible under the frozen, scientifically valid generation contract on the available hardware. Qwen/QVQ-72B-Preview loads successfully across four NVIDIA L40S GPUs, but the official 8,192-token allowance averaged about 7.6 minutes per item in a three-item fail-closed probe. The declared Task A/B/C panel scope (1,192/1,098/1,200 items) therefore projects to roughly 18 days of exclusive four-GPU time and cannot complete within the WACV evaluation window. A historical 48-token run was invalid because it truncated the model before its final answer. Verified 2026-08-26/27; four stopped, terminally parsed Task-B probe rows and logs are preserved under work/model_panel/invalid_runs/qvq_infeasible_20260827/.",
+      "task_subsets": {
+        "A": "taska_api_subset_1200.json",
+        "C": "taskc_api_subset_1200.json"
+      }
+    },
+    {
+      "name": "Gemini 3 Pro (thinking)",
+      "family": "google",
+      "tier": "2_reasoning",
+      "id_candidates": [
+        "gemini-3.1-pro-preview",
+        "gemini-3-pro-preview"
+      ],
+      "params": {
+        "thinking": true,
+        "thinking_level": "high"
+      }
+    },
+    {
+      "name": "Cosmos-Reason1-7B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "nvidia/Cosmos-Reason1-7B"
+      ]
+    },
+    {
+      "name": "Qwen3-VL-32B",
+      "family": "local",
+      "tier": "3_open_large",
+      "id_candidates": [
+        "Qwen/Qwen3-VL-32B-Instruct"
+      ]
+    },
+    {
+      "name": "SenseNova-SI-1.3-Qwen3-VL-8B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "sensenova/SenseNova-SI-1.3-Qwen3-VL-8B"
+      ]
+    },
+    {
+      "name": "EgoMind-7B",
+      "family": "local",
+      "tier": "5_spatial_specialist",
+      "id_candidates": [
+        "Hyggge/EgoMind-7B"
+      ],
+      "revision": "ad127d4c11b31e54f59e72914a5a59e2ce7b835a",
+      "download_gb": 17,
+      "paired_backbone": "Qwen2.5-VL-7B",
+      "task_subsets": {
+        "C": "taskc_api_subset_1200.json"
+      },
+      "note": "POST-FREEZE PANEL AMENDMENT 2026-08-26: CVPR 2026 geometry-free egocentric spatial-reasoning specialist, added prospectively before its outputs were inspected. Official checkpoint Hyggge/EgoMind-7B (8.29B stored parameters, BF16, Apache-2.0), fine-tuned from Qwen2.5-VL-7B-Instruct. This creates a capacity-matched specialist/backbone comparison and diversifies Tier 5 beyond SenseNova/Cosmos. Task A uses the full 5,838-item pool, matching every runnable Tier 5 specialist; Task B uses the complete canonical pool; Task C uses the common frozen 1,200-item subset."
+    },
+    {
+      "name": "Molmo2-8B",
+      "family": "local",
+      "tier": "4_open_small",
+      "id_candidates": [
+        "allenai/Molmo2-8B"
+      ],
+      "revision": "e28fa28597e5ec5e0cca2201dd8ab33d48bc4a1b",
+      "download_gb": 35,
+      "task_subsets": {
+        "C": "taskc_api_subset_1200.json"
+      },
+      "note": "POST-FREEZE PANEL AMENDMENT 2026-08-26: official CVPR 2026 Molmo2 8B checkpoint, added prospectively before its outputs were inspected. Ai2 identifies 8B as the strongest overall Molmo2 size. It is an Apache-2.0, 8.66B-parameter, Qwen3-8B-based model with explicit multi-image training, adding an independent open-model lineage and a matched-scale comparison with Qwen3-VL-8B. Task A uses the full 5,838-item pool, matching every runnable Tier 4 open-small model; Task B uses the complete canonical pool; Task C uses the common frozen 1,200-item subset."
+    }
+  ],
+  "arms": {
+    "main": "full item, decision rule from the package manifest, images shown",
+    "no_image": "identical prompt, images withheld (text-only floor)",
+    "single_view": "identical prompt, View 1 only (Task A and C)",
+    "shuffled_options": "main, with a second option permutation, to measure position sensitivity",
+    "pp1_no_rule": "main minus the zone-definition sentence (docs/Prompt_Parity.md PP-1)",
+    "pp2_few_shot": "main plus the annotators' practice items and reasons (PP-2)"
+  }
+}

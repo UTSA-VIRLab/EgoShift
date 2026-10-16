@@ -1,0 +1,7 @@
+{"answer":"in front","id":"smoke_b_001","metadata":{"rotation_degrees":30,"turn_direction":"left"},"options":["behind","to the left","to the right","in front"],"question":"Synthetic schema fixture B1","task_family":"B"}
+{"answer":"to the right","id":"smoke_b_002","metadata":{"rotation_degrees":60,"turn_direction":"left"},"options":["to the left","behind","in front","to the right"],"question":"Synthetic schema fixture B2","task_family":"B"}
+{"answer":"behind","id":"smoke_b_003","metadata":{"rotation_degrees":90,"turn_direction":"right"},"options":["in front","behind","to the right","to the left"],"question":"Synthetic schema fixture B3","task_family":"B"}
+{"answer":"to the left","id":"smoke_b_004","metadata":{"rotation_degrees":180,"turn_direction":"right"},"options":["behind","in front","to the left","to the right"],"question":"Synthetic schema fixture B4","task_family":"B"}
+{"answer":"visible","id":"smoke_c_001","options":["visible","out of view","occluded"],"question":"Synthetic schema fixture C1","task_family":"C"}
+{"answer":"occluded","id":"smoke_c_002","options":["out of view","occluded","visible"],"question":"Synthetic schema fixture C2","task_family":"C"}
+

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/egoshift/result_record.schema.json",
+  "title": "EgoShift result lineage record",
+  "type": "object",
+  "required": ["schema_version", "result_id", "dataset", "predictions", "model", "protocol", "scorer", "statistics", "metrics", "consumers"],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "result_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dataset": {"type": "object"},
+    "predictions": {"type": "object"},
+    "model": {"type": "object"},
+    "protocol": {"type": "object"},
+    "scorer": {"type": "object"},
+    "statistics": {"type": "object"},
+    "metrics": {"type": "object"},
+    "consumers": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
+

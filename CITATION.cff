@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use EgoShift, please cite the WACV 2027 paper."
+title: "EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision-Language Models"
+authors:
+  - family-names: Ahmed
+    given-names: Faisal
+    affiliation: "University of Texas at San Antonio"
+  - family-names: Quarles
+    given-names: John
+    affiliation: "University of Texas at San Antonio"
+  - family-names: Desai
+    given-names: Kevin
+    affiliation: "University of Texas at San Antonio"
+repository-code: "https://github.com/UTSA-VIRLab/EgoShift"
+url: "https://utsa-virlab.github.io/EgoShift/"
+license: CC-BY-4.0
+preferred-citation:
+  type: conference-paper
+  title: "EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision-Language Models"
+  authors:
+    - family-names: Ahmed
+      given-names: Faisal
+    - family-names: Quarles
+      given-names: John
+    - family-names: Desai
+      given-names: Kevin
+  collection-title: "IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)"
+  year: 2027

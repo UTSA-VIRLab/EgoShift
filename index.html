@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating</title>
+<meta name="description" content="EgoShift (WACV 2027): a benchmark that computes, before any model runs, the highest score reachable from a stated camera turn alone — then builds every question to sit on that ceiling.">
+<link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
+<meta property="og:title" content="EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating">
+<meta property="og:description" content="WACV 2027: pooled accuracy hides a collapse at 90° and 180°. EgoShift bounds the action-only shortcut from camera geometry.">
+<meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0f172a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#2563eb;--primary-dark:#1d4ed8;--accent:#f59e0b;--bg:#fff;--bg-alt:#f8fafc;
+--bg-dark:#0f172a;--text:#1e293b;--text-light:#64748b;--border:#e2e8f0;--red:#ef4444;--max-w:1080px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text);line-height:1.7;background:var(--bg)}
+code,pre,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.wrap{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+header{background:linear-gradient(160deg,#0f172a 0%,#1e293b 60%,#243b53 100%);color:#fff;padding:72px 0 56px;text-align:center}
+header h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+header .sub{color:#93c5fd;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;margin-bottom:22px}
+.authors{font-size:1.05rem;margin:18px 0 6px}
+.authors a{color:#bfdbfe;text-decoration:none;border-bottom:1px solid rgba(191,219,254,.35)}
+.authors a:hover{color:#fff}
+.affil{color:#cbd5e1;font-size:.95rem}
+.links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-block;padding:10px 22px;border-radius:999px;font-weight:600;font-size:.95rem;text-decoration:none;transition:.18s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#e2e8f0;border:1px solid rgba(255,255,255,.22)}
+.btn-ghost:hover{background:rgba(255,255,255,.16);color:#fff}
+.news{display:inline-block;margin-top:26px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);
+color:#fcd34d;padding:7px 18px;border-radius:999px;font-size:.9rem;font-weight:600}
+section{padding:56px 0;border-bottom:1px solid var(--border)}
+section.alt{background:var(--bg-alt)}
+h2{font-size:1.6rem;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
+h3{font-size:1.1rem;font-weight:700;margin:26px 0 10px}
+p{margin-bottom:14px}
+p.lead{font-size:1.1rem;color:#334155}
+figure{margin:26px 0}
+figure img{width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
+figcaption{font-size:.88rem;color:var(--text-light);margin-top:10px;text-align:center}
+.callout{background:#fff;border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px;margin:26px 0}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px}
+.card .n{font-size:1.7rem;font-weight:800;color:var(--primary);line-height:1.2}
+.card .l{font-size:.88rem;color:var(--text-light);margin-top:4px}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:.93rem;background:#fff}
+th,td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center}
+th:first-child,td:first-child{text-align:left}
+thead th{background:var(--bg-alt);font-weight:700;font-size:.85rem;letter-spacing:.02em}
+td.bad{color:var(--red);font-weight:700}
+pre{background:var(--bg-dark);color:#e2e8f0;padding:16px 18px;border-radius:10px;overflow-x:auto;font-size:.86rem;line-height:1.6;margin:16px 0}
+pre code{color:inherit}
+code{background:var(--bg-alt);padding:1px 6px;border-radius:4px;font-size:.88em;border:1px solid var(--border)}
+pre code{background:none;border:none;padding:0}
+footer{padding:40px 0;text-align:center;color:var(--text-light);font-size:.9rem}
+footer a{color:var(--primary);text-decoration:none}
+.eq{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;font-size:1.02rem;margin:18px 0}
+@media(max-width:640px){header{padding:52px 0 40px}section{padding:40px 0}.links{gap:8px}.btn{padding:9px 16px;font-size:.88rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="sub">WACV 2027 &middot; Evaluation &amp; Datasets Track</div>
+    <h1>EgoShift: Bounding the Action-Only Shortcut in<br>Egocentric Spatial Updating for Vision&ndash;Language Models</h1>
+    <div class="authors">
+      <a href="https://www.linkedin.com/in/faisal-ahmed-565943145/">Faisal Ahmed</a> &nbsp;&middot;&nbsp;
+      <a href="https://www.linkedin.com/in/johnpquarles/">John Quarles</a> &nbsp;&middot;&nbsp;
+      <a href="https://www.linkedin.com/in/kevinpdesai/">Kevin Desai</a>
+    </div>
+    <div class="affil">Department of Computer Science, University of Texas at San Antonio</div>
+    <div class="links">
+      <a class="btn btn-primary" href="assets/EgoShift_WACV2027.pdf">Paper</a>
+      <a class="btn btn-ghost" href="assets/EgoShift_WACV2027_supplementary.pdf">Supplementary</a>
+      <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift">Code</a>
+      <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/getting_started.md">Getting Started</a>
+    </div>
+    <div class="news">Accepted at WACV 2027</div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>A model can score well without looking at the image</h2>
+    <p class="lead">When a question states a camera turn, that turn alone rules out some answers. A
+    predictor given only the stated action already beats chance by a wide margin &mdash; and balanced
+    answers, text-only arms and human references do not catch it, because none of them is conditioned
+    on the action.</p>
+    <div class="callout">
+      <strong>The audit is not hypothetical.</strong> An earlier build of our own data was balanced by
+      the usual standard. A predictor that saw <em>only the stated turn</em> scored <strong>72.3%</strong> on it.
+    </div>
+    <p><strong>EgoShift makes the shortcut a quantity instead of a worry.</strong> The camera geometry
+    determines which answers each turn can produce, so the highest score reachable from the action
+    alone can be computed <em>before any model is run</em>. We derive that ceiling and build every turn
+    to sit exactly on it.</p>
+    <figure>
+      <img src="assets/tasks.png" alt="The three EgoShift tasks: cross-view identity, direction after a stated turn, and visibility.">
+      <figcaption>The three tasks. A is a control, B is the primary task, C is supporting.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Pooled accuracy hides the failure</h2>
+    <p>Across 36 systems, accuracy does <strong>not</strong> fall as the turn grows larger. It collapses
+    at exactly two turns.</p>
+    <table>
+      <thead><tr><th>Stated turn</th><th>30&deg;</th><th>60&deg;</th><th>90&deg;</th><th>120&deg;</th><th>180&deg;</th></tr></thead>
+      <tbody><tr><td>Frontier mean, Task B</td><td>86.8</td><td>82.1</td><td class="bad">38.3</td><td>84.3</td><td class="bad">36.8</td></tr></tbody>
+    </table>
+    <p>At 90&deg; and 180&deg; no frontier configuration exceeds 50%, and most return the same answer
+    they give with no image at all. A 120&deg; turn is answered correctly more than twice as often as a
+    90&deg; one &mdash; a difference a single pooled number erases entirely.</p>
+    <figure>
+      <img src="assets/rotation_collapse.png" alt="Per-turn accuracy, showing the collapse at 90 and 180 degrees.">
+      <figcaption>Accuracy by stated turn. The collapse is not a function of turn magnitude.</figcaption>
+    </figure>
+    <div class="grid">
+      <div class="card"><div class="n">12,786</div><div class="l">held-out questions</div></div>
+      <div class="card"><div class="n">36</div><div class="l">systems evaluated</div></div>
+      <div class="card"><div class="n">45.90%</div><div class="l">Task-B action-only ceiling</div></div>
+      <div class="card"><div class="n">72.3%</div><div class="l">leak in the earlier balanced build</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How the ceiling is computed</h2>
+    <p>Write <code>z = (r, d)</code> for the stated turn, <code>r</code> its size and <code>d</code> its
+    direction. Five sizes and two directions give ten <strong>cells</strong>. A predictor given
+    <code>z</code> and nothing else &mdash; no image, no scene, no object, no wording &mdash; can do no
+    better than answering the commonest answer in each cell. With <code>S(z)</code> the answers the
+    geometry allows and <code>n<sub>z</sub></code> the questions in cell <code>z</code>:</p>
+    <div class="eq mono">C<sub>min</sub> &nbsp;=&nbsp; (1/N) &middot; &Sigma;<sub>z</sub> &nbsp;&lceil; n<sub>z</sub> / |S(z)| &rceil;</div>
+    <p>Two independent implementations compute <code>S(z)</code> &mdash; an interval derivation and a
+    dense enumeration &mdash; and a build is accepted only when they agree <em>and</em> every cell
+    attains the bound. Balancing answers across the whole set does not achieve this, which is exactly
+    why the earlier 72.3% build looked fine.</p>
+    <div class="callout">
+      <strong>What the ceiling does not do.</strong> It bounds one shortcut: answering from the stated
+      turn with no image. It says nothing about wording, metadata, or a cue some future model finds.
+      We do not claim the questions are free of shortcuts in general.
+    </div>
+    <figure>
+      <img src="assets/qualitative.png" alt="A mirrored pair showing the substituted answer.">
+      <figcaption>The substitution on a mirrored pair: teal is correct, red is the answer obtained by
+      assuming the object started straight ahead.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Get started</h2>
+    <pre><code>git clone https://github.com/UTSA-VIRLab/EgoShift.git
+cd EgoShift
+python -m pip install -e .
+make check</code></pre>
+    <p>Score predictions, then audit a split against the geometry:</p>
+    <pre><code>egoshift score --questions sample/questions.jsonl \
+               --predictions sample/predictions.jsonl
+
+egoshift audit-taskb --questions path/to/taskb_questions.jsonl</code></pre>
+    <p>Scoring and auditing need no simulator. See
+    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/installation.md">installation</a>,
+    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/getting_started.md">getting started</a>,
+    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/data.md">data</a> and the
+    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/faq.md">FAQ</a>.</p>
+    <h3>Reporting results</h3>
+    <p><strong>Report accuracy per stated turn, not pooled.</strong> Progress on EgoShift should appear
+    as higher scores at 90&deg; and 180&deg;. A system that raises its pooled score while leaving those
+    at the action-only ceiling has not improved at the thing the benchmark measures.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Citation</h2>
+<pre><code>@inproceedings{ahmed2027egoshift,
+  title     = {EgoShift: Bounding the Action-Only Shortcut in Egocentric
+               Spatial Updating for Vision--Language Models},
+  author    = {Ahmed, Faisal and Quarles, John and Desai, Kevin},
+  booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2027}
+}</code></pre>
+    <p style="font-size:.92rem;color:var(--text-light)">Questions, labels and audit outputs are released
+    under CC-BY-4.0. Rendered frames are redistributed under the upstream Apache-2.0 terms of
+    <a href="https://ai2thor.allenai.org/">AI2-THOR</a> and
+    <a href="https://procthor.allenai.org/">ProcTHOR-10k</a>, with attribution and NOTICE preserved.
+    Held-out answers are withheld.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><a href="https://github.com/UTSA-VIRLab/EgoShift">GitHub</a> &nbsp;&middot;&nbsp;
+       <a href="https://www.utsa.edu/">UTSA</a> &nbsp;&middot;&nbsp;
+       Vision, Interaction and Reality Lab</p>
+    <p style="margin-top:8px">Supported by the National Science Foundation.</p>
+  </div>
+</footer>
+
+</body>
+</html>

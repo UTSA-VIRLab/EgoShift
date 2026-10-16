@@ -1,0 +1,118 @@
+{
+  "cell_extension_note": "r2c base: two hidden-deficient cells added after role regeneration from the exhaustive exposure ledger (90:left:'in front' and 90:right:'behind', both reachable from the (-66.587,-45) source-bearing window, desired -55.0). Geometry and gates unchanged from r2b.",
+  "cells": [
+    {
+      "answer": "to the right",
+      "desired_source_bearing_degrees": 0.0,
+      "rotation_degrees": 90,
+      "turn": "left"
+    },
+    {
+      "answer": "to the left",
+      "desired_source_bearing_degrees": 0.0,
+      "rotation_degrees": 90,
+      "turn": "right"
+    },
+    {
+      "answer": "behind",
+      "desired_source_bearing_degrees": 0.0,
+      "rotation_degrees": 180,
+      "turn": "any"
+    },
+    {
+      "answer": "to the left",
+      "desired_source_bearing_degrees": 65.0,
+      "rotation_degrees": 180,
+      "turn": "any"
+    },
+    {
+      "answer": "to the right",
+      "desired_source_bearing_degrees": -65.0,
+      "rotation_degrees": 180,
+      "turn": "any"
+    },
+    {
+      "answer": "in front",
+      "desired_source_bearing_degrees": -55.0,
+      "rotation_degrees": 90,
+      "turn": "left"
+    },
+    {
+      "answer": "behind",
+      "desired_source_bearing_degrees": -55.0,
+      "rotation_degrees": 90,
+      "turn": "right"
+    }
+  ],
+  "distance_range_meters": [
+    0.8,
+    5.5
+  ],
+  "gates": {
+    "excluded_target_types": [
+      "wall",
+      "floor",
+      "ceiling",
+      "room",
+      "door",
+      "window"
+    ],
+    "minimum_bbox_height_pixels": 20,
+    "minimum_bbox_width_pixels": 20,
+    "minimum_mask_edge_margin_pixels": 2,
+    "minimum_visible_pixels": 2500,
+    "minimum_whole_box_post_zone_margin_degrees": 15.0,
+    "same_type_visible_count": 1,
+    "same_type_visible_pixel_threshold": 30,
+    "source_bearing_half_width_degrees": 66.58677555362947
+  },
+  "maximum_positions_per_object_cell": 5,
+  "maximum_render_attempts_per_scene": 72,
+  "maximum_rows_per_physical_component": 2,
+  "mining_id": "egoshift-taskb-targeted-r2b-exact-capacity",
+  "quota_basis": {
+    "buffer_rows": 45,
+    "candidate_items_per_presented_action": {
+      "hidden_test": 78,
+      "public_dev": 12,
+      "tuning_dev": 20
+    },
+    "minimum_fresh_rows_before_caps": 259,
+    "qualified_reservoir_sha256": "ac74032c6b1ba49c7b75c5229ca830f714837182a2a98e78b06cf7ad2587d801",
+    "qualified_reservoir_source": "work/candidate_r2/sources/taskb_reservoir_geometry_b665868.jsonl",
+    "requested_rows_before_merge_and_selection": 304
+  },
+  "render": {
+    "camera_horizon_degrees": 30.0,
+    "height": 480,
+    "vertical_fov_degrees": 120.0,
+    "width": 640
+  },
+  "schema_version": "0.2.0",
+  "seed": "egoshift-taskb-targeted-r2-pose-v1",
+  "supersedes_operationally": "release/configs/taskb_targeted_r2_mining.json",
+  "supersession_reason": "The first sharded launch used one oversized quota for every role/cell. This contract records exact deficit-aware global capacity targets before candidate selection and avoids approximately threefold unnecessary rendering.",
+  "target_rows_per_role_and_cell": {
+    "hidden_test": {
+      "180:any:behind": 56,
+      "180:any:to the left": 56,
+      "180:any:to the right": 56,
+      "90:left:to the right": 24,
+      "90:right:to the left": 24
+    },
+    "public_dev": {
+      "180:any:behind": 8,
+      "180:any:to the left": 8,
+      "180:any:to the right": 8,
+      "90:left:to the right": 0,
+      "90:right:to the left": 0
+    },
+    "tuning_dev": {
+      "180:any:behind": 16,
+      "180:any:to the left": 16,
+      "180:any:to the right": 16,
+      "90:left:to the right": 8,
+      "90:right:to the left": 8
+    }
+  }
+}

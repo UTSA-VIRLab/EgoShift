@@ -1,0 +1,5 @@
+include README.md
+include LICENSE_STATUS.md
+recursive-include schemas *.json
+recursive-include sample *.json *.jsonl
+

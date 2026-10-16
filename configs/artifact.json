@@ -1,0 +1,20 @@
+{
+  "artifact_version": "0.1.0",
+  "supported_schema_versions": ["0.1.0"],
+  "scorer": {
+    "name": "egoshift-benchmark",
+    "version": "0.1.0",
+    "accuracy_denominator": "all_manifest_items",
+    "missing_refusal_error_and_parse_failure": "incorrect",
+    "option_letter_mapping": "A maps to displayed option index 0"
+  },
+  "path_policy": {
+    "manifest_paths": "relative_posix_only",
+    "absolute_paths": "forbidden",
+    "parent_traversal": "forbidden"
+  },
+  "network_access_required": false,
+  "license_status": "pending_external_gate_U6",
+  "human_data_included": false,
+  "benchmark_gold_included": false
+}

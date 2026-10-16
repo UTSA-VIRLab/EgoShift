@@ -1,0 +1,36 @@
+{
+  "schema_version": "0.1.0",
+  "manifest_id": "egoshift-synthetic-smoke-v1",
+  "dataset_version": "0.0.0-smoke",
+  "status": "synthetic_schema_smoke_only",
+  "files": [
+    {
+      "path": "questions.jsonl",
+      "sha256": "51be3320fd3018427bdf4a7284b42bee410347fd93a4f997359dd0f51c348b8b",
+      "media_type": "application/x-ndjson",
+      "records": 6
+    },
+    {
+      "path": "predictions.jsonl",
+      "sha256": "c2cb045aa972e387ee9f5b9238bd11279e4720ed0918de9414cc84b09f9ad5ce",
+      "media_type": "application/x-ndjson",
+      "records": 6
+    },
+    {
+      "path": "expected_report.json",
+      "sha256": "143bf5817acaeec196cf1acc642ebedffc85d549e44a07c46d9f28fd83668b31",
+      "media_type": "application/json",
+      "records": 1
+    }
+  ],
+  "tasks": {
+    "B": {"role": "synthetic_smoke", "items": 4, "annotation_path": "questions.jsonl"},
+    "C": {"role": "synthetic_smoke", "items": 2, "annotation_path": "questions.jsonl"}
+  },
+  "provenance": {
+    "generated_by": "hand-authored schema/scoring fixture",
+    "contains_benchmark_evidence": false,
+    "contains_simulator_assets": false,
+    "contains_human_data": false
+  }
+}

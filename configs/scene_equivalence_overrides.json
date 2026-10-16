@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1.0",
+  "conservative_pairs": [
+    {
+      "scenes": ["scene_03617", "scene_00591"],
+      "evidence": "cross-scene perceptual-hash screening at Hamming distance <= 4",
+      "policy": "co-group for split leakage prevention; do not call an exact physical duplicate"
+    }
+  ]
+}
