@@ -58,9 +58,33 @@ exemption, and it should not be described as either.
 The question files and development answers are distributed with the release
 bundle. Rendered frames are large and are hosted separately rather than in git.
 
-> **Note.** The data host is being set up for the camera-ready. Until the link
-> appears here, use `sample/` for the schema and the scoring path, and open an
-> issue if you need early access.
+Everything is on Hugging Face: **[huggingface.co/datasets/utsavirlab/EgoShift](https://huggingface.co/datasets/utsavirlab/EgoShift)**
+
+| File | Size | Contents |
+|:---|---:|:---|
+| `egoshift_reviewer_bundle.tar.gz` | 169 MB | questions for all splits, dev answers, 276,403 raw model completions, 124 audit reports, human aggregates, seeded frame sample. **This file alone reproduces every table in the paper.** |
+| `egoshift_task_a.tar.gz` | 5.9 GB | Task A rendered frames |
+| `egoshift_task_c.tar.gz` | 3.9 GB | Task C rendered frames |
+| `egoshift_task_b.tar.gz` | 573 MB | Task B rendered frames |
+| `egoshift_surveys.tar.gz` | 298 MB | blank annotator survey instruments |
+| `croissant.json` | — | Croissant 1.0 metadata, nine Responsible AI fields |
+| `CHECKSUMS.json` | — | SHA-256 for every file |
+
+Start with the bundle; the frame sets are a convenience and are not needed to
+reproduce the paper.
+
+```shell
+pip install huggingface_hub
+hf download utsavirlab/EgoShift egoshift_reviewer_bundle.tar.gz \
+    --repo-type dataset --local-dir .
+tar xzf egoshift_reviewer_bundle.tar.gz
+```
+
+Verify what you downloaded against `CHECKSUMS.json`:
+
+```shell
+sha256sum egoshift_reviewer_bundle.tar.gz
+```
 
 ## Submitting for held-out scoring
 

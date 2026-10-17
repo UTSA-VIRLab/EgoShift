@@ -158,8 +158,12 @@ benchmark measures.
 Questions, labels and audit outputs are released under **CC-BY-4.0**. Rendered frames are
 redistributed under the upstream **Apache-2.0** terms of AI2-THOR and ProcTHOR-10k, with attribution
 and `NOTICE` preserved. **Held-out answers are withheld** so the split stays usable as a test set;
-submit predictions to score against them. See [`docs/data.md`](docs/data.md); the full datasheet
-is Section F of the [supplementary material](assets/EgoShift_WACV2027_supplementary.pdf).
+submit predictions to score against them.
+
+**Download:** [`huggingface.co/datasets/utsavirlab/EgoShift`](https://huggingface.co/datasets/utsavirlab/EgoShift) — start with
+`egoshift_reviewer_bundle.tar.gz` (169 MB), which reproduces every table in the
+paper. See [`docs/data.md`](docs/data.md); the full datasheet is Section F of the
+[supplementary material](assets/EgoShift_WACV2027_supplementary.pdf).
 
 ### Repository layout
 
