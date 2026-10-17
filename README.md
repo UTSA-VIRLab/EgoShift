@@ -8,7 +8,7 @@
   <a href="#getting-started"><strong>Getting Started</strong></a>
 </p>
 
-**News: our paper is accepted at WACV 2027 (Evaluation & Datasets track).**
+**News: Our paper is accepted at WACV 2027 (Evaluation & Datasets track).**
 
 [Faisal Ahmed](https://www.linkedin.com/in/faisal-ahmed-565943145/), [John Quarles](https://www.linkedin.com/in/johnpquarles/), [Kevin Desai](https://www.linkedin.com/in/kevinpdesai/) — Department of Computer Science, University of Texas at San Antonio
 
