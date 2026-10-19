@@ -40,9 +40,12 @@ no longer hidden:
 
 | Stated turn | 30° | 60° | 90° | 120° | 180° |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| Free from the turn | 50.4 | 50.4 | 33.3 | 50.0 | 35.7 |
+| Free from the turn <sup>†</sup> | 50.4 | 50.4 | 33.3 | 50.0 | 35.7 |
 | **Earned by using the image** | **+36.4** | **+31.7** | **+5.0** | **+34.3** | **+1.1** |
 | Frontier mean | 86.8 | 82.1 | 38.3 | 84.3 | 36.8 |
+
+<sup>†</sup> computed from the camera geometry **before any model ran**. That row is the
+contribution; the one below it is a consequence.
 
 A 120° turn is answered correctly more than twice as often as a 90° one. Accuracy tracks the number
 of answers the geometry permits — three at 90° and 180°, two everywhere else — not how far the camera
@@ -50,8 +53,27 @@ moved.
 
 <p align="center"><img src="./resources/tasks.png" alt="the three EgoShift tasks" width="94%"></p>
 
-This is not hypothetical. An earlier build of our own data was balanced by the usual standard, and a
-predictor that saw **only the stated turn** scored **72.3%** on it.
+### The contribution is the construction, not the scores
+
+No other benchmark can fill in that first row, because nobody computes it. That is what
+EgoShift adds: a procedure that derives, from the stated action and the camera geometry,
+the best score reachable **without the image**, and then requires every cell of the built
+data to match it. The derivation, an independent checker and the record of which scenes
+were ever used in development all ship with the benchmark.
+
+It is not a formality. Applied to our own data — already balanced to the conventional
+standard, equal answers across the set — the test found a predictor that saw **only the
+stated turn** scoring **72.3%**. Balancing globally says nothing about what happens inside
+a single action.
+
+> That 72.3% build differs from the released one in other ways too, so it is evidence that
+> the test catches what balancing misses, not a controlled measurement of what the
+> construction bought.
+
+Any benchmark whose questions state an action — a turn, a step, a grasp — can compute the
+same bound and build against it. **That procedure is the part meant to outlive these
+particular models.**
+
 
 ### Leaderboard
 

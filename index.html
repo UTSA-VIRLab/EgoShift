@@ -255,10 +255,34 @@ footer{border-top:1px solid var(--line);background:var(--card);
     </div>
     <div class="key">
       <span><i class="k1"></i>earned by using the image</span>
-      <span><i class="k0"></i>free from the stated turn</span>
+      <span><i class="k0"></i>free from the stated turn &mdash; <b>computed from camera
+        geometry before any model ran</b></span>
     </div>
   </div>
 </div></header>
+
+<section><div class="wrap">
+  <h2>The contribution is the construction, not the scores</h2>
+  <p class="lede">Nobody can draw the grey bars above for their own benchmark, because
+  nobody computes them. That is what EgoShift adds: a procedure that derives, from the
+  stated action and the camera geometry, the best score reachable without the image, and
+  then requires every cell of the built data to match it. The derivation, an independent
+  checker and the record of which scenes were ever used in development all ship with the
+  benchmark.</p>
+
+  <p>It is not a formality. Applied to our own data &mdash; already balanced to the
+  conventional standard, equal answers across the set &mdash; the test found a predictor
+  that saw <b>only the stated turn</b> scoring <b>72.3%</b>. Balancing globally says
+  nothing about what happens inside a single action.</p>
+
+  <div class="note">That 72.3% build differs from the released one in other ways too, so
+  it is evidence that the test catches what balancing misses, not a controlled measurement
+  of what the construction bought.</div>
+
+  <p>Any benchmark whose questions state an action &mdash; a turn, a step, a grasp &mdash;
+  can compute the same bound and build against it. That procedure is the part meant to
+  outlive these particular models.</p>
+</div></section>
 
 <section><div class="wrap">
   <h2>Three tasks, one shared geometry</h2>
