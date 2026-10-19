@@ -1,4 +1,9 @@
-# EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision–Language Models
+<p align="center">
+  <img src="resources/banner.png" alt="EgoShift — a stated camera turn gives the answer away. Frontier accuracy by turn: 86.8 at 30 degrees, 82.1 at 60, 38.3 at 90, 84.3 at 120, 36.8 at 180, with the portion earned by using the image falling from +36.4 to +1.1." width="100%">
+</p>
+
+<h1 align="center">EgoShift</h1>
+<p align="center"><i>Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision–Language Models</i></p>
 
 <p align="center">
   <a href="https://utsa-virlab.github.io/EgoShift/"><strong>Project Page</strong></a> &nbsp;·&nbsp;
