@@ -3,289 +3,381 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating</title>
-<meta name="description" content="EgoShift (WACV 2027): a benchmark that computes, before any model runs, the highest score reachable from a stated camera turn alone — then builds every question to sit on that ceiling.">
+<title>EgoShift &mdash; what a stated turn gives away</title>
+<meta name="description" content="EgoShift (WACV 2027): a benchmark that computes, from camera geometry and before any model runs, the highest score reachable from a stated turn alone.">
 <link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
-<meta property="og:title" content="EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating">
-<meta property="og:description" content="WACV 2027: pooled accuracy hides a collapse at 90° and 180°. EgoShift bounds the action-only shortcut from camera geometry.">
+<meta property="og:title" content="EgoShift: bounding the action-only shortcut">
+<meta property="og:description" content="22 of 36 vision-language models score at or below what the stated camera turn gives away for free.">
 <meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#14171C">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--primary:#2563eb;--primary-dark:#1d4ed8;--accent:#f59e0b;--bg:#fff;--bg-alt:#f8fafc;
---bg-dark:#0f172a;--text:#1e293b;--text-light:#64748b;--border:#e2e8f0;--red:#ef4444;--max-w:1080px}
+:root{
+  --paper:#F5F6F8; --card:#fff; --ink:#14171C; --mute:#5C6472; --line:#DCE0E7;
+  --geo:#2F3B8C; --fail:#B3123C; --ceil:#9A6B07; --human:#0B6E4F;
+  --w:1060px;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text);line-height:1.7;background:var(--bg)}
-code,pre,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
-.wrap{max-width:var(--max-w);margin:0 auto;padding:0 24px}
-header{background:linear-gradient(160deg,#0f172a 0%,#1e293b 60%,#243b53 100%);color:#fff;padding:72px 0 56px;text-align:center}
-header h1{font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
-header .sub{color:#93c5fd;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;margin-bottom:22px}
-.authors{font-size:1.05rem;margin:18px 0 6px}
-.authors a{color:#bfdbfe;text-decoration:none;border-bottom:1px solid rgba(191,219,254,.35)}
-.authors a:hover{color:#fff}
-.affil{color:#cbd5e1;font-size:.95rem}
-.links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
-.btn{display:inline-block;padding:10px 22px;border-radius:999px;font-weight:600;font-size:.95rem;text-decoration:none;transition:.18s}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark)}
-.btn-ghost{background:rgba(255,255,255,.08);color:#e2e8f0;border:1px solid rgba(255,255,255,.22)}
-.btn-ghost:hover{background:rgba(255,255,255,.16);color:#fff}
-.news{display:inline-block;margin-top:26px;background:rgba(245,158,11,.14);border:1px solid rgba(245,158,11,.45);
-color:#fcd34d;padding:7px 18px;border-radius:999px;font-size:.9rem;font-weight:600}
-section{padding:56px 0;border-bottom:1px solid var(--border)}
-section.alt{background:var(--bg-alt)}
-h2{font-size:1.6rem;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
-h3{font-size:1.1rem;font-weight:700;margin:26px 0 10px}
-p{margin-bottom:14px}
-p.lead{font-size:1.1rem;color:#334155}
-figure{margin:26px 0}
-figure img{width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
-figcaption{font-size:.88rem;color:var(--text-light);margin-top:10px;text-align:center}
-.callout{background:#fff;border-left:4px solid var(--accent);padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px;margin:26px 0}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px}
-.card .n{font-size:1.7rem;font-weight:800;color:var(--primary);line-height:1.2}
-.card .l{font-size:.88rem;color:var(--text-light);margin-top:4px}
-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:.93rem;background:#fff}
-th,td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:center}
-th:first-child,td:first-child{text-align:left}
-thead th{background:var(--bg-alt);font-weight:700;font-size:.85rem;letter-spacing:.02em}
-td.bad{color:var(--red);font-weight:700}
-pre{background:var(--bg-dark);color:#e2e8f0;padding:16px 18px;border-radius:10px;overflow-x:auto;font-size:.86rem;line-height:1.6;margin:16px 0}
-pre code{color:inherit}
-code{background:var(--bg-alt);padding:1px 6px;border-radius:4px;font-size:.88em;border:1px solid var(--border)}
-pre code{background:none;border:none;padding:0}
-footer{padding:40px 0;text-align:center;color:var(--text-light);font-size:.9rem}
-footer a{color:var(--primary);text-decoration:none}
-.eq{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;font-size:1.02rem;margin:18px 0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);
+  font:400 16.5px/1.65 "IBM Plex Sans",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 28px}
+h1,h2,h3{font-family:Archivo,system-ui,sans-serif;letter-spacing:-.022em;line-height:1.08}
+h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin-bottom:.6em}
+h3{font-size:1.05rem;font-weight:700;margin:2em 0 .5em}
+p{max-width:68ch;margin-bottom:1em}
+a{color:var(--geo)}
+b,strong{font-weight:600}
+.n{font-variant-numeric:tabular-nums}
 
-/* leaderboard */
-.lb{width:100%;border-collapse:collapse;font-size:.92rem;margin:20px 0;background:#fff}
-.lb th{background:var(--bg-alt);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;
-  color:var(--text-light);padding:9px 10px;text-align:left;border-bottom:2px solid var(--border)}
-.lb td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
-.lb tbody tr:hover{background:#f1f5ff}
-.lb .rk{width:38px;text-align:center;color:var(--text-light);font-variant-numeric:tabular-nums}
-.lb .num{text-align:right;font-variant-numeric:tabular-nums}
-.lb .b{font-weight:700;width:58px}
-.lb .dim{color:var(--text-light);width:54px}
-.lb tr.ref{background:#fcfcfd}
-.lb tr.ref td{border-top:2px solid var(--border)}
-.bar{width:120px;height:8px;border-radius:999px;background:var(--border);overflow:hidden}
-.bar i{display:block;height:100%;border-radius:999px;
-  background:linear-gradient(90deg,#60a5fa,#2563eb)}
-.bar i.hum{background:linear-gradient(90deg,#34d399,#059669)}
-.bar i.ceil{background:linear-gradient(90deg,#fbbf24,#d97706)}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
-.dot.g{background:#4285f4}.dot.a{background:#d97757}.dot.o{background:#10a37f}.dot.w{background:#cbd5e1}
-.warn{color:var(--accent);font-weight:700;cursor:help}
-details.more{margin:10px 0 0}
-details.more summary{cursor:pointer;font-weight:600;color:var(--primary);padding:8px 0;font-size:.93rem}
-.legend{font-size:.84rem;color:var(--text-light);margin-top:-6px}
-@media(max-width:640px){.bar{width:62px}.lb{font-size:.82rem}.lb td,.lb th{padding:6px 5px}}
-@media(max-width:640px){header{padding:52px 0 40px}section{padding:40px 0}.links{gap:8px}.btn{padding:9px 16px;font-size:.88rem}}
+/* ── masthead ── */
+.top{border-bottom:1px solid var(--line);background:var(--card)}
+.top .wrap{display:flex;align-items:baseline;justify-content:space-between;
+  padding-top:16px;padding-bottom:16px;gap:16px;flex-wrap:wrap}
+.mark{font-family:Archivo;font-weight:800;font-size:1.22rem;letter-spacing:-.03em}
+.venue{color:var(--mute);font-size:.9rem}
+
+/* ── hero ── */
+.hero{background:var(--card);border-bottom:1px solid var(--line);
+  padding:58px 0 10px}
+.hero h1{font-size:clamp(2rem,5.2vw,3.35rem);font-weight:800;max-width:17ch;margin-bottom:18px}
+.hero .say{font-size:1.12rem;color:var(--mute);max-width:60ch}
+.byline{margin-top:26px;font-size:.96rem;color:var(--mute)}
+.byline a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.byline a:hover{border-color:var(--geo);color:var(--geo)}
+
+/* ── the dial: the one bold element ── */
+.dial{margin:44px 0 0;padding-bottom:40px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,2.4vw,34px);
+  align-items:end;border-bottom:2px solid var(--ink);padding-bottom:0}
+.tick{display:flex;flex-direction:column;align-items:center;position:relative}
+.col{position:relative;width:100%;max-width:92px;height:168px;
+  background:repeating-linear-gradient(to top,transparent 0 15px,var(--line) 15px 16px);
+  display:flex;align-items:flex-end}
+.col .fill{display:block;width:100%;background:var(--geo)}
+.tick.bad .fill{background:var(--fail)}
+.col .ceil{position:absolute;left:-4px;right:-4px;height:0;
+  border-top:2px dashed var(--ceil)}
+.val{font-family:Archivo;font-weight:800;font-size:1.5rem;margin-top:10px;
+  font-variant-numeric:tabular-nums}
+.tick.bad .val{color:var(--fail)}
+.ang{font-family:Archivo;font-weight:600;font-size:1.05rem;color:var(--ink)}
+.sup{font-size:.8rem;color:var(--mute);margin-top:2px}
+.key{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;font-size:.88rem;color:var(--mute)}
+.key i{display:inline-block;width:22px;height:0;vertical-align:middle;margin-right:7px}
+.key .k1{border-top:9px solid var(--geo)}
+.key .k2{border-top:9px solid var(--fail)}
+.key .k3{border-top:2px dashed var(--ceil)}
+
+/* ── sections ── */
+section{padding:56px 0}
+section+section{border-top:1px solid var(--line)}
+.lede{font-size:1.1rem}
+.pull{border-left:3px solid var(--fail);padding:4px 0 4px 20px;margin:28px 0;
+  font-size:1.12rem;max-width:62ch}
+.note{border-left:3px solid var(--line);padding:4px 0 4px 20px;margin:24px 0;
+  color:var(--mute);font-size:.96rem;max-width:64ch}
+
+/* ── leaderboard ── */
+table.lb{width:100%;border-collapse:collapse;font-size:.94rem;margin-top:8px}
+.lb th{font:600 .76rem/1 "IBM Plex Sans";color:var(--mute);text-align:left;
+  padding:0 10px 9px;border-bottom:1.5px solid var(--ink)}
+.lb th.n{text-align:right}
+.lb td{padding:6px 10px;border-bottom:1px solid var(--line)}
+.lb tbody tr:hover{background:#EEF1F8}
+.lb .rk{width:30px;color:var(--mute);font-variant-numeric:tabular-nums;font-size:.85rem}
+.lb .mdl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.lb .n{text-align:right;font-variant-numeric:tabular-nums}
+.lb .hero{font-weight:700;width:60px}
+.lb .sub{color:var(--mute);width:54px}
+.lb tr.under .mdl{color:var(--mute)}
+.lb tr.under .hero{color:var(--fail)}
+.track{width:150px}
+.track span{display:block;height:7px;background:var(--geo)}
+tr.under .track span{background:#D8A3B4}
+.sw{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:9px}
+.sw.g{background:#4285F4}.sw.a{background:#C2683F}.sw.o{background:#0B8F6E}.sw.w{background:#AEB6C2}
+tr.ref td{border-top:1.5px solid var(--ink);padding-top:9px}
+tr.ref .track span{background:var(--human)}
+tr.ceilrow .track span{background:var(--ceil)}
+details.more summary{cursor:pointer;color:var(--geo);font-weight:600;
+  padding:14px 0 0;font-size:.93rem}
+details.more[open] summary{margin-bottom:6px}
+
+/* ── code ── */
+pre{background:var(--ink);color:#E6E9EF;padding:18px 20px;overflow-x:auto;
+  font:400 .85rem/1.65 ui-monospace,"SF Mono",Menlo,monospace;margin:16px 0}
+code{font:400 .9em ui-monospace,"SF Mono",Menlo,monospace;
+  background:#EBEEF3;padding:1px 5px}
+pre code{background:none;padding:0}
+
+/* ── links row ── */
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.cta a{display:inline-block;padding:9px 18px;font-weight:600;font-size:.93rem;
+  text-decoration:none;border:1.5px solid var(--ink);color:var(--ink);background:var(--card)}
+.cta a.pri{background:var(--ink);color:var(--card)}
+.cta a:hover{border-color:var(--geo);color:var(--geo)}
+.cta a.pri:hover{background:var(--geo);border-color:var(--geo);color:#fff}
+a:focus-visible,summary:focus-visible{outline:2.5px solid var(--geo);outline-offset:3px}
+
+figure{margin:28px 0}
+figure img{width:100%;border:1px solid var(--line);background:#fff}
+figcaption{font-size:.86rem;color:var(--mute);margin-top:9px;max-width:68ch}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:0;border-top:1.5px solid var(--ink);margin:26px 0}
+.grid3 div{padding:16px 18px 16px 0;border-bottom:1px solid var(--line)}
+.grid3 b{display:block;font-family:Archivo;font-weight:800;font-size:1.9rem;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.grid3 span{font-size:.88rem;color:var(--mute)}
+footer{border-top:1px solid var(--line);background:var(--card);
+  padding:30px 0;font-size:.9rem;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:700px){
+  .col{height:118px} .val{font-size:1.15rem} .sup{display:none}
+  .track{display:none} .lb .mdl{max-width:150px;white-space:normal}
+  section{padding:40px 0} .hero{padding-top:38px}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="wrap">
-    <div class="sub">WACV 2027 &middot; Evaluation &amp; Datasets Track</div>
-    <h1>EgoShift: Bounding the Action-Only Shortcut in<br>Egocentric Spatial Updating for Vision&ndash;Language Models</h1>
-    <div class="authors">
-      <a href="https://www.linkedin.com/in/faisal-ahmed-565943145/">Faisal Ahmed</a> &nbsp;&middot;&nbsp;
-      <a href="https://www.linkedin.com/in/johnpquarles/">John Quarles</a> &nbsp;&middot;&nbsp;
-      <a href="https://www.linkedin.com/in/kevinpdesai/">Kevin Desai</a>
-    </div>
-    <div class="affil">Department of Computer Science, University of Texas at San Antonio</div>
-    <div class="links">
-      <a class="btn btn-primary" href="assets/EgoShift_WACV2027.pdf">Paper</a>
-      <a class="btn btn-ghost" href="assets/EgoShift_WACV2027_supplementary.pdf">Supplementary</a>
-      <a class="btn btn-ghost" href="#leaderboard">Leaderboard</a>
-      <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift">Code</a>
-      <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/getting_started.md">Getting Started</a>
-    </div>
-    <div class="news">Accepted at WACV 2027</div>
-  </div>
-</header>
+<div class="top"><div class="wrap">
+  <span class="mark">EgoShift</span>
+  <span class="venue">WACV 2027, Evaluation &amp; Datasets</span>
+</div></div>
 
-<section>
-  <div class="wrap">
-    <h2>A model can score well without looking at the image</h2>
-    <p class="lead">When a question states a camera turn, that turn alone rules out some answers. A
-    predictor given only the stated action already beats chance by a wide margin &mdash; and balanced
-    answers, text-only arms and human references do not catch it, because none of them is conditioned
-    on the action.</p>
-    <div class="callout">
-      <strong>The audit is not hypothetical.</strong> An earlier build of our own data was balanced by
-      the usual standard. A predictor that saw <em>only the stated turn</em> scored <strong>72.3%</strong> on it.
-    </div>
-    <p><strong>EgoShift makes the shortcut a quantity instead of a worry.</strong> The camera geometry
-    determines which answers each turn can produce, so the highest score reachable from the action
-    alone can be computed <em>before any model is run</em>. We derive that ceiling and build every turn
-    to sit exactly on it.</p>
-    <figure>
-      <img src="assets/tasks.png" alt="The three EgoShift tasks: cross-view identity, direction after a stated turn, and visibility.">
-      <figcaption>The three tasks. A is a control, B is the primary task, C is supporting.</figcaption>
-    </figure>
-  </div>
-</section>
+<header class="hero"><div class="wrap">
+  <h1>A stated camera turn gives the answer away.</h1>
+  <p class="say">Ask where an object lands after a 90&deg; turn and you have already
+  ruled out some answers. A model can score well from the turn alone and never
+  look at the image. EgoShift computes how much is given away &mdash; from the
+  camera geometry, before any model runs &mdash; and builds every question to sit
+  on that bound.</p>
 
-<section id="leaderboard">
-  <div class="wrap">
-    <h2>Leaderboard</h2>
-    <p>Accuracy on the held-out splits, sorted by <b>Task B</b>, the primary task.
-    Parse failures count as incorrect.</p>
-    <p class="legend"><span class="dot g"></span>Google &nbsp;
-      <span class="dot a"></span>Anthropic &nbsp;
-      <span class="dot o"></span>OpenAI &nbsp;
-      <span class="dot w"></span>open weights &nbsp;&middot;&nbsp;
-      <span class="warn">⚠</span> at or below the action-only ceiling</p>
-    <table class="lb">
-      <thead><tr><th></th><th>Model</th><th></th><th class="num">Task B</th>
-      <th class="num">Task A</th><th class="num">Task C</th></tr></thead>
-      <tbody>
-<tr><td class="rk">🥇</td><td><span class="dot g"></span>Gemini 3 Pro (thinking)</td><td class="num"><div class="bar"><i style="width:83.6%"></i></div></td><td class="num b">83.6</td><td class="num dim">91.4</td><td class="num dim">88.0</td></tr>
-<tr><td class="rk">🥈</td><td><span class="dot g"></span>Gemini 3 Flash</td><td class="num"><div class="bar"><i style="width:83.5%"></i></div></td><td class="num b">83.5</td><td class="num dim">96.6</td><td class="num dim">89.3</td></tr>
-<tr><td class="rk">🥉</td><td><span class="dot g"></span>Gemini 3 Pro</td><td class="num"><div class="bar"><i style="width:81.9%"></i></div></td><td class="num b">81.9</td><td class="num dim">91.8</td><td class="num dim">88.2</td></tr>
-<tr><td class="rk">4</td><td><span class="dot a"></span>Claude Fable 5</td><td class="num"><div class="bar"><i style="width:81.4%"></i></div></td><td class="num b">81.4</td><td class="num dim">94.8</td><td class="num dim">88.4</td></tr>
-<tr><td class="rk">5</td><td><span class="dot o"></span>GPT-5.6 Sol (thinking)</td><td class="num"><div class="bar"><i style="width:81.1%"></i></div></td><td class="num b">81.1</td><td class="num dim">93.2</td><td class="num dim">88.0</td></tr>
-<tr><td class="rk">6</td><td><span class="dot a"></span>Claude Opus 5 (extended)</td><td class="num"><div class="bar"><i style="width:80.2%"></i></div></td><td class="num b">80.2</td><td class="num dim">95.1</td><td class="num dim">84.3</td></tr>
-<tr><td class="rk">7</td><td><span class="dot a"></span>Claude Opus 5</td><td class="num"><div class="bar"><i style="width:80.1%"></i></div></td><td class="num b">80.1</td><td class="num dim">91.6</td><td class="num dim">83.2</td></tr>
-<tr><td class="rk">8</td><td><span class="dot a"></span>Claude Sonnet 5</td><td class="num"><div class="bar"><i style="width:77.1%"></i></div></td><td class="num b">77.1</td><td class="num dim">92.6</td><td class="num dim">75.8</td></tr>
-<tr><td class="rk">9</td><td><span class="dot o"></span>GPT-5.6 Sol</td><td class="num"><div class="bar"><i style="width:76.3%"></i></div></td><td class="num b">76.3</td><td class="num dim">93.4</td><td class="num dim">87.2</td></tr>
-<tr><td class="rk">10</td><td><span class="dot w"></span>InternVL3-38B</td><td class="num"><div class="bar"><i style="width:65.1%"></i></div></td><td class="num b">65.1</td><td class="num dim">96.1</td><td class="num dim">65.2</td></tr>
-<tr><td class="rk">11</td><td><span class="dot w"></span>InternVL3-78B</td><td class="num"><div class="bar"><i style="width:56.1%"></i></div></td><td class="num b">56.1</td><td class="num dim">91.9</td><td class="num dim">63.6</td></tr>
-<tr><td class="rk">12</td><td><span class="dot g"></span>Gemini 3 Flash Lite</td><td class="num"><div class="bar"><i style="width:53.0%"></i></div></td><td class="num b">53.0</td><td class="num dim">96.2</td><td class="num dim">67.3</td></tr>
-<tr class="ref"><td></td><td>🧑 <b>Trained human panel</b></td>
-<td class="num"><div class="bar"><i class="hum" style="width:84.6%"></i></div></td>
-<td class="num b">84.6</td><td class="num dim">98.1</td><td class="num dim">89.6</td></tr>
-<tr class="ref"><td></td><td>🚧 <i>Action-only ceiling</i></td>
-<td class="num"><div class="bar"><i class="ceil" style="width:45.9%"></i></div></td>
-<td class="num b">45.9</td><td class="num dim">—</td><td class="num dim">—</td></tr>
-      </tbody>
-    </table>
-    <details class="more">
-      <summary>Show all 36 evaluated systems</summary>
-      <table class="lb"><tbody>
-<tr><td class="rk">13</td><td><span class="dot w"></span>Qwen3-VL-32B</td><td class="num"><div class="bar"><i style="width:47.7%"></i></div></td><td class="num b">47.7</td><td class="num dim">95.6</td><td class="num dim">59.3</td></tr>
-<tr><td class="rk">14</td><td><span class="dot w"></span>Qwen2.5-VL-32B</td><td class="num"><div class="bar"><i style="width:46.4%"></i></div></td><td class="num b">46.4</td><td class="num dim">80.5</td><td class="num dim">59.9</td></tr>
-<tr><td class="rk">15</td><td><span class="dot w"></span>InternVL3-14B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.6%"></i></div></td><td class="num b">45.6</td><td class="num dim">92.0</td><td class="num dim">63.9</td></tr>
-<tr><td class="rk">16</td><td><span class="dot w"></span>Qwen2.5-VL-72B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.6%"></i></div></td><td class="num b">45.6</td><td class="num dim">85.7</td><td class="num dim">61.8</td></tr>
-<tr><td class="rk">17</td><td><span class="dot a"></span>Claude Haiku 4.5 <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.4%"></i></div></td><td class="num b">45.4</td><td class="num dim">71.2</td><td class="num dim">38.8</td></tr>
-<tr><td class="rk">18</td><td><span class="dot o"></span>GPT-5.1 <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:42.0%"></i></div></td><td class="num b">42.0</td><td class="num dim">90.8</td><td class="num dim">73.1</td></tr>
-<tr><td class="rk">19</td><td><span class="dot w"></span>Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:41.3%"></i></div></td><td class="num b">41.3</td><td class="num dim">92.2</td><td class="num dim">63.5</td></tr>
-<tr><td class="rk">20</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:36.9%"></i></div></td><td class="num b">36.9</td><td class="num dim">88.8</td><td class="num dim">64.2</td></tr>
-<tr><td class="rk">21</td><td><span class="dot w"></span>SenseNova-SI-1.3-Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:33.3%"></i></div></td><td class="num b">33.3</td><td class="num dim">93.6</td><td class="num dim">61.7</td></tr>
-<tr><td class="rk">22</td><td><span class="dot w"></span>InternVL3-2B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:28.8%"></i></div></td><td class="num b">28.8</td><td class="num dim">53.9</td><td class="num dim">39.7</td></tr>
-<tr><td class="rk">23</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen2.5-VL-3B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:27.9%"></i></div></td><td class="num b">27.9</td><td class="num dim">50.0</td><td class="num dim">30.8</td></tr>
-<tr><td class="rk">24</td><td><span class="dot w"></span>InternVL3-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:26.9%"></i></div></td><td class="num b">26.9</td><td class="num dim">79.2</td><td class="num dim">60.9</td></tr>
-<tr><td class="rk">25</td><td><span class="dot w"></span>LLaVA-OneVision-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:25.6%"></i></div></td><td class="num b">25.6</td><td class="num dim">50.3</td><td class="num dim">39.2</td></tr>
-<tr><td class="rk">26</td><td><span class="dot w"></span>Idefics3-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:24.6%"></i></div></td><td class="num b">24.6</td><td class="num dim">59.2</td><td class="num dim">37.8</td></tr>
-<tr><td class="rk">27</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen2.5-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:23.9%"></i></div></td><td class="num b">23.9</td><td class="num dim">56.8</td><td class="num dim">56.2</td></tr>
-<tr><td class="rk">28</td><td><span class="dot w"></span>Qwen2.5-VL-3B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:23.3%"></i></div></td><td class="num b">23.3</td><td class="num dim">54.4</td><td class="num dim">38.7</td></tr>
-<tr><td class="rk">29</td><td><span class="dot w"></span>EgoMind-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.9%"></i></div></td><td class="num b">21.9</td><td class="num dim">59.6</td><td class="num dim">33.4</td></tr>
-<tr><td class="rk">30</td><td><span class="dot w"></span>SmolVLM-Instruct <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.4%"></i></div></td><td class="num b">21.4</td><td class="num dim">51.8</td><td class="num dim">33.4</td></tr>
-<tr><td class="rk">31</td><td><span class="dot w"></span>Molmo2-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.3%"></i></div></td><td class="num b">21.3</td><td class="num dim">71.1</td><td class="num dim">52.0</td></tr>
-<tr><td class="rk">32</td><td><span class="dot w"></span>LLaVA-1.6-Mistral-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.2%"></i></div></td><td class="num b">21.2</td><td class="num dim">49.3</td><td class="num dim">33.3</td></tr>
-<tr><td class="rk">33</td><td><span class="dot w"></span>Qwen2-VL-2B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:19.1%"></i></div></td><td class="num b">19.1</td><td class="num dim">50.3</td><td class="num dim">32.9</td></tr>
-<tr><td class="rk">34</td><td><span class="dot w"></span>Qwen2.5-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:18.9%"></i></div></td><td class="num b">18.9</td><td class="num dim">60.8</td><td class="num dim">41.4</td></tr>
-<tr><td class="rk">35</td><td><span class="dot w"></span>Cosmos-Reason1-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:15.8%"></i></div></td><td class="num b">15.8</td><td class="num dim">76.1</td><td class="num dim">41.4</td></tr>
-<tr><td class="rk">36</td><td><span class="dot w"></span>Qwen2-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:11.7%"></i></div></td><td class="num b">11.7</td><td class="num dim">50.0</td><td class="num dim">62.2</td></tr>
-      </tbody></table>
-    </details>
-    <div class="callout" style="margin-top:22px">
-      <strong>22 of the 36 systems score at or below the action-only ceiling.</strong>
-      For those, the reported accuracy is consistent with never having looked at
-      the picture.
+  <div class="byline">
+    <a href="https://www.linkedin.com/in/faisal-ahmed-565943145/">Faisal Ahmed</a>,
+    <a href="https://www.linkedin.com/in/johnpquarles/">John Quarles</a> and
+    <a href="https://www.linkedin.com/in/kevinpdesai/">Kevin Desai</a>,
+    University of Texas at San Antonio
+  </div>
+
+  <div class="cta">
+    <a class="pri" href="assets/EgoShift_WACV2027.pdf">Read the paper</a>
+    <a href="#leaderboard">Leaderboard</a>
+    <a href="https://github.com/UTSA-VIRLab/EgoShift">Code</a>
+    <a href="https://huggingface.co/datasets/utsavirlab/EgoShift">Data</a>
+    <a href="https://doi.org/10.5281/zenodo.23440746">DOI</a>
+  </div>
+
+  <div class="dial">
+    <div class="scale">
+<div class="tick">
+      <div class="col"><span class="fill" style="height:86.8%"></span>
+        <span class="ceil" style="bottom:50.4%"></span></div>
+      <b class="val">86.8</b>
+      <span class="ang">30&deg;</span>
+      <span class="sup">2 answers</span>
+    </div>
+<div class="tick">
+      <div class="col"><span class="fill" style="height:82.1%"></span>
+        <span class="ceil" style="bottom:50.4%"></span></div>
+      <b class="val">82.1</b>
+      <span class="ang">60&deg;</span>
+      <span class="sup">2 answers</span>
+    </div>
+<div class="tick bad">
+      <div class="col"><span class="fill" style="height:38.3%"></span>
+        <span class="ceil" style="bottom:33.3%"></span></div>
+      <b class="val">38.3</b>
+      <span class="ang">90&deg;</span>
+      <span class="sup">3 answers</span>
+    </div>
+<div class="tick">
+      <div class="col"><span class="fill" style="height:84.3%"></span>
+        <span class="ceil" style="bottom:50.0%"></span></div>
+      <b class="val">84.3</b>
+      <span class="ang">120&deg;</span>
+      <span class="sup">2 answers</span>
+    </div>
+<div class="tick bad">
+      <div class="col"><span class="fill" style="height:36.8%"></span>
+        <span class="ceil" style="bottom:35.7%"></span></div>
+      <b class="val">36.8</b>
+      <span class="ang">180&deg;</span>
+      <span class="sup">3 answers</span>
+    </div>
+    </div>
+    <div class="key">
+      <span><i class="k1"></i>mean accuracy, 12 frontier systems</span>
+      <span><i class="k2"></i>at the ceiling</span>
+      <span><i class="k3"></i>what the turn alone reaches</span>
     </div>
   </div>
-</section>
+</div></header>
 
-<section class="alt">
-  <div class="wrap">
-    <h2>Pooled accuracy hides the failure</h2>
-    <p>Across 36 systems, accuracy does <strong>not</strong> fall as the turn grows larger. It collapses
-    at exactly two turns.</p>
-    <table>
-      <thead><tr><th>Stated turn</th><th>30&deg;</th><th>60&deg;</th><th>90&deg;</th><th>120&deg;</th><th>180&deg;</th></tr></thead>
-      <tbody><tr><td>Frontier mean, Task B</td><td>86.8</td><td>82.1</td><td class="bad">38.3</td><td>84.3</td><td class="bad">36.8</td></tr></tbody>
-    </table>
-    <p>At 90&deg; and 180&deg; no frontier configuration exceeds 50%, and most return the same answer
-    they give with no image at all. A 120&deg; turn is answered correctly more than twice as often as a
-    90&deg; one &mdash; a difference a single pooled number erases entirely.</p>
-    <figure>
-      <img src="assets/rotation_collapse.png" alt="Per-turn accuracy, showing the collapse at 90 and 180 degrees.">
-      <figcaption>Accuracy by stated turn. The collapse is not a function of turn magnitude.</figcaption>
-    </figure>
-    <div class="grid">
-      <div class="card"><div class="n">12,786</div><div class="l">held-out questions</div></div>
-      <div class="card"><div class="n">36</div><div class="l">systems evaluated</div></div>
-      <div class="card"><div class="n">45.90%</div><div class="l">Task-B action-only ceiling</div></div>
-      <div class="card"><div class="n">72.3%</div><div class="l">leak in the earlier balanced build</div></div>
-    </div>
+<section><div class="wrap">
+  <h2>Three tasks, one shared geometry</h2>
+  <p class="lede">Match an object across two views, say where it lands after a
+  stated turn, and judge whether it is visible, out of view or hidden behind
+  something. Task&nbsp;B is the primary task; A is a positive control and C is
+  supporting.</p>
+  <figure>
+    <img src="assets/tasks.png" alt="Three example questions: cross-view object identity, direction after a stated turn, and visibility.">
+    <figcaption>Examples from the development split. The red rectangle marks the
+    object being asked about. On the Task-B dial, teal is correct and red is the
+    answer obtained by assuming the object started straight ahead.</figcaption>
+  </figure>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Difficulty does not grow with the turn</h2>
+  <p class="lede">A 120&deg; turn is answered correctly more than twice as often as
+  a 90&deg; one. Accuracy tracks the number of answers the geometry permits, not
+  how far the camera moved: three answers at 90&deg; and 180&deg;, two everywhere
+  else. Those are exactly the two turns where every frontier system sits on the
+  bound.</p>
+
+  <div class="pull">At 90&deg; and 180&deg;, <b>94.8%</b> and <b>89.9%</b> of
+  frontier answers are identical to the same model&rsquo;s answer with no image
+  at all.</div>
+
+  <p>An earlier build of this data was balanced the usual way &mdash; equal answers
+  across the set &mdash; and a predictor that saw only the stated turn scored
+  <b>72.3%</b> on it. Balancing globally does not constrain what happens inside
+  a single turn.</p>
+
+  <figure>
+    <img src="assets/rotation_collapse.png" alt="Task-B accuracy against stated rotation for twelve frontier configurations, collapsing at 90 and 180 degrees.">
+    <figcaption>Each thin line is one frontier configuration. The right panel
+    gives the share of answers identical to that model&rsquo;s no-image answer.</figcaption>
+  </figure>
+</div></section>
+
+<section id="leaderboard"><div class="wrap">
+  <h2>Leaderboard</h2>
+  <p>Accuracy on the held-out splits, sorted by Task B. Parse failures count as
+  incorrect. Rows in red score at or below what the stated turn gives away.</p>
+
+  <table class="lb">
+    <thead><tr><th></th><th>Model</th><th></th>
+      <th class="n">Task&nbsp;B</th><th class="n">Task&nbsp;A</th><th class="n">Task&nbsp;C</th></tr></thead>
+    <tbody>
+<tr><td class=rk>1</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro (thinking)</td><td class=track><span style="width:83.6%"></span></td><td class="n hero">83.6</td><td class="n sub">91.4</td><td class="n sub">88.0</td></tr>
+<tr><td class=rk>2</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash</td><td class=track><span style="width:83.5%"></span></td><td class="n hero">83.5</td><td class="n sub">96.6</td><td class="n sub">89.3</td></tr>
+<tr><td class=rk>3</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro</td><td class=track><span style="width:81.9%"></span></td><td class="n hero">81.9</td><td class="n sub">91.8</td><td class="n sub">88.2</td></tr>
+<tr><td class=rk>4</td><td class=mdl><i class="sw a"></i>Claude Fable 5</td><td class=track><span style="width:81.4%"></span></td><td class="n hero">81.4</td><td class="n sub">94.8</td><td class="n sub">88.4</td></tr>
+<tr><td class=rk>5</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol (thinking)</td><td class=track><span style="width:81.1%"></span></td><td class="n hero">81.1</td><td class="n sub">93.2</td><td class="n sub">88.0</td></tr>
+<tr><td class=rk>6</td><td class=mdl><i class="sw a"></i>Claude Opus 5 (extended)</td><td class=track><span style="width:80.2%"></span></td><td class="n hero">80.2</td><td class="n sub">95.1</td><td class="n sub">84.3</td></tr>
+<tr><td class=rk>7</td><td class=mdl><i class="sw a"></i>Claude Opus 5</td><td class=track><span style="width:80.1%"></span></td><td class="n hero">80.1</td><td class="n sub">91.6</td><td class="n sub">83.2</td></tr>
+<tr><td class=rk>8</td><td class=mdl><i class="sw a"></i>Claude Sonnet 5</td><td class=track><span style="width:77.1%"></span></td><td class="n hero">77.1</td><td class="n sub">92.6</td><td class="n sub">75.8</td></tr>
+<tr><td class=rk>9</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol</td><td class=track><span style="width:76.3%"></span></td><td class="n hero">76.3</td><td class="n sub">93.4</td><td class="n sub">87.2</td></tr>
+<tr><td class=rk>10</td><td class=mdl><i class="sw w"></i>InternVL3-38B</td><td class=track><span style="width:65.1%"></span></td><td class="n hero">65.1</td><td class="n sub">96.1</td><td class="n sub">65.2</td></tr>
+<tr><td class=rk>11</td><td class=mdl><i class="sw w"></i>InternVL3-78B</td><td class=track><span style="width:56.1%"></span></td><td class="n hero">56.1</td><td class="n sub">91.9</td><td class="n sub">63.6</td></tr>
+<tr><td class=rk>12</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash Lite</td><td class=track><span style="width:53.0%"></span></td><td class="n hero">53.0</td><td class="n sub">96.2</td><td class="n sub">67.3</td></tr>
+      <tr class="ref"><td></td><td class="mdl">Trained human panel</td>
+        <td class="track"><span style="width:84.6%"></span></td>
+        <td class="n hero">84.6</td><td class="n sub">98.1</td><td class="n sub">89.6</td></tr>
+      <tr class="ceilrow"><td></td><td class="mdl">What the turn alone reaches</td>
+        <td class="track"><span style="width:45.9%"></span></td>
+        <td class="n hero">45.9</td><td class="n sub">&mdash;</td><td class="n sub">&mdash;</td></tr>
+    </tbody>
+  </table>
+
+  <details class="more"><summary>Show the remaining 24 systems</summary>
+    <table class="lb"><tbody>
+<tr><td class=rk>13</td><td class=mdl><i class="sw w"></i>Qwen3-VL-32B</td><td class=track><span style="width:47.7%"></span></td><td class="n hero">47.7</td><td class="n sub">95.6</td><td class="n sub">59.3</td></tr>
+<tr><td class=rk>14</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-32B</td><td class=track><span style="width:46.4%"></span></td><td class="n hero">46.4</td><td class="n sub">80.5</td><td class="n sub">59.9</td></tr>
+<tr class=under><td class=rk>15</td><td class=mdl><i class="sw w"></i>InternVL3-14B</td><td class=track><span style="width:45.6%"></span></td><td class="n hero">45.6</td><td class="n sub">92.0</td><td class="n sub">63.9</td></tr>
+<tr class=under><td class=rk>16</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-72B</td><td class=track><span style="width:45.6%"></span></td><td class="n hero">45.6</td><td class="n sub">85.7</td><td class="n sub">61.8</td></tr>
+<tr class=under><td class=rk>17</td><td class=mdl><i class="sw a"></i>Claude Haiku 4.5</td><td class=track><span style="width:45.4%"></span></td><td class="n hero">45.4</td><td class="n sub">71.2</td><td class="n sub">38.8</td></tr>
+<tr class=under><td class=rk>18</td><td class=mdl><i class="sw o"></i>GPT-5.1</td><td class=track><span style="width:42.0%"></span></td><td class="n hero">42.0</td><td class="n sub">90.8</td><td class="n sub">73.1</td></tr>
+<tr class=under><td class=rk>19</td><td class=mdl><i class="sw w"></i>Qwen3-VL-8B</td><td class=track><span style="width:41.3%"></span></td><td class="n hero">41.3</td><td class="n sub">92.2</td><td class="n sub">63.5</td></tr>
+<tr class=under><td class=rk>20</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen3-VL-8B</td><td class=track><span style="width:36.9%"></span></td><td class="n hero">36.9</td><td class="n sub">88.8</td><td class="n sub">64.2</td></tr>
+<tr class=under><td class=rk>21</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.3-Qwen3-VL-8B</td><td class=track><span style="width:33.3%"></span></td><td class="n hero">33.3</td><td class="n sub">93.6</td><td class="n sub">61.7</td></tr>
+<tr class=under><td class=rk>22</td><td class=mdl><i class="sw w"></i>InternVL3-2B</td><td class=track><span style="width:28.8%"></span></td><td class="n hero">28.8</td><td class="n sub">53.9</td><td class="n sub">39.7</td></tr>
+<tr class=under><td class=rk>23</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-3B</td><td class=track><span style="width:27.9%"></span></td><td class="n hero">27.9</td><td class="n sub">50.0</td><td class="n sub">30.8</td></tr>
+<tr class=under><td class=rk>24</td><td class=mdl><i class="sw w"></i>InternVL3-8B</td><td class=track><span style="width:26.9%"></span></td><td class="n hero">26.9</td><td class="n sub">79.2</td><td class="n sub">60.9</td></tr>
+<tr class=under><td class=rk>25</td><td class=mdl><i class="sw w"></i>LLaVA-OneVision-7B</td><td class=track><span style="width:25.6%"></span></td><td class="n hero">25.6</td><td class="n sub">50.3</td><td class="n sub">39.2</td></tr>
+<tr class=under><td class=rk>26</td><td class=mdl><i class="sw w"></i>Idefics3-8B</td><td class=track><span style="width:24.6%"></span></td><td class="n hero">24.6</td><td class="n sub">59.2</td><td class="n sub">37.8</td></tr>
+<tr class=under><td class=rk>27</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-7B</td><td class=track><span style="width:23.9%"></span></td><td class="n hero">23.9</td><td class="n sub">56.8</td><td class="n sub">56.2</td></tr>
+<tr class=under><td class=rk>28</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-3B</td><td class=track><span style="width:23.3%"></span></td><td class="n hero">23.3</td><td class="n sub">54.4</td><td class="n sub">38.7</td></tr>
+<tr class=under><td class=rk>29</td><td class=mdl><i class="sw w"></i>EgoMind-7B</td><td class=track><span style="width:21.9%"></span></td><td class="n hero">21.9</td><td class="n sub">59.6</td><td class="n sub">33.4</td></tr>
+<tr class=under><td class=rk>30</td><td class=mdl><i class="sw w"></i>SmolVLM-Instruct</td><td class=track><span style="width:21.4%"></span></td><td class="n hero">21.4</td><td class="n sub">51.8</td><td class="n sub">33.4</td></tr>
+<tr class=under><td class=rk>31</td><td class=mdl><i class="sw w"></i>Molmo2-8B</td><td class=track><span style="width:21.3%"></span></td><td class="n hero">21.3</td><td class="n sub">71.1</td><td class="n sub">52.0</td></tr>
+<tr class=under><td class=rk>32</td><td class=mdl><i class="sw w"></i>LLaVA-1.6-Mistral-7B</td><td class=track><span style="width:21.2%"></span></td><td class="n hero">21.2</td><td class="n sub">49.3</td><td class="n sub">33.3</td></tr>
+<tr class=under><td class=rk>33</td><td class=mdl><i class="sw w"></i>Qwen2-VL-2B</td><td class=track><span style="width:19.1%"></span></td><td class="n hero">19.1</td><td class="n sub">50.3</td><td class="n sub">32.9</td></tr>
+<tr class=under><td class=rk>34</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-7B</td><td class=track><span style="width:18.9%"></span></td><td class="n hero">18.9</td><td class="n sub">60.8</td><td class="n sub">41.4</td></tr>
+<tr class=under><td class=rk>35</td><td class=mdl><i class="sw w"></i>Cosmos-Reason1-7B</td><td class=track><span style="width:15.8%"></span></td><td class="n hero">15.8</td><td class="n sub">76.1</td><td class="n sub">41.4</td></tr>
+<tr class=under><td class=rk>36</td><td class=mdl><i class="sw w"></i>Qwen2-VL-7B</td><td class=track><span style="width:11.7%"></span></td><td class="n hero">11.7</td><td class="n sub">50.0</td><td class="n sub">62.2</td></tr>
+    </tbody></table>
+  </details>
+
+  <div class="pull">22 of the 36 systems score at or below the bound. For those,
+  the reported accuracy is consistent with never having looked at the image.</div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Where the bound comes from</h2>
+  <p>Write <code>z = (r, d)</code> for the stated turn, <code>r</code> its size and
+  <code>d</code> its direction. Five sizes and two directions give ten cells. A
+  predictor handed <code>z</code> and nothing else &mdash; no image, no scene, no
+  object, no wording &mdash; can do no better than naming the commonest answer in
+  each cell. With <code>S(z)</code> the answers the geometry permits and
+  <code>n<sub>z</sub></code> the questions in that cell:</p>
+
+<pre><code>C_min  =  (1/N) · Σ_z  ⌈ n_z / |S(z)| ⌉</code></pre>
+
+  <p>Two implementations compute <code>S(z)</code> independently &mdash; an interval
+  derivation and a dense enumeration &mdash; and a build is accepted only when they
+  agree and every cell attains the bound. For the held-out Task-B set that is
+  <code>504/1,098 = 45.90%</code>, matched in all ten cells.</p>
+
+  <div class="note">The bound covers one shortcut: answering from the stated turn
+  with no image. It says nothing about wording, metadata, or a cue some future
+  model finds. We do not claim the questions are free of shortcuts in general.</div>
+
+  <figure>
+    <img src="assets/qualitative.png" alt="A mirrored pair of questions showing the correct answer against the answer obtained by assuming the object started straight ahead.">
+    <figcaption>The substitution on a mirrored pair. The failing answer is not
+    random: it is what you get by assuming the object began straight ahead and
+    applying the stated turn correctly.</figcaption>
+  </figure>
+
+  <div class="grid3">
+    <div><b>12,786</b><span>held-out questions</span></div>
+    <div><b>36</b><span>systems evaluated</span></div>
+    <div><b>3,119</b><span>rooms, disjoint across splits</span></div>
   </div>
-</section>
+</div></section>
 
-<section>
-  <div class="wrap">
-    <h2>How the ceiling is computed</h2>
-    <p>Write <code>z = (r, d)</code> for the stated turn, <code>r</code> its size and <code>d</code> its
-    direction. Five sizes and two directions give ten <strong>cells</strong>. A predictor given
-    <code>z</code> and nothing else &mdash; no image, no scene, no object, no wording &mdash; can do no
-    better than answering the commonest answer in each cell. With <code>S(z)</code> the answers the
-    geometry allows and <code>n<sub>z</sub></code> the questions in cell <code>z</code>:</p>
-    <div class="eq mono">C<sub>min</sub> &nbsp;=&nbsp; (1/N) &middot; &Sigma;<sub>z</sub> &nbsp;&lceil; n<sub>z</sub> / |S(z)| &rceil;</div>
-    <p>Two independent implementations compute <code>S(z)</code> &mdash; an interval derivation and a
-    dense enumeration &mdash; and a build is accepted only when they agree <em>and</em> every cell
-    attains the bound. Balancing answers across the whole set does not achieve this, which is exactly
-    why the earlier 72.3% build looked fine.</p>
-    <div class="callout">
-      <strong>What the ceiling does not do.</strong> It bounds one shortcut: answering from the stated
-      turn with no image. It says nothing about wording, metadata, or a cue some future model finds.
-      We do not claim the questions are free of shortcuts in general.
-    </div>
-    <figure>
-      <img src="assets/qualitative.png" alt="A mirrored pair showing the substituted answer.">
-      <figcaption>The substitution on a mirrored pair: teal is correct, red is the answer obtained by
-      assuming the object started straight ahead.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="alt">
-  <div class="wrap">
-    <h2>Get started</h2>
-    <pre><code>git clone https://github.com/UTSA-VIRLab/EgoShift.git
-cd EgoShift
-python -m pip install -e .
+<section><div class="wrap">
+  <h2>Run it</h2>
+  <p>Scoring and auditing need no simulator. The core package has no required
+  dependencies.</p>
+<pre><code>git clone https://github.com/UTSA-VIRLab/EgoShift.git
+cd EgoShift &amp;&amp; pip install -e ".[test,full]"
 make check</code></pre>
-    <p>Score predictions, then audit a split against the geometry:</p>
-    <pre><code>egoshift score --questions sample/questions.jsonl \
+  <p>Score predictions, then audit a split against the geometry:</p>
+<pre><code>egoshift score --questions sample/questions.jsonl \
                --predictions sample/predictions.jsonl
 
-egoshift audit-taskb --questions path/to/taskb_questions.jsonl</code></pre>
-    <p>Scoring and auditing need no simulator. See
-    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/installation.md">installation</a>,
-    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/getting_started.md">getting started</a>,
-    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/data.md">data</a> and the
-    <a href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/faq.md">FAQ</a>.</p>
-    <h3>Reporting results</h3>
-    <p><strong>Report accuracy per stated turn, not pooled.</strong> Progress on EgoShift should appear
-    as higher scores at 90&deg; and 180&deg;. A system that raises its pooled score while leaving those
-    at the action-only ceiling has not improved at the thing the benchmark measures.</p>
-  </div>
-</section>
+egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
+  <h3>If you report results</h3>
+  <p>Report accuracy per stated turn. A system that raises its pooled score while
+  leaving 90&deg; and 180&deg; on the bound has not improved at the thing this
+  benchmark measures. Submissions go through
+  <a href="https://github.com/UTSA-VIRLab/EgoShift/issues/new?template=leaderboard.yml">a results issue</a>;
+  held-out answers are withheld, so we score the file.</p>
+</div></section>
 
-<section>
-  <div class="wrap">
-    <h2>Citation</h2>
+<section><div class="wrap">
+  <h2>Cite</h2>
 <pre><code>@inproceedings{ahmed2027egoshift,
   title     = {EgoShift: Bounding the Action-Only Shortcut in Egocentric
                Spatial Updating for Vision--Language Models},
@@ -293,22 +385,19 @@ egoshift audit-taskb --questions path/to/taskb_questions.jsonl</code></pre>
   booktitle = {IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
   year      = {2027}
 }</code></pre>
-    <p style="font-size:.92rem;color:var(--text-light)">Questions, labels and audit outputs are released
-    under CC-BY-4.0. Rendered frames are redistributed under the upstream Apache-2.0 terms of
-    <a href="https://ai2thor.allenai.org/">AI2-THOR</a> and
-    <a href="https://procthor.allenai.org/">ProcTHOR-10k</a>, with attribution and NOTICE preserved.
-    Held-out answers are withheld.</p>
-  </div>
-</section>
+  <p>The dataset is citable on its own:
+  <a href="https://doi.org/10.5281/zenodo.23440746">10.5281/zenodo.23440746</a>.
+  Questions, labels and audit outputs are CC-BY-4.0; rendered frames carry the
+  upstream Apache-2.0 terms of
+  <a href="https://ai2thor.allenai.org/">AI2-THOR</a> and
+  <a href="https://procthor.allenai.org/">ProcTHOR-10k</a>, attribution and
+  NOTICE preserved. Held-out answers are withheld.</p>
+</div></section>
 
-<footer>
-  <div class="wrap">
-    <p><a href="https://github.com/UTSA-VIRLab/EgoShift">GitHub</a> &nbsp;&middot;&nbsp;
-       <a href="https://www.utsa.edu/">UTSA</a> &nbsp;&middot;&nbsp;
-       Vision, Interaction and Reality Lab</p>
-    <p style="margin-top:8px">Supported by the National Science Foundation.</p>
-  </div>
-</footer>
+<footer><div class="wrap">
+  Vision, Interaction and Reality Lab, University of Texas at San Antonio.
+  Supported by the National Science Foundation.
+</div></footer>
 
 </body>
 </html>
