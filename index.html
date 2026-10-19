@@ -55,25 +55,26 @@ b,strong{font-weight:600}
 /* ── the dial: the one bold element ── */
 .dial{margin:44px 0 0;padding-bottom:40px}
 .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,2.4vw,34px);
-  align-items:end;border-bottom:2px solid var(--ink);padding-bottom:0}
-.tick{display:flex;flex-direction:column;align-items:center;position:relative}
-.col{position:relative;width:100%;max-width:92px;height:168px;
-  background:repeating-linear-gradient(to top,transparent 0 15px,var(--line) 15px 16px);
-  display:flex;align-items:flex-end}
-.col .fill{display:block;width:100%;background:var(--geo)}
-.tick.bad .fill{background:var(--fail)}
-.col .ceil{position:absolute;left:-4px;right:-4px;height:0;
+  align-items:end;border-bottom:2px solid var(--ink)}
+.tick{display:flex;flex-direction:column;align-items:center}
+.col{position:relative;width:100%;max-width:92px;height:190px;
+  display:flex;flex-direction:column;justify-content:flex-end}
+.col .free{display:block;width:100%;background:#E3E7EE;
   border-top:2px dashed var(--ceil)}
+.col .earn{display:block;width:100%;background:var(--geo)}
+.tick.bad .earn{background:var(--fail)}
 .val{font-family:Archivo;font-weight:800;font-size:1.5rem;margin-top:10px;
-  font-variant-numeric:tabular-nums}
+  font-variant-numeric:tabular-nums;line-height:1}
 .tick.bad .val{color:var(--fail)}
+.gain{font-size:.82rem;font-weight:600;color:var(--geo);font-variant-numeric:tabular-nums;
+  margin:3px 0 6px}
+.tick.bad .gain{color:var(--fail)}
 .ang{font-family:Archivo;font-weight:600;font-size:1.05rem;color:var(--ink)}
-.sup{font-size:.8rem;color:var(--mute);margin-top:2px}
+.sup{font-size:.78rem;color:var(--mute);margin-top:2px}
 .key{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;font-size:.88rem;color:var(--mute)}
-.key i{display:inline-block;width:22px;height:0;vertical-align:middle;margin-right:7px}
-.key .k1{border-top:9px solid var(--geo)}
-.key .k2{border-top:9px solid var(--fail)}
-.key .k3{border-top:2px dashed var(--ceil)}
+.key i{display:inline-block;width:20px;height:11px;vertical-align:-1px;margin-right:7px}
+.key .k1{background:var(--geo)}
+.key .k0{background:#E3E7EE;border-top:2px dashed var(--ceil)}
 
 /* ── sections ── */
 section{padding:56px 0}
@@ -107,13 +108,17 @@ tr.ref td{border-top:1.5px solid var(--ink);padding-top:9px}
 tr.ref .track span{background:var(--human)}
 tr.ceilrow .track span{background:var(--ceil)}
 
-.lb thead th.srt{cursor:pointer;user-select:none;color:var(--mute)}
+.lb thead th.srt{cursor:pointer;user-select:none;color:var(--mute);white-space:nowrap}
 .lb thead th.srt:hover{color:var(--geo)}
 .lb thead th.srt.on{color:var(--ink)}
 .car{display:inline-block;width:0;height:0;margin-left:6px;vertical-align:middle;
-  border-left:4px solid transparent;border-right:4px solid transparent}
-.srt.on .car{border-top:5px solid var(--ink)}
+  border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:5px solid var(--line)}
+.srt:hover .car{border-top-color:var(--geo)}
+.srt.on .car{border-top-color:var(--ink)}
 .srt.on.asc .car{border-top:0;border-bottom:5px solid var(--ink)}
+.srt{position:relative}
+.sorthint{font-size:.86rem;color:var(--mute);margin:-4px 0 14px}
 .lb tbody tr[hidden]{display:none}
 .lb td.lead{font-weight:700}
 .more-btn{margin-top:14px;background:none;border:1.5px solid var(--ink);
@@ -153,7 +158,13 @@ footer{border-top:1px solid var(--line);background:var(--card);
   padding:30px 0;font-size:.9rem;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media(max-width:700px){
-  .col{height:118px} .val{font-size:1.15rem} .sup{display:none}
+  .tw{display:none}
+  .lb td,.lb th{padding:6px 4px}
+  .lb .rk{width:18px}
+  .lb .hero{width:42px}.lb .sub{width:40px}
+  .lb{font-size:.84rem}
+
+  .col{height:134px} .val{font-size:1.15rem} .sup{display:none}
   .track{display:none} .lb .mdl{max-width:150px;white-space:normal}
   section{padding:40px 0} .hero{padding-top:38px}
 }
@@ -192,45 +203,59 @@ footer{border-top:1px solid var(--line);background:var(--card);
   <div class="dial">
     <div class="scale">
 <div class="tick">
-      <div class="col"><span class="fill" style="height:86.8%"></span>
-        <span class="ceil" style="bottom:50.4%"></span></div>
+      <div class="col">
+        <span class="earn" style="height:36.4%"></span>
+        <span class="free" style="height:50.4%"></span>
+      </div>
       <b class="val">86.8</b>
+      <span class="gain">+36.4</span>
       <span class="ang">30&deg;</span>
-      <span class="sup">2 answers</span>
+      <span class="sup">2 answers possible</span>
     </div>
 <div class="tick">
-      <div class="col"><span class="fill" style="height:82.1%"></span>
-        <span class="ceil" style="bottom:50.4%"></span></div>
+      <div class="col">
+        <span class="earn" style="height:31.7%"></span>
+        <span class="free" style="height:50.4%"></span>
+      </div>
       <b class="val">82.1</b>
+      <span class="gain">+31.7</span>
       <span class="ang">60&deg;</span>
-      <span class="sup">2 answers</span>
+      <span class="sup">2 answers possible</span>
     </div>
 <div class="tick bad">
-      <div class="col"><span class="fill" style="height:38.3%"></span>
-        <span class="ceil" style="bottom:33.3%"></span></div>
+      <div class="col">
+        <span class="earn" style="height:5.0%"></span>
+        <span class="free" style="height:33.3%"></span>
+      </div>
       <b class="val">38.3</b>
+      <span class="gain">+5.0</span>
       <span class="ang">90&deg;</span>
-      <span class="sup">3 answers</span>
+      <span class="sup">3 answers possible</span>
     </div>
 <div class="tick">
-      <div class="col"><span class="fill" style="height:84.3%"></span>
-        <span class="ceil" style="bottom:50.0%"></span></div>
+      <div class="col">
+        <span class="earn" style="height:34.3%"></span>
+        <span class="free" style="height:50.0%"></span>
+      </div>
       <b class="val">84.3</b>
+      <span class="gain">+34.3</span>
       <span class="ang">120&deg;</span>
-      <span class="sup">2 answers</span>
+      <span class="sup">2 answers possible</span>
     </div>
 <div class="tick bad">
-      <div class="col"><span class="fill" style="height:36.8%"></span>
-        <span class="ceil" style="bottom:35.7%"></span></div>
+      <div class="col">
+        <span class="earn" style="height:1.1%"></span>
+        <span class="free" style="height:35.7%"></span>
+      </div>
       <b class="val">36.8</b>
+      <span class="gain">+1.1</span>
       <span class="ang">180&deg;</span>
-      <span class="sup">3 answers</span>
+      <span class="sup">3 answers possible</span>
     </div>
     </div>
     <div class="key">
-      <span><i class="k1"></i>mean accuracy, 12 frontier systems</span>
-      <span><i class="k2"></i>at the ceiling</span>
-      <span><i class="k3"></i>what the turn alone reaches</span>
+      <span><i class="k1"></i>earned by using the image</span>
+      <span><i class="k0"></i>free from the stated turn</span>
     </div>
   </div>
 </div></header>
@@ -275,15 +300,18 @@ footer{border-top:1px solid var(--line);background:var(--card);
 
 <section id="leaderboard"><div class="wrap">
   <h2>Leaderboard</h2>
-  <p>Accuracy on the held-out splits, sorted by Task B. Parse failures count as
-  incorrect. Rows in red score at or below what the stated turn gives away.</p>
+  <p>Accuracy on the held-out splits. Parse failures count as incorrect. A score
+  at or below the reference row &mdash; what the stated turn reaches on Task&nbsp;B,
+  the random rate on A and C &mdash; is shown in red, because it is reachable
+  without using the image.</p>
+  <p class="sorthint">Click <b>Task&nbsp;A</b>, <b>Task&nbsp;B</b> or <b>Task&nbsp;C</b> to re-rank all 36 systems.</p>
 
   <table class="lb" id="board">
     <thead><tr>
       <th class="rk"></th><th>Model</th><th></th>
-      <th class="n srt" data-k="a" tabindex="0" role="button" aria-sort="none">Task&nbsp;A<span class="car"></span></th>
-      <th class="n srt on" data-k="b" tabindex="0" role="button" aria-sort="descending">Task&nbsp;B<span class="car"></span></th>
-      <th class="n srt" data-k="c" tabindex="0" role="button" aria-sort="none">Task&nbsp;C<span class="car"></span></th>
+      <th class="n srt" data-k="a" tabindex="0" role="button" aria-sort="none"><span class=tw>Task&nbsp;</span>A<span class="car"></span></th>
+      <th class="n srt on" data-k="b" tabindex="0" role="button" aria-sort="descending"><span class=tw>Task&nbsp;</span>B<span class="car"></span></th>
+      <th class="n srt" data-k="c" tabindex="0" role="button" aria-sort="none"><span class=tw>Task&nbsp;</span>C<span class="car"></span></th>
     </tr></thead>
     <tbody>
 <tr data-a="91.4" data-b="83.6" data-c="88.0"><td class=rk>1</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro (thinking)</td><td class=track><span style="width:83.6%"></span></td><td class="n v-a sub">91.4</td><td class="n v-b lead">83.6</td><td class="n v-c sub">88.0</td></tr>
