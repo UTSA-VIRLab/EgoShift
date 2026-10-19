@@ -58,7 +58,15 @@ exemption, and it should not be described as either.
 The question files and development answers are distributed with the release
 bundle. Rendered frames are large and are hosted separately rather than in git.
 
-Everything is on Hugging Face: **[huggingface.co/datasets/utsavirlab/EgoShift](https://huggingface.co/datasets/utsavirlab/EgoShift)**
+Two copies, same contents.
+
+| Where | What | Use it for |
+|:---|:---|:---|
+| [Hugging Face](https://huggingface.co/datasets/utsavirlab/EgoShift) | everything, 10.75 GiB | downloading, including the full frame sets |
+| [Zenodo, `10.5281/zenodo.23440746`](https://doi.org/10.5281/zenodo.23440746) | the 169 MB bundle | **citing**, and a permanent archival copy |
+
+The Zenodo record is the citable one: a DOI survives an account rename or a
+host changing its terms, which a platform URL does not.
 
 | File | Size | Contents |
 |:---|---:|:---|

@@ -3,15 +3,22 @@ message: "If you use EgoShift, please cite the WACV 2027 paper."
 title: "EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision-Language Models"
 authors:
   - family-names: Ahmed
+    orcid: "https://orcid.org/0009-0007-5751-0705"
     given-names: Faisal
     affiliation: "University of Texas at San Antonio"
   - family-names: Quarles
+    orcid: "https://orcid.org/0000-0002-4790-167X"
     given-names: John
     affiliation: "University of Texas at San Antonio"
   - family-names: Desai
+    orcid: "https://orcid.org/0000-0002-2964-8981"
     given-names: Kevin
     affiliation: "University of Texas at San Antonio"
 repository-code: "https://github.com/UTSA-VIRLab/EgoShift"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23440746
+    description: "The EgoShift dataset"
 url: "https://utsa-virlab.github.io/EgoShift/"
 license: CC-BY-4.0
 preferred-citation:

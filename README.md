@@ -8,6 +8,8 @@
   <a href="#getting-started"><strong>Getting Started</strong></a>
 </p>
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23440746.svg)](https://doi.org/10.5281/zenodo.23440746)
+
 **News: Our paper is accepted at WACV 2027 (Evaluation & Datasets track).**
 
 [Faisal Ahmed](https://www.linkedin.com/in/faisal-ahmed-565943145/), [John Quarles](https://www.linkedin.com/in/johnpquarles/), [Kevin Desai](https://www.linkedin.com/in/kevinpdesai/) — Department of Computer Science, University of Texas at San Antonio
@@ -179,6 +181,8 @@ paper. See [`docs/data.md`](docs/data.md); the full datasheet is Section F of th
 | [`assets/`](assets) | paper and supplementary PDFs |
 
 ### Citation
+
+The dataset has its own DOI, [`10.5281/zenodo.23440746`](https://doi.org/10.5281/zenodo.23440746), citable independently of the paper.
 
 ```bibtex
 @inproceedings{ahmed2027egoshift,
