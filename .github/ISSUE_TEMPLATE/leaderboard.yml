@@ -1,0 +1,58 @@
+name: Leaderboard submission
+description: Submit results for a system you evaluated on EgoShift
+title: "[Leaderboard] <system name>"
+labels: ["leaderboard"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Held-out answers are withheld, so we score your prediction file here.
+        Please check it parses against the **development** split first:
+        `egoshift score --questions dev_questions.jsonl --predictions yours.jsonl --strict`
+  - type: input
+    id: system
+    attributes:
+      label: System
+      description: Name and exact version or API snapshot, e.g. "Gemini 3 Pro (thinking), 2026-09-14"
+    validations: {required: true}
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Access
+      options: ["Open weights", "API", "Research preview", "Other"]
+    validations: {required: true}
+  - type: input
+    id: link
+    attributes:
+      label: Model or paper link
+    validations: {required: false}
+  - type: textarea
+    id: predictions
+    attributes:
+      label: Prediction files
+      description: Attach one JSONL per task, matching schemas/prediction.schema.json. Drag files into this box.
+    validations: {required: true}
+  - type: textarea
+    id: protocol
+    attributes:
+      label: Protocol
+      description: |
+        Prompt, parser, decoding settings, retries, and how parse failures were handled.
+        State whether any question was skipped and why.
+      placeholder: |
+        Prompt: zero-shot, the benchmark's own template, unmodified
+        Decoding: temperature 0, max tokens 512
+        Retries: none
+        Parse failures: counted as incorrect
+    validations: {required: true}
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I did not train or tune on the held-out split.
+          required: true
+        - label: I will report accuracy per stated turn, not pooled.
+          required: true
+        - label: Parse failures are counted as incorrect.
+          required: true

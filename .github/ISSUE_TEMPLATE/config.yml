@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Paper and supplementary
+    url: https://github.com/UTSA-VIRLab/EgoShift/blob/main/assets/EgoShift_WACV2027.pdf
+    about: Method, construction and full results
+  - name: Dataset on Hugging Face
+    url: https://huggingface.co/datasets/utsavirlab/EgoShift
+    about: Download questions, development answers and frames

@@ -1,0 +1,21 @@
+name: Bug report
+description: Something in the benchmark, scorer or audit is wrong
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Include the command you ran and the full output.
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations: {required: true}
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Output of: git rev-parse --short HEAD && python -V"
+    validations: {required: true}

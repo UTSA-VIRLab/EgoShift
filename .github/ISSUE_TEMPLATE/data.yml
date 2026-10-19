@@ -1,0 +1,21 @@
+name: Question or label dispute
+description: An item looks mislabelled, ambiguous or unanswerable
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Labels are computed from simulator geometry, not annotated by hand, so a
+        dispute is usually about the question's *answerability* rather than the
+        key. Both are worth reporting.
+  - type: input
+    id: qid
+    attributes:
+      label: Question id
+    validations: {required: true}
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong with it
+      description: What you believe the answer should be, and why.
+    validations: {required: true}

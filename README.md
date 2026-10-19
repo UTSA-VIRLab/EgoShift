@@ -8,7 +8,15 @@
   <a href="#getting-started"><strong>Getting Started</strong></a>
 </p>
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23440746.svg)](https://doi.org/10.5281/zenodo.23440746)
+<p align="center">
+  <a href="https://doi.org/10.5281/zenodo.23440746"><img alt="DOI" src="https://zenodo.org/badge/DOI/10.5281/zenodo.23440746.svg"></a>
+  <a href="https://github.com/UTSA-VIRLab/EgoShift/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/UTSA-VIRLab/EgoShift/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://huggingface.co/datasets/utsavirlab/EgoShift"><img alt="Dataset" src="https://img.shields.io/badge/%F0%9F%A4%97%20dataset-utsavirlab%2FEgoShift-yellow"></a>
+  <img alt="Python" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-CC--BY--4.0%20%2B%20Apache--2.0-green"></a>
+  <img alt="Questions" src="https://img.shields.io/badge/questions-12%2C786-informational">
+  <img alt="Models" src="https://img.shields.io/badge/models%20evaluated-36-informational">
+</p>
 
 **News: Our paper is accepted at WACV 2027 (Evaluation & Datasets track).**
 
@@ -28,14 +36,69 @@ before any model is run*. We derive that ceiling and build every turn to sit exa
 The audit is not hypothetical. An earlier build of our own data was balanced by the usual standard,
 and a predictor that saw **only the stated turn** scored **72.3%** on it.
 
+### Leaderboard
+
+Accuracy (%) on the held-out splits. Twelve frontier configurations, then four
+open-weight anchors spanning the scaling curve; all 36 are in the
+[supplementary material](assets/EgoShift_WACV2027_supplementary.pdf). Sorted by
+**Task B**, the primary task. Parse failures count as incorrect.
+
+| # | Model | A — identity | **B — direction** | C — visibility |
+|:--|:---|:---:|:---:|:---:|
+| 1 | Gemini 3 Pro (thinking) | 91.4 | **83.6** | 88.0 |
+| 2 | Gemini 3 Flash | **96.6** | 83.5 | **89.3** |
+| 3 | Gemini 3 Pro | 91.8 | 81.9<sup>†</sup> | 88.2<sup>†</sup> |
+| 4 | Claude Fable 5 | 94.8 | 81.4 | 88.4 |
+| 5 | GPT-5.6 Sol (thinking) | 93.2 | 81.1 | 88.0 |
+| 6 | Claude Opus 5 (extended) | 95.1 | 80.2 | 84.3 |
+| 7 | Claude Opus 5 | 91.6 | 80.1 | 83.2 |
+| 8 | Claude Sonnet 5 | 92.6 | 77.1 | 75.8 |
+| 9 | GPT-5.6 Sol | 93.4 | 76.3 | 87.2 |
+| 10 | Gemini 3 Flash Lite | 96.2 | 53.0 | 67.3 |
+| 11 | Claude Haiku 4.5 | 71.2 | 45.4 | 38.8 |
+| 12 | GPT-5.1 | 90.8 | 42.0<sup>†</sup> | 73.1 |
+| | *InternVL3-38B* | 96.1 | 65.1 | 65.2 |
+| | *Qwen3-VL-32B* | 95.6 | 47.7 | 59.3 |
+| | *SenseNova-SI-1.3-Qwen3-VL-8B* | 93.6 | 33.3 | 61.7 |
+| | *Qwen2.5-VL-7B* | 60.8 | 18.9 | 41.4 |
+| | **Trained human panel** | **98.1** | **84.6** | **89.6** |
+| | Action-only ceiling | — | 45.9 | — |
+| | Random | 50.0 | 25.0 | 33.3 |
+
+<sup>†</sup> a retry returned a second valid answer on six GPT-5.1 Task-B and on
+twenty-three and ten Gemini 3 Pro Task-B and Task-C questions; those count as
+incorrect.
+
+**Read that table and the task looks nearly solved** — the best model is 1.0
+point under the human panel. It is not. Read it one turn at a time instead:
+
 ### Why it matters
 
 Across 36 systems, pooled accuracy looks close to solved while a severe failure hides inside it.
 Accuracy does **not** fall as the turn grows larger — it collapses at exactly two turns:
 
-| Stated turn | 30° | 60° | 90° | 120° | 180° |
+| Model | 30° | 60° | 90° | 120° | 180° |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| Frontier mean (Task B) | 86.8 | 82.1 | **38.3** | 84.3 | **36.8** |
+| Gemini 3 Flash | 100.0 | 99.3 | 🔴 40.6 | 98.9 | 🔴 33.9 |
+| Gemini 3 Pro (thinking) | 100.0 | 98.9 | 🔴 41.0 | 98.9 | 🔴 35.7 |
+| Claude Fable 5 | 99.3 | 96.7 | 🔴 34.2 | 98.5 | 🔴 37.5 |
+| Claude Opus 5 (extended) | 95.6 | 97.8 | 🔴 34.2 | 97.0 | 🔴 33.9 |
+| Gemini 3 Pro | 95.9 | 96.7 | 🔴 43.2 | 95.9 | 🔴 37.5 |
+| Claude Opus 5 | 95.6 | 97.0 | 🔴 34.6 | 97.0 | 🔴 33.9 |
+| GPT-5.6 Sol (thinking) | 97.0 | 91.9 | 🔴 44.0 | 94.8 | 🔴 42.9 |
+| Claude Sonnet 5 | 93.3 | 77.8 | 🔴 49.6 | 92.9 | 🔴 35.7 |
+| GPT-5.6 Sol | 89.6 | 80.7 | 🔴 44.9 | 91.4 | 🔴 50.0 |
+| **Frontier mean** | **86.8** | **82.1** | **38.3** | **84.3** | **36.8** |
+| *Action-only ceiling* | *50.4* | *50.4* | *33.3* | *50.0* | *35.7* |
+| *Answers the geometry allows* | *2* | *2* | *3* | *2* | *3* |
+
+Every frontier model scores above 89% at 30°, 60° and 120°, and **collapses to
+the action-only ceiling at 90° and 180°** — the two turns where the geometry
+permits three answers instead of two.
+
+The mechanism shows in one more number. At those two turns, **94.8% and 89.9%**
+of frontier answers are *identical to the same model's answer with no image at
+all*. The picture is being ignored.
 
 At 90° and 180° no frontier configuration exceeds 50%, and most return the same answer they give
 with no image at all. A single pooled number reports progress that has not happened.
@@ -115,7 +178,8 @@ egoshift validate-manifest sample/manifest.json --root sample
 The fixture is schema and scoring smoke data only. It contains no simulator image and is not
 evidence for the paper. Full walkthrough: [`docs/getting_started.md`](docs/getting_started.md).
 
-### How the ceiling is computed
+<details>
+<summary><b>How the ceiling is computed</b> — the geometry, the formula, and where each piece lives in the code</summary>
 
 Write `z = (r, d)` for the stated turn, `r` its size and `d` its direction. Five sizes and two
 directions give ten **cells**. A predictor given `z` and nothing else — no image, no scene, no
@@ -139,6 +203,8 @@ and the build is accepted only when they agree and every cell attains the bound.
 | fail-closed split roles, exposure ledger | [`split_roles.py`](src/egoshift/split_roles.py) |
 | manifest schema and content addressing | [`manifest.py`](src/egoshift/manifest.py), [`hashing.py`](src/egoshift/hashing.py) |
 | integrated construction audit | [`integrated_audit.py`](src/egoshift/integrated_audit.py) |
+
+</details>
 
 ### Results
 
@@ -167,7 +233,8 @@ submit predictions to score against them.
 paper. See [`docs/data.md`](docs/data.md); the full datasheet is Section F of the
 [supplementary material](assets/EgoShift_WACV2027_supplementary.pdf).
 
-### Repository layout
+<details>
+<summary><b>Repository layout</b> — what is in each directory</summary>
 
 | Path | What is in it |
 |:---|:---|
@@ -179,6 +246,28 @@ paper. See [`docs/data.md`](docs/data.md); the full datasheet is Section F of th
 | [`configs/`](configs) | task and panel configurations |
 | [`docs/`](docs) | [installation](docs/installation.md), [getting started](docs/getting_started.md), [data](docs/data.md), [FAQ](docs/faq.md) |
 | [`assets/`](assets) | paper and supplementary PDFs |
+
+</details>
+
+### Submit your results
+
+The leaderboard takes submissions. Held-out answers are withheld, so scoring
+happens here rather than on your machine.
+
+1. Run your system on the held-out questions — they ship in the
+   [dataset](https://huggingface.co/datasets/utsavirlab/EgoShift), answers
+   excluded.
+2. Check your prediction file parses, by scoring it against the **development**
+   split first:
+   ```shell
+   egoshift score --questions dev_questions.jsonl --predictions yours.jsonl --strict
+   ```
+   `--strict` exits non-zero if anything is missing, extra or unparseable.
+3. Open a [results submission](https://github.com/UTSA-VIRLab/EgoShift/issues/new?template=leaderboard.yml)
+   issue and attach the file.
+
+We score it and add the row. **Per-turn numbers are required** — a pooled score
+cannot be interpreted, which is the finding this benchmark exists to report.
 
 ### Citation
 
