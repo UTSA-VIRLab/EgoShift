@@ -1,10 +1,11 @@
 # EgoShift: Bounding the Action-Only Shortcut in Egocentric Spatial Updating for Vision–Language Models
 
 <p align="center">
-  <a href="https://utsa-virlab.github.io/EgoShift/"><strong>Project Page</strong></a> &nbsp;|&nbsp;
-  <a href="assets/EgoShift_WACV2027.pdf"><strong>Paper</strong></a> &nbsp;|&nbsp;
-  <a href="assets/EgoShift_WACV2027_supplementary.pdf"><strong>Supplementary</strong></a> &nbsp;|&nbsp;
-  <a href="#installation"><strong>Installation</strong></a> &nbsp;|&nbsp;
+  <a href="https://utsa-virlab.github.io/EgoShift/"><strong>Project Page</strong></a> &nbsp;·&nbsp;
+  <a href="assets/EgoShift_WACV2027.pdf"><strong>Paper</strong></a> &nbsp;·&nbsp;
+  <a href="#leaderboard"><strong>Leaderboard</strong></a> &nbsp;·&nbsp;
+  <a href="https://huggingface.co/datasets/utsavirlab/EgoShift"><strong>Dataset</strong></a> &nbsp;·&nbsp;
+  <a href="#installation"><strong>Install</strong></a> &nbsp;·&nbsp;
   <a href="#getting-started"><strong>Getting Started</strong></a>
 </p>
 
@@ -22,21 +23,32 @@
 
 [Faisal Ahmed](https://www.linkedin.com/in/faisal-ahmed-565943145/), [John Quarles](https://www.linkedin.com/in/johnpquarles/), [Kevin Desai](https://www.linkedin.com/in/kevinpdesai/) — Department of Computer Science, University of Texas at San Antonio
 
-A model can score well on egocentric spatial reasoning **without ever looking at the image**.
-When a question states a camera turn, that turn alone rules out some answers, so a predictor given
-only the stated action already beats chance by a wide margin. Balanced answers, text-only arms and
-human references do not catch this, because they are not conditioned on the action.
+### A stated camera turn gives the answer away
 
-**EgoShift makes the shortcut a quantity instead of a worry.** The camera geometry determines which
-answers each turn can produce, so the highest score reachable from the action alone can be *computed
-before any model is run*. We derive that ceiling and build every turn to sit exactly on it.
+Ask where an object lands after a 90° turn and you have already ruled out some answers. A model can
+score well from the turn alone and never look at the image. Balanced answers, text-only arms and
+human references miss this, because none of them is conditioned on the action.
+
+EgoShift computes how much the turn gives away — from the camera geometry, **before any model runs** —
+and builds every question to sit on that bound. Split a score into the two parts and the failure is
+no longer hidden:
+
+| Stated turn | 30° | 60° | 90° | 120° | 180° |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| Free from the turn | 50.4 | 50.4 | 33.3 | 50.0 | 35.7 |
+| **Earned by using the image** | **+36.4** | **+31.7** | **+5.0** | **+34.3** | **+1.1** |
+| Frontier mean | 86.8 | 82.1 | 38.3 | 84.3 | 36.8 |
+
+A 120° turn is answered correctly more than twice as often as a 90° one. Accuracy tracks the number
+of answers the geometry permits — three at 90° and 180°, two everywhere else — not how far the camera
+moved.
 
 <p align="center"><img src="./resources/tasks.png" alt="the three EgoShift tasks" width="94%"></p>
 
-The audit is not hypothetical. An earlier build of our own data was balanced by the usual standard,
-and a predictor that saw **only the stated turn** scored **72.3%** on it.
+This is not hypothetical. An earlier build of our own data was balanced by the usual standard, and a
+predictor that saw **only the stated turn** scored **72.3%** on it.
 
-### 🏆 Leaderboard
+### Leaderboard
 
 Accuracy (%) on the held-out splits, sorted by **Task B** — the primary task.
 Parse failures count as incorrect. 🔵 Google · 🟠 Anthropic · ⚫ OpenAI · ⬜ open weights.
