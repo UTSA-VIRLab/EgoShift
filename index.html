@@ -106,6 +106,20 @@ tr.under .track span{background:#D8A3B4}
 tr.ref td{border-top:1.5px solid var(--ink);padding-top:9px}
 tr.ref .track span{background:var(--human)}
 tr.ceilrow .track span{background:var(--ceil)}
+
+.lb thead th.srt{cursor:pointer;user-select:none;color:var(--mute)}
+.lb thead th.srt:hover{color:var(--geo)}
+.lb thead th.srt.on{color:var(--ink)}
+.car{display:inline-block;width:0;height:0;margin-left:6px;vertical-align:middle;
+  border-left:4px solid transparent;border-right:4px solid transparent}
+.srt.on .car{border-top:5px solid var(--ink)}
+.srt.on.asc .car{border-top:0;border-bottom:5px solid var(--ink)}
+.lb tbody tr[hidden]{display:none}
+.lb td.lead{font-weight:700}
+.more-btn{margin-top:14px;background:none;border:1.5px solid var(--ink);
+  font:600 .9rem "IBM Plex Sans";padding:8px 16px;cursor:pointer;color:var(--ink)}
+.more-btn:hover{border-color:var(--geo);color:var(--geo)}
+.hint{font-size:.88rem;color:var(--mute);margin-top:12px}
 details.more summary{cursor:pointer;color:var(--geo);font-weight:600;
   padding:14px 0 0;font-size:.93rem}
 details.more[open] summary{margin-bottom:6px}
@@ -264,62 +278,63 @@ footer{border-top:1px solid var(--line);background:var(--card);
   <p>Accuracy on the held-out splits, sorted by Task B. Parse failures count as
   incorrect. Rows in red score at or below what the stated turn gives away.</p>
 
-  <table class="lb">
-    <thead><tr><th></th><th>Model</th><th></th>
-      <th class="n">Task&nbsp;B</th><th class="n">Task&nbsp;A</th><th class="n">Task&nbsp;C</th></tr></thead>
+  <table class="lb" id="board">
+    <thead><tr>
+      <th class="rk"></th><th>Model</th><th></th>
+      <th class="n srt" data-k="a" tabindex="0" role="button" aria-sort="none">Task&nbsp;A<span class="car"></span></th>
+      <th class="n srt on" data-k="b" tabindex="0" role="button" aria-sort="descending">Task&nbsp;B<span class="car"></span></th>
+      <th class="n srt" data-k="c" tabindex="0" role="button" aria-sort="none">Task&nbsp;C<span class="car"></span></th>
+    </tr></thead>
     <tbody>
-<tr><td class=rk>1</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro (thinking)</td><td class=track><span style="width:83.6%"></span></td><td class="n hero">83.6</td><td class="n sub">91.4</td><td class="n sub">88.0</td></tr>
-<tr><td class=rk>2</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash</td><td class=track><span style="width:83.5%"></span></td><td class="n hero">83.5</td><td class="n sub">96.6</td><td class="n sub">89.3</td></tr>
-<tr><td class=rk>3</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro</td><td class=track><span style="width:81.9%"></span></td><td class="n hero">81.9</td><td class="n sub">91.8</td><td class="n sub">88.2</td></tr>
-<tr><td class=rk>4</td><td class=mdl><i class="sw a"></i>Claude Fable 5</td><td class=track><span style="width:81.4%"></span></td><td class="n hero">81.4</td><td class="n sub">94.8</td><td class="n sub">88.4</td></tr>
-<tr><td class=rk>5</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol (thinking)</td><td class=track><span style="width:81.1%"></span></td><td class="n hero">81.1</td><td class="n sub">93.2</td><td class="n sub">88.0</td></tr>
-<tr><td class=rk>6</td><td class=mdl><i class="sw a"></i>Claude Opus 5 (extended)</td><td class=track><span style="width:80.2%"></span></td><td class="n hero">80.2</td><td class="n sub">95.1</td><td class="n sub">84.3</td></tr>
-<tr><td class=rk>7</td><td class=mdl><i class="sw a"></i>Claude Opus 5</td><td class=track><span style="width:80.1%"></span></td><td class="n hero">80.1</td><td class="n sub">91.6</td><td class="n sub">83.2</td></tr>
-<tr><td class=rk>8</td><td class=mdl><i class="sw a"></i>Claude Sonnet 5</td><td class=track><span style="width:77.1%"></span></td><td class="n hero">77.1</td><td class="n sub">92.6</td><td class="n sub">75.8</td></tr>
-<tr><td class=rk>9</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol</td><td class=track><span style="width:76.3%"></span></td><td class="n hero">76.3</td><td class="n sub">93.4</td><td class="n sub">87.2</td></tr>
-<tr><td class=rk>10</td><td class=mdl><i class="sw w"></i>InternVL3-38B</td><td class=track><span style="width:65.1%"></span></td><td class="n hero">65.1</td><td class="n sub">96.1</td><td class="n sub">65.2</td></tr>
-<tr><td class=rk>11</td><td class=mdl><i class="sw w"></i>InternVL3-78B</td><td class=track><span style="width:56.1%"></span></td><td class="n hero">56.1</td><td class="n sub">91.9</td><td class="n sub">63.6</td></tr>
-<tr><td class=rk>12</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash Lite</td><td class=track><span style="width:53.0%"></span></td><td class="n hero">53.0</td><td class="n sub">96.2</td><td class="n sub">67.3</td></tr>
-      <tr class="ref"><td></td><td class="mdl">Trained human panel</td>
-        <td class="track"><span style="width:84.6%"></span></td>
-        <td class="n hero">84.6</td><td class="n sub">98.1</td><td class="n sub">89.6</td></tr>
-      <tr class="ceilrow"><td></td><td class="mdl">What the turn alone reaches</td>
-        <td class="track"><span style="width:45.9%"></span></td>
-        <td class="n hero">45.9</td><td class="n sub">&mdash;</td><td class="n sub">&mdash;</td></tr>
+<tr data-a="91.4" data-b="83.6" data-c="88.0"><td class=rk>1</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro (thinking)</td><td class=track><span style="width:83.6%"></span></td><td class="n v-a sub">91.4</td><td class="n v-b lead">83.6</td><td class="n v-c sub">88.0</td></tr>
+<tr data-a="96.6" data-b="83.5" data-c="89.3"><td class=rk>2</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash</td><td class=track><span style="width:83.5%"></span></td><td class="n v-a sub">96.6</td><td class="n v-b lead">83.5</td><td class="n v-c sub">89.3</td></tr>
+<tr data-a="91.8" data-b="81.9" data-c="88.2"><td class=rk>3</td><td class=mdl><i class="sw g"></i>Gemini 3 Pro</td><td class=track><span style="width:81.9%"></span></td><td class="n v-a sub">91.8</td><td class="n v-b lead">81.9</td><td class="n v-c sub">88.2</td></tr>
+<tr data-a="94.8" data-b="81.4" data-c="88.4"><td class=rk>4</td><td class=mdl><i class="sw a"></i>Claude Fable 5</td><td class=track><span style="width:81.4%"></span></td><td class="n v-a sub">94.8</td><td class="n v-b lead">81.4</td><td class="n v-c sub">88.4</td></tr>
+<tr data-a="93.2" data-b="81.1" data-c="88.0"><td class=rk>5</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol (thinking)</td><td class=track><span style="width:81.1%"></span></td><td class="n v-a sub">93.2</td><td class="n v-b lead">81.1</td><td class="n v-c sub">88.0</td></tr>
+<tr data-a="95.1" data-b="80.2" data-c="84.3"><td class=rk>6</td><td class=mdl><i class="sw a"></i>Claude Opus 5 (extended)</td><td class=track><span style="width:80.2%"></span></td><td class="n v-a sub">95.1</td><td class="n v-b lead">80.2</td><td class="n v-c sub">84.3</td></tr>
+<tr data-a="91.6" data-b="80.1" data-c="83.2"><td class=rk>7</td><td class=mdl><i class="sw a"></i>Claude Opus 5</td><td class=track><span style="width:80.1%"></span></td><td class="n v-a sub">91.6</td><td class="n v-b lead">80.1</td><td class="n v-c sub">83.2</td></tr>
+<tr data-a="92.6" data-b="77.1" data-c="75.8"><td class=rk>8</td><td class=mdl><i class="sw a"></i>Claude Sonnet 5</td><td class=track><span style="width:77.1%"></span></td><td class="n v-a sub">92.6</td><td class="n v-b lead">77.1</td><td class="n v-c sub">75.8</td></tr>
+<tr data-a="93.4" data-b="76.3" data-c="87.2"><td class=rk>9</td><td class=mdl><i class="sw o"></i>GPT-5.6 Sol</td><td class=track><span style="width:76.3%"></span></td><td class="n v-a sub">93.4</td><td class="n v-b lead">76.3</td><td class="n v-c sub">87.2</td></tr>
+<tr data-a="96.1" data-b="65.1" data-c="65.2"><td class=rk>10</td><td class=mdl><i class="sw w"></i>InternVL3-38B</td><td class=track><span style="width:65.1%"></span></td><td class="n v-a sub">96.1</td><td class="n v-b lead">65.1</td><td class="n v-c sub">65.2</td></tr>
+<tr data-a="91.9" data-b="56.1" data-c="63.6"><td class=rk>11</td><td class=mdl><i class="sw w"></i>InternVL3-78B</td><td class=track><span style="width:56.1%"></span></td><td class="n v-a sub">91.9</td><td class="n v-b lead">56.1</td><td class="n v-c sub">63.6</td></tr>
+<tr data-a="96.2" data-b="53.0" data-c="67.3"><td class=rk>12</td><td class=mdl><i class="sw g"></i>Gemini 3 Flash Lite</td><td class=track><span style="width:53.0%"></span></td><td class="n v-a sub">96.2</td><td class="n v-b lead">53.0</td><td class="n v-c sub">67.3</td></tr>
+<tr data-a="95.6" data-b="47.7" data-c="59.3" hidden><td class=rk>13</td><td class=mdl><i class="sw w"></i>Qwen3-VL-32B</td><td class=track><span style="width:47.7%"></span></td><td class="n v-a sub">95.6</td><td class="n v-b lead">47.7</td><td class="n v-c sub">59.3</td></tr>
+<tr data-a="80.5" data-b="46.4" data-c="59.9" hidden><td class=rk>14</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-32B</td><td class=track><span style="width:46.4%"></span></td><td class="n v-a sub">80.5</td><td class="n v-b lead">46.4</td><td class="n v-c sub">59.9</td></tr>
+<tr data-a="92.0" data-b="45.6" data-c="63.9" class=under hidden><td class=rk>15</td><td class=mdl><i class="sw w"></i>InternVL3-14B</td><td class=track><span style="width:45.6%"></span></td><td class="n v-a sub">92.0</td><td class="n v-b lead">45.6</td><td class="n v-c sub">63.9</td></tr>
+<tr data-a="85.7" data-b="45.6" data-c="61.8" class=under hidden><td class=rk>16</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-72B</td><td class=track><span style="width:45.6%"></span></td><td class="n v-a sub">85.7</td><td class="n v-b lead">45.6</td><td class="n v-c sub">61.8</td></tr>
+<tr data-a="71.2" data-b="45.4" data-c="38.8" class=under hidden><td class=rk>17</td><td class=mdl><i class="sw a"></i>Claude Haiku 4.5</td><td class=track><span style="width:45.4%"></span></td><td class="n v-a sub">71.2</td><td class="n v-b lead">45.4</td><td class="n v-c sub">38.8</td></tr>
+<tr data-a="90.8" data-b="42.0" data-c="73.1" class=under hidden><td class=rk>18</td><td class=mdl><i class="sw o"></i>GPT-5.1</td><td class=track><span style="width:42.0%"></span></td><td class="n v-a sub">90.8</td><td class="n v-b lead">42.0</td><td class="n v-c sub">73.1</td></tr>
+<tr data-a="92.2" data-b="41.3" data-c="63.5" class=under hidden><td class=rk>19</td><td class=mdl><i class="sw w"></i>Qwen3-VL-8B</td><td class=track><span style="width:41.3%"></span></td><td class="n v-a sub">92.2</td><td class="n v-b lead">41.3</td><td class="n v-c sub">63.5</td></tr>
+<tr data-a="88.8" data-b="36.9" data-c="64.2" class=under hidden><td class=rk>20</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen3-VL-8B</td><td class=track><span style="width:36.9%"></span></td><td class="n v-a sub">88.8</td><td class="n v-b lead">36.9</td><td class="n v-c sub">64.2</td></tr>
+<tr data-a="93.6" data-b="33.3" data-c="61.7" class=under hidden><td class=rk>21</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.3-Qwen3-VL-8B</td><td class=track><span style="width:33.3%"></span></td><td class="n v-a sub">93.6</td><td class="n v-b lead">33.3</td><td class="n v-c sub">61.7</td></tr>
+<tr data-a="53.9" data-b="28.8" data-c="39.7" class=under hidden><td class=rk>22</td><td class=mdl><i class="sw w"></i>InternVL3-2B</td><td class=track><span style="width:28.8%"></span></td><td class="n v-a sub">53.9</td><td class="n v-b lead">28.8</td><td class="n v-c sub">39.7</td></tr>
+<tr data-a="50.0" data-b="27.9" data-c="30.8" class=under hidden><td class=rk>23</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-3B</td><td class=track><span style="width:27.9%"></span></td><td class="n v-a sub">50.0</td><td class="n v-b lead">27.9</td><td class="n v-c sub">30.8</td></tr>
+<tr data-a="79.2" data-b="26.9" data-c="60.9" class=under hidden><td class=rk>24</td><td class=mdl><i class="sw w"></i>InternVL3-8B</td><td class=track><span style="width:26.9%"></span></td><td class="n v-a sub">79.2</td><td class="n v-b lead">26.9</td><td class="n v-c sub">60.9</td></tr>
+<tr data-a="50.3" data-b="25.6" data-c="39.2" class=under hidden><td class=rk>25</td><td class=mdl><i class="sw w"></i>LLaVA-OneVision-7B</td><td class=track><span style="width:25.6%"></span></td><td class="n v-a sub">50.3</td><td class="n v-b lead">25.6</td><td class="n v-c sub">39.2</td></tr>
+<tr data-a="59.2" data-b="24.6" data-c="37.8" class=under hidden><td class=rk>26</td><td class=mdl><i class="sw w"></i>Idefics3-8B</td><td class=track><span style="width:24.6%"></span></td><td class="n v-a sub">59.2</td><td class="n v-b lead">24.6</td><td class="n v-c sub">37.8</td></tr>
+<tr data-a="56.8" data-b="23.9" data-c="56.2" class=under hidden><td class=rk>27</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-7B</td><td class=track><span style="width:23.9%"></span></td><td class="n v-a sub">56.8</td><td class="n v-b lead">23.9</td><td class="n v-c sub">56.2</td></tr>
+<tr data-a="54.4" data-b="23.3" data-c="38.7" class=under hidden><td class=rk>28</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-3B</td><td class=track><span style="width:23.3%"></span></td><td class="n v-a sub">54.4</td><td class="n v-b lead">23.3</td><td class="n v-c sub">38.7</td></tr>
+<tr data-a="59.6" data-b="21.9" data-c="33.4" class=under hidden><td class=rk>29</td><td class=mdl><i class="sw w"></i>EgoMind-7B</td><td class=track><span style="width:21.9%"></span></td><td class="n v-a sub">59.6</td><td class="n v-b lead">21.9</td><td class="n v-c sub">33.4</td></tr>
+<tr data-a="51.8" data-b="21.4" data-c="33.4" class=under hidden><td class=rk>30</td><td class=mdl><i class="sw w"></i>SmolVLM-Instruct</td><td class=track><span style="width:21.4%"></span></td><td class="n v-a sub">51.8</td><td class="n v-b lead">21.4</td><td class="n v-c sub">33.4</td></tr>
+<tr data-a="71.1" data-b="21.3" data-c="52.0" class=under hidden><td class=rk>31</td><td class=mdl><i class="sw w"></i>Molmo2-8B</td><td class=track><span style="width:21.3%"></span></td><td class="n v-a sub">71.1</td><td class="n v-b lead">21.3</td><td class="n v-c sub">52.0</td></tr>
+<tr data-a="49.3" data-b="21.2" data-c="33.3" class=under hidden><td class=rk>32</td><td class=mdl><i class="sw w"></i>LLaVA-1.6-Mistral-7B</td><td class=track><span style="width:21.2%"></span></td><td class="n v-a sub">49.3</td><td class="n v-b lead">21.2</td><td class="n v-c sub">33.3</td></tr>
+<tr data-a="50.3" data-b="19.1" data-c="32.9" class=under hidden><td class=rk>33</td><td class=mdl><i class="sw w"></i>Qwen2-VL-2B</td><td class=track><span style="width:19.1%"></span></td><td class="n v-a sub">50.3</td><td class="n v-b lead">19.1</td><td class="n v-c sub">32.9</td></tr>
+<tr data-a="60.8" data-b="18.9" data-c="41.4" class=under hidden><td class=rk>34</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-7B</td><td class=track><span style="width:18.9%"></span></td><td class="n v-a sub">60.8</td><td class="n v-b lead">18.9</td><td class="n v-c sub">41.4</td></tr>
+<tr data-a="76.1" data-b="15.8" data-c="41.4" class=under hidden><td class=rk>35</td><td class=mdl><i class="sw w"></i>Cosmos-Reason1-7B</td><td class=track><span style="width:15.8%"></span></td><td class="n v-a sub">76.1</td><td class="n v-b lead">15.8</td><td class="n v-c sub">41.4</td></tr>
+<tr data-a="50.0" data-b="11.7" data-c="62.2" class=under hidden><td class=rk>36</td><td class=mdl><i class="sw w"></i>Qwen2-VL-7B</td><td class=track><span style="width:11.7%"></span></td><td class="n v-a sub">50.0</td><td class="n v-b lead">11.7</td><td class="n v-c sub">62.2</td></tr>
     </tbody>
+    <tfoot>
+      <tr class="ref"><td></td><td class="mdl">Trained human panel</td>
+        <td class="track"><span class="hum" style="width:84.6%"></span></td>
+        <td class="n" data-a="98.1">98.1</td><td class="n" data-b="84.6">84.6</td><td class="n" data-c="89.6">89.6</td></tr>
+      <tr class="ceilrow"><td></td><td class="mdl" id="refname">What the turn alone reaches</td>
+        <td class="track"><span class="cl" style="width:45.9%"></span></td>
+        <td class="n">50.0</td><td class="n">45.9</td><td class="n">33.3</td></tr>
+    </tfoot>
   </table>
+  <button id="toggle" class="more-btn" aria-expanded="false" hidden>Show all 36 systems</button>
+  <p class="hint" id="hint">22 of 36 systems score at or below what the turn alone reaches on Task B.</p>
 
-  <details class="more"><summary>Show the remaining 24 systems</summary>
-    <table class="lb"><tbody>
-<tr><td class=rk>13</td><td class=mdl><i class="sw w"></i>Qwen3-VL-32B</td><td class=track><span style="width:47.7%"></span></td><td class="n hero">47.7</td><td class="n sub">95.6</td><td class="n sub">59.3</td></tr>
-<tr><td class=rk>14</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-32B</td><td class=track><span style="width:46.4%"></span></td><td class="n hero">46.4</td><td class="n sub">80.5</td><td class="n sub">59.9</td></tr>
-<tr class=under><td class=rk>15</td><td class=mdl><i class="sw w"></i>InternVL3-14B</td><td class=track><span style="width:45.6%"></span></td><td class="n hero">45.6</td><td class="n sub">92.0</td><td class="n sub">63.9</td></tr>
-<tr class=under><td class=rk>16</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-72B</td><td class=track><span style="width:45.6%"></span></td><td class="n hero">45.6</td><td class="n sub">85.7</td><td class="n sub">61.8</td></tr>
-<tr class=under><td class=rk>17</td><td class=mdl><i class="sw a"></i>Claude Haiku 4.5</td><td class=track><span style="width:45.4%"></span></td><td class="n hero">45.4</td><td class="n sub">71.2</td><td class="n sub">38.8</td></tr>
-<tr class=under><td class=rk>18</td><td class=mdl><i class="sw o"></i>GPT-5.1</td><td class=track><span style="width:42.0%"></span></td><td class="n hero">42.0</td><td class="n sub">90.8</td><td class="n sub">73.1</td></tr>
-<tr class=under><td class=rk>19</td><td class=mdl><i class="sw w"></i>Qwen3-VL-8B</td><td class=track><span style="width:41.3%"></span></td><td class="n hero">41.3</td><td class="n sub">92.2</td><td class="n sub">63.5</td></tr>
-<tr class=under><td class=rk>20</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen3-VL-8B</td><td class=track><span style="width:36.9%"></span></td><td class="n hero">36.9</td><td class="n sub">88.8</td><td class="n sub">64.2</td></tr>
-<tr class=under><td class=rk>21</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.3-Qwen3-VL-8B</td><td class=track><span style="width:33.3%"></span></td><td class="n hero">33.3</td><td class="n sub">93.6</td><td class="n sub">61.7</td></tr>
-<tr class=under><td class=rk>22</td><td class=mdl><i class="sw w"></i>InternVL3-2B</td><td class=track><span style="width:28.8%"></span></td><td class="n hero">28.8</td><td class="n sub">53.9</td><td class="n sub">39.7</td></tr>
-<tr class=under><td class=rk>23</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-3B</td><td class=track><span style="width:27.9%"></span></td><td class="n hero">27.9</td><td class="n sub">50.0</td><td class="n sub">30.8</td></tr>
-<tr class=under><td class=rk>24</td><td class=mdl><i class="sw w"></i>InternVL3-8B</td><td class=track><span style="width:26.9%"></span></td><td class="n hero">26.9</td><td class="n sub">79.2</td><td class="n sub">60.9</td></tr>
-<tr class=under><td class=rk>25</td><td class=mdl><i class="sw w"></i>LLaVA-OneVision-7B</td><td class=track><span style="width:25.6%"></span></td><td class="n hero">25.6</td><td class="n sub">50.3</td><td class="n sub">39.2</td></tr>
-<tr class=under><td class=rk>26</td><td class=mdl><i class="sw w"></i>Idefics3-8B</td><td class=track><span style="width:24.6%"></span></td><td class="n hero">24.6</td><td class="n sub">59.2</td><td class="n sub">37.8</td></tr>
-<tr class=under><td class=rk>27</td><td class=mdl><i class="sw w"></i>SenseNova-SI-1.1-Qwen2.5-VL-7B</td><td class=track><span style="width:23.9%"></span></td><td class="n hero">23.9</td><td class="n sub">56.8</td><td class="n sub">56.2</td></tr>
-<tr class=under><td class=rk>28</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-3B</td><td class=track><span style="width:23.3%"></span></td><td class="n hero">23.3</td><td class="n sub">54.4</td><td class="n sub">38.7</td></tr>
-<tr class=under><td class=rk>29</td><td class=mdl><i class="sw w"></i>EgoMind-7B</td><td class=track><span style="width:21.9%"></span></td><td class="n hero">21.9</td><td class="n sub">59.6</td><td class="n sub">33.4</td></tr>
-<tr class=under><td class=rk>30</td><td class=mdl><i class="sw w"></i>SmolVLM-Instruct</td><td class=track><span style="width:21.4%"></span></td><td class="n hero">21.4</td><td class="n sub">51.8</td><td class="n sub">33.4</td></tr>
-<tr class=under><td class=rk>31</td><td class=mdl><i class="sw w"></i>Molmo2-8B</td><td class=track><span style="width:21.3%"></span></td><td class="n hero">21.3</td><td class="n sub">71.1</td><td class="n sub">52.0</td></tr>
-<tr class=under><td class=rk>32</td><td class=mdl><i class="sw w"></i>LLaVA-1.6-Mistral-7B</td><td class=track><span style="width:21.2%"></span></td><td class="n hero">21.2</td><td class="n sub">49.3</td><td class="n sub">33.3</td></tr>
-<tr class=under><td class=rk>33</td><td class=mdl><i class="sw w"></i>Qwen2-VL-2B</td><td class=track><span style="width:19.1%"></span></td><td class="n hero">19.1</td><td class="n sub">50.3</td><td class="n sub">32.9</td></tr>
-<tr class=under><td class=rk>34</td><td class=mdl><i class="sw w"></i>Qwen2.5-VL-7B</td><td class=track><span style="width:18.9%"></span></td><td class="n hero">18.9</td><td class="n sub">60.8</td><td class="n sub">41.4</td></tr>
-<tr class=under><td class=rk>35</td><td class=mdl><i class="sw w"></i>Cosmos-Reason1-7B</td><td class=track><span style="width:15.8%"></span></td><td class="n hero">15.8</td><td class="n sub">76.1</td><td class="n sub">41.4</td></tr>
-<tr class=under><td class=rk>36</td><td class=mdl><i class="sw w"></i>Qwen2-VL-7B</td><td class=track><span style="width:11.7%"></span></td><td class="n hero">11.7</td><td class="n sub">50.0</td><td class="n sub">62.2</td></tr>
-    </tbody></table>
-  </details>
-
-  <div class="pull">22 of the 36 systems score at or below the bound. For those,
-  the reported accuracy is consistent with never having looked at the image.</div>
 </div></section>
 
 <section><div class="wrap">
@@ -399,5 +414,74 @@ egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
   Supported by the National Science Foundation.
 </div></footer>
 
+
+<script>
+(function(){
+  var REF = {a:[50.0,"the random rate"], b:[45.9,"what the turn alone reaches"], c:[33.3,"the random rate"]};
+  var tb = document.querySelector("#board tbody");
+  var rows = Array.prototype.slice.call(tb.rows);
+  var btn = document.getElementById("toggle");
+  var hint = document.getElementById("hint");
+  var key = "b", desc = true, showAll = false;
+  btn.hidden = false;   // only useful once JS is running
+
+  function paint(){
+    var ref = REF[key][0];
+    rows.sort(function(x,y){
+      var a = +x.dataset[key], b = +y.dataset[key];
+      return desc ? b-a : a-b;
+    });
+    var under = 0;
+    rows.forEach(function(tr,i){
+      tb.appendChild(tr);
+      tr.cells[0].textContent = i+1;
+      tr.hidden = !showAll && i >= 12;
+      var v = +tr.dataset[key];
+      var low = v <= ref;
+      if(low) under++;
+      tr.classList.toggle("under", low);
+      tr.querySelector(".track span").style.width = v + "%";
+      ["a","b","c"].forEach(function(k){
+        var td = tr.querySelector(".v-"+k);
+        td.textContent = (+tr.dataset[k]).toFixed(1);
+        td.classList.toggle("lead", k===key);
+        td.classList.toggle("sub", k!==key);
+      });
+    });
+    document.querySelectorAll(".srt").forEach(function(th){
+      var on = th.dataset.k === key;
+      th.classList.toggle("on", on);
+      th.classList.toggle("asc", on && !desc);
+      th.setAttribute("aria-sort", on ? (desc?"descending":"ascending") : "none");
+    });
+    var tf = document.querySelector("#board tfoot");
+    tf.querySelector(".hum").style.width = tf.querySelector("[data-"+key+"]").dataset[key] + "%";
+    tf.querySelector(".cl").style.width = ref + "%";
+    document.getElementById("refname").textContent =
+      key==="b" ? "What the turn alone reaches" : "Random";
+    hint.textContent = under + " of 36 systems score at or below " + REF[key][1] +
+      " on Task " + key.toUpperCase() + ".";
+  }
+
+  function hit(th){
+    var k = th.dataset.k;
+    if(k === key){ desc = !desc; } else { key = k; desc = true; }
+    paint();
+  }
+  document.querySelectorAll(".srt").forEach(function(th){
+    th.addEventListener("click", function(){ hit(th); });
+    th.addEventListener("keydown", function(e){
+      if(e.key==="Enter"||e.key===" "){ e.preventDefault(); hit(th); }
+    });
+  });
+  btn.addEventListener("click", function(){
+    showAll = !showAll;
+    btn.textContent = showAll ? "Show the top 12" : "Show all 36 systems";
+    btn.setAttribute("aria-expanded", showAll);
+    paint();
+  });
+  paint();
+})();
+</script>
 </body>
 </html>
