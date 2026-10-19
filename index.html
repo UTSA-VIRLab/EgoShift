@@ -64,6 +64,31 @@ pre code{background:none;border:none;padding:0}
 footer{padding:40px 0;text-align:center;color:var(--text-light);font-size:.9rem}
 footer a{color:var(--primary);text-decoration:none}
 .eq{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;font-size:1.02rem;margin:18px 0}
+
+/* leaderboard */
+.lb{width:100%;border-collapse:collapse;font-size:.92rem;margin:20px 0;background:#fff}
+.lb th{background:var(--bg-alt);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--text-light);padding:9px 10px;text-align:left;border-bottom:2px solid var(--border)}
+.lb td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.lb tbody tr:hover{background:#f1f5ff}
+.lb .rk{width:38px;text-align:center;color:var(--text-light);font-variant-numeric:tabular-nums}
+.lb .num{text-align:right;font-variant-numeric:tabular-nums}
+.lb .b{font-weight:700;width:58px}
+.lb .dim{color:var(--text-light);width:54px}
+.lb tr.ref{background:#fcfcfd}
+.lb tr.ref td{border-top:2px solid var(--border)}
+.bar{width:120px;height:8px;border-radius:999px;background:var(--border);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,#60a5fa,#2563eb)}
+.bar i.hum{background:linear-gradient(90deg,#34d399,#059669)}
+.bar i.ceil{background:linear-gradient(90deg,#fbbf24,#d97706)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.dot.g{background:#4285f4}.dot.a{background:#d97757}.dot.o{background:#10a37f}.dot.w{background:#cbd5e1}
+.warn{color:var(--accent);font-weight:700;cursor:help}
+details.more{margin:10px 0 0}
+details.more summary{cursor:pointer;font-weight:600;color:var(--primary);padding:8px 0;font-size:.93rem}
+.legend{font-size:.84rem;color:var(--text-light);margin-top:-6px}
+@media(max-width:640px){.bar{width:62px}.lb{font-size:.82rem}.lb td,.lb th{padding:6px 5px}}
 @media(max-width:640px){header{padding:52px 0 40px}section{padding:40px 0}.links{gap:8px}.btn{padding:9px 16px;font-size:.88rem}}
 </style>
 </head>
@@ -82,6 +107,7 @@ footer a{color:var(--primary);text-decoration:none}
     <div class="links">
       <a class="btn btn-primary" href="assets/EgoShift_WACV2027.pdf">Paper</a>
       <a class="btn btn-ghost" href="assets/EgoShift_WACV2027_supplementary.pdf">Supplementary</a>
+      <a class="btn btn-ghost" href="#leaderboard">Leaderboard</a>
       <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift">Code</a>
       <a class="btn btn-ghost" href="https://github.com/UTSA-VIRLab/EgoShift/blob/main/docs/getting_started.md">Getting Started</a>
     </div>
@@ -108,6 +134,77 @@ footer a{color:var(--primary);text-decoration:none}
       <img src="assets/tasks.png" alt="The three EgoShift tasks: cross-view identity, direction after a stated turn, and visibility.">
       <figcaption>The three tasks. A is a control, B is the primary task, C is supporting.</figcaption>
     </figure>
+  </div>
+</section>
+
+<section id="leaderboard">
+  <div class="wrap">
+    <h2>Leaderboard</h2>
+    <p>Accuracy on the held-out splits, sorted by <b>Task B</b>, the primary task.
+    Parse failures count as incorrect.</p>
+    <p class="legend"><span class="dot g"></span>Google &nbsp;
+      <span class="dot a"></span>Anthropic &nbsp;
+      <span class="dot o"></span>OpenAI &nbsp;
+      <span class="dot w"></span>open weights &nbsp;&middot;&nbsp;
+      <span class="warn">⚠</span> at or below the action-only ceiling</p>
+    <table class="lb">
+      <thead><tr><th></th><th>Model</th><th></th><th class="num">Task B</th>
+      <th class="num">Task A</th><th class="num">Task C</th></tr></thead>
+      <tbody>
+<tr><td class="rk">🥇</td><td><span class="dot g"></span>Gemini 3 Pro (thinking)</td><td class="num"><div class="bar"><i style="width:83.6%"></i></div></td><td class="num b">83.6</td><td class="num dim">91.4</td><td class="num dim">88.0</td></tr>
+<tr><td class="rk">🥈</td><td><span class="dot g"></span>Gemini 3 Flash</td><td class="num"><div class="bar"><i style="width:83.5%"></i></div></td><td class="num b">83.5</td><td class="num dim">96.6</td><td class="num dim">89.3</td></tr>
+<tr><td class="rk">🥉</td><td><span class="dot g"></span>Gemini 3 Pro</td><td class="num"><div class="bar"><i style="width:81.9%"></i></div></td><td class="num b">81.9</td><td class="num dim">91.8</td><td class="num dim">88.2</td></tr>
+<tr><td class="rk">4</td><td><span class="dot a"></span>Claude Fable 5</td><td class="num"><div class="bar"><i style="width:81.4%"></i></div></td><td class="num b">81.4</td><td class="num dim">94.8</td><td class="num dim">88.4</td></tr>
+<tr><td class="rk">5</td><td><span class="dot o"></span>GPT-5.6 Sol (thinking)</td><td class="num"><div class="bar"><i style="width:81.1%"></i></div></td><td class="num b">81.1</td><td class="num dim">93.2</td><td class="num dim">88.0</td></tr>
+<tr><td class="rk">6</td><td><span class="dot a"></span>Claude Opus 5 (extended)</td><td class="num"><div class="bar"><i style="width:80.2%"></i></div></td><td class="num b">80.2</td><td class="num dim">95.1</td><td class="num dim">84.3</td></tr>
+<tr><td class="rk">7</td><td><span class="dot a"></span>Claude Opus 5</td><td class="num"><div class="bar"><i style="width:80.1%"></i></div></td><td class="num b">80.1</td><td class="num dim">91.6</td><td class="num dim">83.2</td></tr>
+<tr><td class="rk">8</td><td><span class="dot a"></span>Claude Sonnet 5</td><td class="num"><div class="bar"><i style="width:77.1%"></i></div></td><td class="num b">77.1</td><td class="num dim">92.6</td><td class="num dim">75.8</td></tr>
+<tr><td class="rk">9</td><td><span class="dot o"></span>GPT-5.6 Sol</td><td class="num"><div class="bar"><i style="width:76.3%"></i></div></td><td class="num b">76.3</td><td class="num dim">93.4</td><td class="num dim">87.2</td></tr>
+<tr><td class="rk">10</td><td><span class="dot w"></span>InternVL3-38B</td><td class="num"><div class="bar"><i style="width:65.1%"></i></div></td><td class="num b">65.1</td><td class="num dim">96.1</td><td class="num dim">65.2</td></tr>
+<tr><td class="rk">11</td><td><span class="dot w"></span>InternVL3-78B</td><td class="num"><div class="bar"><i style="width:56.1%"></i></div></td><td class="num b">56.1</td><td class="num dim">91.9</td><td class="num dim">63.6</td></tr>
+<tr><td class="rk">12</td><td><span class="dot g"></span>Gemini 3 Flash Lite</td><td class="num"><div class="bar"><i style="width:53.0%"></i></div></td><td class="num b">53.0</td><td class="num dim">96.2</td><td class="num dim">67.3</td></tr>
+<tr class="ref"><td></td><td>🧑 <b>Trained human panel</b></td>
+<td class="num"><div class="bar"><i class="hum" style="width:84.6%"></i></div></td>
+<td class="num b">84.6</td><td class="num dim">98.1</td><td class="num dim">89.6</td></tr>
+<tr class="ref"><td></td><td>🚧 <i>Action-only ceiling</i></td>
+<td class="num"><div class="bar"><i class="ceil" style="width:45.9%"></i></div></td>
+<td class="num b">45.9</td><td class="num dim">—</td><td class="num dim">—</td></tr>
+      </tbody>
+    </table>
+    <details class="more">
+      <summary>Show all 36 evaluated systems</summary>
+      <table class="lb"><tbody>
+<tr><td class="rk">13</td><td><span class="dot w"></span>Qwen3-VL-32B</td><td class="num"><div class="bar"><i style="width:47.7%"></i></div></td><td class="num b">47.7</td><td class="num dim">95.6</td><td class="num dim">59.3</td></tr>
+<tr><td class="rk">14</td><td><span class="dot w"></span>Qwen2.5-VL-32B</td><td class="num"><div class="bar"><i style="width:46.4%"></i></div></td><td class="num b">46.4</td><td class="num dim">80.5</td><td class="num dim">59.9</td></tr>
+<tr><td class="rk">15</td><td><span class="dot w"></span>InternVL3-14B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.6%"></i></div></td><td class="num b">45.6</td><td class="num dim">92.0</td><td class="num dim">63.9</td></tr>
+<tr><td class="rk">16</td><td><span class="dot w"></span>Qwen2.5-VL-72B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.6%"></i></div></td><td class="num b">45.6</td><td class="num dim">85.7</td><td class="num dim">61.8</td></tr>
+<tr><td class="rk">17</td><td><span class="dot a"></span>Claude Haiku 4.5 <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:45.4%"></i></div></td><td class="num b">45.4</td><td class="num dim">71.2</td><td class="num dim">38.8</td></tr>
+<tr><td class="rk">18</td><td><span class="dot o"></span>GPT-5.1 <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:42.0%"></i></div></td><td class="num b">42.0</td><td class="num dim">90.8</td><td class="num dim">73.1</td></tr>
+<tr><td class="rk">19</td><td><span class="dot w"></span>Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:41.3%"></i></div></td><td class="num b">41.3</td><td class="num dim">92.2</td><td class="num dim">63.5</td></tr>
+<tr><td class="rk">20</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:36.9%"></i></div></td><td class="num b">36.9</td><td class="num dim">88.8</td><td class="num dim">64.2</td></tr>
+<tr><td class="rk">21</td><td><span class="dot w"></span>SenseNova-SI-1.3-Qwen3-VL-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:33.3%"></i></div></td><td class="num b">33.3</td><td class="num dim">93.6</td><td class="num dim">61.7</td></tr>
+<tr><td class="rk">22</td><td><span class="dot w"></span>InternVL3-2B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:28.8%"></i></div></td><td class="num b">28.8</td><td class="num dim">53.9</td><td class="num dim">39.7</td></tr>
+<tr><td class="rk">23</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen2.5-VL-3B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:27.9%"></i></div></td><td class="num b">27.9</td><td class="num dim">50.0</td><td class="num dim">30.8</td></tr>
+<tr><td class="rk">24</td><td><span class="dot w"></span>InternVL3-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:26.9%"></i></div></td><td class="num b">26.9</td><td class="num dim">79.2</td><td class="num dim">60.9</td></tr>
+<tr><td class="rk">25</td><td><span class="dot w"></span>LLaVA-OneVision-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:25.6%"></i></div></td><td class="num b">25.6</td><td class="num dim">50.3</td><td class="num dim">39.2</td></tr>
+<tr><td class="rk">26</td><td><span class="dot w"></span>Idefics3-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:24.6%"></i></div></td><td class="num b">24.6</td><td class="num dim">59.2</td><td class="num dim">37.8</td></tr>
+<tr><td class="rk">27</td><td><span class="dot w"></span>SenseNova-SI-1.1-Qwen2.5-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:23.9%"></i></div></td><td class="num b">23.9</td><td class="num dim">56.8</td><td class="num dim">56.2</td></tr>
+<tr><td class="rk">28</td><td><span class="dot w"></span>Qwen2.5-VL-3B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:23.3%"></i></div></td><td class="num b">23.3</td><td class="num dim">54.4</td><td class="num dim">38.7</td></tr>
+<tr><td class="rk">29</td><td><span class="dot w"></span>EgoMind-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.9%"></i></div></td><td class="num b">21.9</td><td class="num dim">59.6</td><td class="num dim">33.4</td></tr>
+<tr><td class="rk">30</td><td><span class="dot w"></span>SmolVLM-Instruct <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.4%"></i></div></td><td class="num b">21.4</td><td class="num dim">51.8</td><td class="num dim">33.4</td></tr>
+<tr><td class="rk">31</td><td><span class="dot w"></span>Molmo2-8B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.3%"></i></div></td><td class="num b">21.3</td><td class="num dim">71.1</td><td class="num dim">52.0</td></tr>
+<tr><td class="rk">32</td><td><span class="dot w"></span>LLaVA-1.6-Mistral-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:21.2%"></i></div></td><td class="num b">21.2</td><td class="num dim">49.3</td><td class="num dim">33.3</td></tr>
+<tr><td class="rk">33</td><td><span class="dot w"></span>Qwen2-VL-2B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:19.1%"></i></div></td><td class="num b">19.1</td><td class="num dim">50.3</td><td class="num dim">32.9</td></tr>
+<tr><td class="rk">34</td><td><span class="dot w"></span>Qwen2.5-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:18.9%"></i></div></td><td class="num b">18.9</td><td class="num dim">60.8</td><td class="num dim">41.4</td></tr>
+<tr><td class="rk">35</td><td><span class="dot w"></span>Cosmos-Reason1-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:15.8%"></i></div></td><td class="num b">15.8</td><td class="num dim">76.1</td><td class="num dim">41.4</td></tr>
+<tr><td class="rk">36</td><td><span class="dot w"></span>Qwen2-VL-7B <span class="warn" title="at or below the action-only ceiling">⚠</span></td><td class="num"><div class="bar"><i style="width:11.7%"></i></div></td><td class="num b">11.7</td><td class="num dim">50.0</td><td class="num dim">62.2</td></tr>
+      </tbody></table>
+    </details>
+    <div class="callout" style="margin-top:22px">
+      <strong>22 of the 36 systems score at or below the action-only ceiling.</strong>
+      For those, the reported accuracy is consistent with never having looked at
+      the picture.
+    </div>
   </div>
 </section>
 

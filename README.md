@@ -36,41 +36,71 @@ before any model is run*. We derive that ceiling and build every turn to sit exa
 The audit is not hypothetical. An earlier build of our own data was balanced by the usual standard,
 and a predictor that saw **only the stated turn** scored **72.3%** on it.
 
-### Leaderboard
+### 🏆 Leaderboard
 
-Accuracy (%) on the held-out splits. Twelve frontier configurations, then four
-open-weight anchors spanning the scaling curve; all 36 are in the
-[supplementary material](assets/EgoShift_WACV2027_supplementary.pdf). Sorted by
-**Task B**, the primary task. Parse failures count as incorrect.
+Accuracy (%) on the held-out splits, sorted by **Task B** — the primary task.
+Parse failures count as incorrect. 🔵 Google · 🟠 Anthropic · ⚫ OpenAI · ⬜ open weights.
 
-| # | Model | A — identity | **B — direction** | C — visibility |
-|:--|:---|:---:|:---:|:---:|
-| 1 | Gemini 3 Pro (thinking) | 91.4 | **83.6** | 88.0 |
-| 2 | Gemini 3 Flash | **96.6** | 83.5 | **89.3** |
-| 3 | Gemini 3 Pro | 91.8 | 81.9<sup>†</sup> | 88.2<sup>†</sup> |
-| 4 | Claude Fable 5 | 94.8 | 81.4 | 88.4 |
-| 5 | GPT-5.6 Sol (thinking) | 93.2 | 81.1 | 88.0 |
-| 6 | Claude Opus 5 (extended) | 95.1 | 80.2 | 84.3 |
-| 7 | Claude Opus 5 | 91.6 | 80.1 | 83.2 |
-| 8 | Claude Sonnet 5 | 92.6 | 77.1 | 75.8 |
-| 9 | GPT-5.6 Sol | 93.4 | 76.3 | 87.2 |
-| 10 | Gemini 3 Flash Lite | 96.2 | 53.0 | 67.3 |
-| 11 | Claude Haiku 4.5 | 71.2 | 45.4 | 38.8 |
-| 12 | GPT-5.1 | 90.8 | 42.0<sup>†</sup> | 73.1 |
-| | *InternVL3-38B* | 96.1 | 65.1 | 65.2 |
-| | *Qwen3-VL-32B* | 95.6 | 47.7 | 59.3 |
-| | *SenseNova-SI-1.3-Qwen3-VL-8B* | 93.6 | 33.3 | 61.7 |
-| | *Qwen2.5-VL-7B* | 60.8 | 18.9 | 41.4 |
-| | **Trained human panel** | **98.1** | **84.6** | **89.6** |
-| | Action-only ceiling | — | 45.9 | — |
-| | Random | 50.0 | 25.0 | 33.3 |
+| # | Model | | Task B ↓ | Task A | Task C |
+|:--:|:---|:---|--:|--:|--:|
+| 🥇 | 🔵 Gemini 3 Pro (thinking) | `██████████░░` | **83.6** | 91.4 | 88.0 |
+| 🥈 | 🔵 Gemini 3 Flash | `██████████░░` | **83.5** | 96.6 | 89.3 |
+| 🥉 | 🔵 Gemini 3 Pro | `██████████░░` | **81.9** | 91.8 | 88.2 |
+| 4 | 🟠 Claude Fable 5 | `██████████░░` | **81.4** | 94.8 | 88.4 |
+| 5 | ⚫ GPT-5.6 Sol (thinking) | `██████████░░` | **81.1** | 93.2 | 88.0 |
+| 6 | 🟠 Claude Opus 5 (extended) | `██████████░░` | **80.2** | 95.1 | 84.3 |
+| 7 | 🟠 Claude Opus 5 | `██████████░░` | **80.1** | 91.6 | 83.2 |
+| 8 | 🟠 Claude Sonnet 5 | `█████████░░░` | **77.1** | 92.6 | 75.8 |
+| 9 | ⚫ GPT-5.6 Sol | `█████████░░░` | **76.3** | 93.4 | 87.2 |
+| 10 | ⬜ InternVL3-38B | `████████░░░░` | **65.1** | 96.1 | 65.2 |
+| 11 | ⬜ InternVL3-78B | `███████░░░░░` | **56.1** | 91.9 | 63.6 |
+| 12 | 🔵 Gemini 3 Flash Lite | `██████░░░░░░` | **53.0** | 96.2 | 67.3 |
+| | 🧑 **Trained human panel** | `██████████░░` | **84.6** | 98.1 | 89.6 |
+| | 🚧 *Action-only ceiling* | `██████░░░░░░` | *45.9* | — | — |
+| | 🎲 *Random* | `███░░░░░░░░░` | *25.0* | *50.0* | *33.3* |
 
-<sup>†</sup> a retry returned a second valid answer on six GPT-5.1 Task-B and on
-twenty-three and ten Gemini 3 Pro Task-B and Task-C questions; those count as
-incorrect.
+<details>
+<summary><b>All 36 evaluated systems</b> — the remaining 24, same protocol</summary>
 
-**Read that table and the task looks nearly solved** — the best model is 1.0
-point under the human panel. It is not. Read it one turn at a time instead:
+| # | Model | | Task B ↓ | Task A | Task C |
+|:--:|:---|:---|--:|--:|--:|
+|  | ⬜ Qwen3-VL-32B | `██████░░░░░░` | **47.7** | 95.6 | 59.3 |
+|  | ⬜ Qwen2.5-VL-32B | `██████░░░░░░` | **46.4** | 80.5 | 59.9 |
+|  | ⬜ InternVL3-14B ⚠️ | `█████░░░░░░░` | **45.6** | 92.0 | 63.9 |
+|  | ⬜ Qwen2.5-VL-72B ⚠️ | `█████░░░░░░░` | **45.6** | 85.7 | 61.8 |
+|  | 🟠 Claude Haiku 4.5 ⚠️ | `█████░░░░░░░` | **45.4** | 71.2 | 38.8 |
+|  | ⚫ GPT-5.1 ⚠️ | `█████░░░░░░░` | **42.0** | 90.8 | 73.1 |
+|  | ⬜ Qwen3-VL-8B ⚠️ | `█████░░░░░░░` | **41.3** | 92.2 | 63.5 |
+|  | ⬜ SenseNova-SI-1.1-Qwen3-VL-8B ⚠️ | `████░░░░░░░░` | **36.9** | 88.8 | 64.2 |
+|  | ⬜ SenseNova-SI-1.3-Qwen3-VL-8B ⚠️ | `████░░░░░░░░` | **33.3** | 93.6 | 61.7 |
+|  | ⬜ InternVL3-2B ⚠️ | `███░░░░░░░░░` | **28.8** | 53.9 | 39.7 |
+|  | ⬜ SenseNova-SI-1.1-Qwen2.5-VL-3B ⚠️ | `███░░░░░░░░░` | **27.9** | 50.0 | 30.8 |
+|  | ⬜ InternVL3-8B ⚠️ | `███░░░░░░░░░` | **26.9** | 79.2 | 60.9 |
+|  | ⬜ LLaVA-OneVision-7B ⚠️ | `███░░░░░░░░░` | **25.6** | 50.3 | 39.2 |
+|  | ⬜ Idefics3-8B ⚠️ | `███░░░░░░░░░` | **24.6** | 59.2 | 37.8 |
+|  | ⬜ SenseNova-SI-1.1-Qwen2.5-VL-7B ⚠️ | `███░░░░░░░░░` | **23.9** | 56.8 | 56.2 |
+|  | ⬜ Qwen2.5-VL-3B ⚠️ | `███░░░░░░░░░` | **23.3** | 54.4 | 38.7 |
+|  | ⬜ EgoMind-7B ⚠️ | `███░░░░░░░░░` | **21.9** | 59.6 | 33.4 |
+|  | ⬜ SmolVLM-Instruct ⚠️ | `███░░░░░░░░░` | **21.4** | 51.8 | 33.4 |
+|  | ⬜ Molmo2-8B ⚠️ | `███░░░░░░░░░` | **21.3** | 71.1 | 52.0 |
+|  | ⬜ LLaVA-1.6-Mistral-7B ⚠️ | `███░░░░░░░░░` | **21.2** | 49.3 | 33.3 |
+|  | ⬜ Qwen2-VL-2B ⚠️ | `██░░░░░░░░░░` | **19.1** | 50.3 | 32.9 |
+|  | ⬜ Qwen2.5-VL-7B ⚠️ | `██░░░░░░░░░░` | **18.9** | 60.8 | 41.4 |
+|  | ⬜ Cosmos-Reason1-7B ⚠️ | `██░░░░░░░░░░` | **15.8** | 76.1 | 41.4 |
+|  | ⬜ Qwen2-VL-7B ⚠️ | `█░░░░░░░░░░░` | **11.7** | 50.0 | 62.2 |
+
+⚠️ marks a system **at or below the action-only ceiling** on Task B: its score
+is reachable from the stated turn alone, with no image.
+
+</details>
+
+> **22 of the 36 systems we evaluated score at or below the action-only
+> ceiling.** For those, the reported accuracy is consistent with never having
+> looked at the picture.
+
+**Read the top of that table and the task looks nearly solved** — the best
+model is 1.0 point under the human panel. It is not. Read it one turn at a
+time instead:
 
 ### Why it matters
 
