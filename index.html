@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EgoShift — a benchmark for egocentric spatial updating</title>
-<meta name="description" content="Frontier models answer 84.3% of 120-degree turns correctly and 38.3% of 90-degree ones. Accuracy does not fall as the turn grows larger, and a pooled score hides where it collapses. EgoShift reads egocentric spatial updating one stated turn at a time. WACV 2027.">
+<meta name="description" content="A question that states how far the camera turned gives part of the answer away. EgoShift computes how far — 45.90%, from the camera geometry, before any model runs — and holds all ten turn cells to it, so accuracy can be read one action at a time. WACV 2027.">
 <link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:title" content="EgoShift">
-<meta property="og:description" content="Frontier models answer 84.3% of 120-degree turns correctly and 38.3% of 90-degree ones. Accuracy does not fall as the turn grows larger, and a pooled score hides where it collapses.">
+<meta property="og:description" content="A question that states how far the camera turned gives part of the answer away. EgoShift computes how far — 45.90%, fixed by the geometry before any model runs — and holds all ten turn cells to it.">
 <meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -343,9 +343,9 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
     <h1>EgoShift</h1>
     <p class="tag">A benchmark for egocentric spatial updating</p>
     <div class="hbar"></div>
-    <p class="find">Frontier models answer <b>84.3%</b> of 120&deg; turns correctly and
-    <b>38.3%</b> of 90&deg; ones. Accuracy does not fall as the turn grows larger, and a
-    pooled score hides where it collapses.</p>
+    <p class="find">Only Task B states an action, so only there can the wording give the
+    answer away. EgoShift computes how far that goes &mdash; <b>45.90%</b>, fixed by the
+    camera geometry before any model ran &mdash; and holds all ten turn cells to it.</p>
     <ul class="q3">
       <li><b>A</b> Is this the same object? <i>control</i></li>
       <li><b>B</b> Where is it after you turn? <i>primary</i></li>
@@ -413,7 +413,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
 
   <div class="facts">
     <div><b class="num">12,786</b><span>held-out questions</span></div>
-    <div><b class="num">4,698</b><span>distinct rooms</span></div>
+    <div><b class="num">8,198</b><span>distinct rooms, none in two splits</span></div>
     <div><b class="num">15,761</b><span>development questions, answers released</span></div>
     <div><b class="num">36</b><span>systems evaluated</span></div>
     <div><b class="num">27</b><span>trained-annotator sessions</span></div>
