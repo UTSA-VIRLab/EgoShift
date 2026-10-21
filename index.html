@@ -41,6 +41,12 @@ b,strong{font-weight:600}
 .top .wrap{display:flex;align-items:baseline;justify-content:space-between;
   padding-top:16px;padding-bottom:16px;gap:16px;flex-wrap:wrap}
 .mark{font-family:Archivo;font-weight:800;font-size:1.22rem;letter-spacing:-.03em}
+.crumb{display:flex;align-items:baseline;gap:9px;min-width:0}
+.home{font-family:Archivo;font-weight:700;font-size:1.22rem;letter-spacing:-.03em;
+  color:var(--mute);text-decoration:none;border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s}
+.home:hover,.home:focus-visible{color:var(--geo);border-bottom-color:var(--geo)}
+.sep{color:var(--line);font-size:1.22rem;font-weight:300}
 .venue{color:var(--mute);font-size:.9rem}
 
 /* ── hero ── */
@@ -156,6 +162,8 @@ figcaption{font-size:.86rem;color:var(--mute);margin-top:9px;max-width:68ch}
 .grid3 span{font-size:.88rem;color:var(--mute)}
 footer{border-top:1px solid var(--line);background:var(--card);
   padding:30px 0;font-size:.9rem;color:var(--mute)}
+footer .lab{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line)}
+footer .lab:hover,footer .lab:focus-visible{color:var(--geo);border-bottom-color:var(--geo)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media(max-width:700px){
   .tw{display:none}
@@ -173,7 +181,11 @@ footer{border-top:1px solid var(--line);background:var(--card);
 <body>
 
 <div class="top"><div class="wrap">
-  <span class="mark">EgoShift</span>
+  <span class="crumb">
+    <a class="home" href="https://utsa-virlab.github.io/">VIRLab</a>
+    <span class="sep">/</span>
+    <span class="mark">EgoShift</span>
+  </span>
   <span class="venue">WACV 2027, Evaluation &amp; Datasets</span>
 </div></div>
 
@@ -462,8 +474,9 @@ egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
 </div></section>
 
 <footer><div class="wrap">
-  Vision, Interaction and Reality Lab, University of Texas at San Antonio.
-  Supported by the National Science Foundation.
+  <a class="lab" href="https://utsa-virlab.github.io/">Vision and Immersive Realities
+  Lab (VIRLab)</a>, University of Texas at San Antonio.
+  Supported by the National Science Foundation under award IIS-2316240.
 </div></footer>
 
 
