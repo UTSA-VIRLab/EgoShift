@@ -4,198 +4,230 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EgoShift — bounding the action-only shortcut</title>
-<meta name="description" content="A benchmark that computes, from camera geometry alone, how much a stated turn gives away — then builds every question to sit on that bound. WACV 2027.">
+<meta name="description" content="A stated camera turn gives the answer away. EgoShift computes exactly how much, from geometry, before any model runs. WACV 2027.">
 <link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:title" content="EgoShift">
 <meta property="og:description" content="A stated camera turn gives the answer away. EgoShift measures exactly how much, before any model runs.">
 <meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0C1020">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#11151C; --paper:#FBFBF9; --card:#fff;
-  --mute:#5D6673; --line:#E4E6E1;
-  --earn:#0B8F6E;          /* what the model actually earns */
-  --free:#C9A227;          /* what the turn gives away */
-  --miss:#C2683F;          /* the shortcut's answer */
-  --w:1120px;
+  --ink:#0C1020; --ink2:#161E36; --line2:#2A3353;
+  --paper:#FFFCF5; --card:#fff; --line:#EBE6DA; --mute:#5E6677;
+  --sun:#FFB703;    /* free — what the turn gives away */
+  --jade:#00B386;   /* earned — what the model adds   */
+  --coral:#FF5A3C;  /* the shortcut's answer          */
+  --violet:#7C5CFF; /* interaction                    */
+  --w:1140px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--paper);color:var(--ink);
+body{background:var(--paper);color:#10131C;
   font:400 16.5px/1.65 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:var(--w);margin:0 auto;padding:0 26px}
-h1,h2,h3{font-family:"Space Grotesk",system-ui,sans-serif;letter-spacing:-.025em;line-height:1.05;font-weight:700}
-h2{font-size:clamp(1.55rem,3.2vw,2.3rem);margin-bottom:.5em}
-h3{font-size:1.06rem;margin:1.9em 0 .45em}
-p{max-width:66ch;margin-bottom:1em}
-a{color:var(--earn)}
+h1,h2,h3{font-family:"Space Grotesk",system-ui,sans-serif;letter-spacing:-.03em;line-height:1.04;font-weight:700}
+h2{font-size:clamp(1.7rem,3.8vw,2.7rem);margin-bottom:.45em}
+h3{font-size:1.06rem;margin:1.7em 0 .4em}
+p{max-width:64ch;margin-bottom:1em}
+a{color:var(--jade)}
 b,strong{font-weight:600}
 .num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-weight:600}
-section{padding:72px 0;border-top:1px solid var(--line)}
-.lede{font-size:1.1rem;color:var(--mute);max-width:62ch}
+section{padding:82px 0}
+.lede{font-size:1.1rem;color:var(--mute);max-width:60ch}
+.dark{background:var(--ink);color:#F2F4F8}
+.dark h2{color:#fff} .dark .lede{color:#9AA4BC} .dark a{color:var(--sun)}
+.tintv{background:linear-gradient(180deg,#F3F0FF 0%,#FBFAFF 100%)}
 
 /* ── sticky bar ───────────────────────────────── */
-.bar{position:sticky;top:0;z-index:50;background:rgba(251,251,249,.88);
-  backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.bar .wrap{display:flex;align-items:center;gap:14px;padding-top:11px;padding-bottom:11px}
-.back{display:inline-flex;align-items:center;gap:7px;flex:none;
-  padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);
-  color:var(--mute);font-size:.86rem;font-weight:600;text-decoration:none;white-space:nowrap;
-  transition:color .15s,border-color .15s,transform .15s}
-.back:hover,.back:focus-visible{color:var(--earn);border-color:var(--earn);transform:translateX(-2px)}
-.back .ar{font-size:1.05em;line-height:1}
-.brand{font-family:"Space Grotesk";font-weight:700;font-size:1.1rem;letter-spacing:-.03em}
+.bar{position:sticky;top:0;z-index:60;background:rgba(12,16,32,.92);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line2)}
+.bar .wrap{display:flex;align-items:center;gap:14px;padding:11px 26px}
+.back{display:inline-flex;align-items:center;gap:7px;flex:none;padding:7px 14px;
+  border:1px solid var(--line2);border-radius:999px;background:rgba(255,255,255,.05);
+  color:#C3CBDE;font-size:.86rem;font-weight:600;text-decoration:none;white-space:nowrap;
+  transition:color .15s,border-color .15s,background .15s,transform .15s}
+.back:hover,.back:focus-visible{color:var(--ink);background:var(--sun);border-color:var(--sun);transform:translateX(-3px)}
+.brand{font-family:"Space Grotesk";font-weight:700;font-size:1.1rem;color:#fff;letter-spacing:-.03em}
 .bar .sp{flex:1}
-.bar .vn{color:var(--mute);font-size:.84rem}
-@media(max-width:620px){.bar .vn{display:none}}
+.bar .vn{color:#8E98B2;font-size:.83rem}
+@media(max-width:640px){.bar .vn{display:none}}
 
 /* ── hero ─────────────────────────────────────── */
-.hero{padding:62px 0 58px}
-.hero .wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:54px;align-items:center}
-h1{font-size:clamp(2.5rem,6.2vw,4.4rem)}
-h1 .hl{color:var(--miss)}
-.hero p.say{font-size:1.12rem;color:var(--mute);margin-top:1.1em;max-width:46ch}
+.hero{background:var(--ink);color:#fff;padding:70px 0 78px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-30% -10% auto auto;width:720px;height:720px;
+  background:radial-gradient(circle,rgba(124,92,255,.30),transparent 62%);pointer-events:none}
+.hero::after{content:"";position:absolute;inset:auto auto -40% -12%;width:620px;height:620px;
+  background:radial-gradient(circle,rgba(0,179,134,.22),transparent 62%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+h1{font-size:clamp(2.6rem,6.6vw,4.7rem);color:#fff}
+h1 em{font-style:normal;color:var(--coral)}
+.hero p.say{font-size:1.14rem;color:#AEB8D0;margin-top:1.05em;max-width:46ch}
 .cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:30px}
-.cta a{display:inline-block;padding:10px 19px;border:1px solid var(--line);border-radius:10px;
-  background:var(--card);font-weight:600;font-size:.92rem;text-decoration:none;color:var(--ink);
-  transition:border-color .15s,color .15s,transform .15s}
-.cta a:hover,.cta a:focus-visible{border-color:var(--earn);color:var(--earn);transform:translateY(-2px)}
-.cta a.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
-.cta a.pri:hover{background:var(--earn);border-color:var(--earn);color:#fff}
+.cta a{display:inline-block;padding:11px 20px;border-radius:11px;font-weight:600;font-size:.93rem;
+  text-decoration:none;border:1px solid var(--line2);color:#D6DCEC;background:rgba(255,255,255,.04);
+  transition:all .16s}
+.cta a:hover,.cta a:focus-visible{border-color:var(--sun);color:var(--sun);transform:translateY(-2px)}
+.cta a.pri{background:var(--sun);color:#0C1020;border-color:var(--sun)}
+.cta a.pri:hover{background:#FFC93C;border-color:#FFC93C;color:#0C1020}
+@media(max-width:880px){.hero .wrap{grid-template-columns:1fr;gap:34px}}
 
 /* ── the instrument ───────────────────────────── */
-.inst{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 24px 20px}
-.turns{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:18px}
-.turns button{padding:9px 2px;border:1px solid var(--line);border-radius:9px;
-  background:var(--paper);font:600 .92rem/1 "IBM Plex Mono",monospace;color:var(--mute);
+.inst{background:rgba(255,255,255,.045);border:1px solid var(--line2);border-radius:22px;
+  padding:22px;backdrop-filter:blur(6px)}
+.turns{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px}
+.turns button{padding:10px 2px;border:1px solid var(--line2);border-radius:10px;
+  background:rgba(255,255,255,.04);font:600 .92rem/1 "IBM Plex Mono",monospace;color:#AEB8D0;
   cursor:pointer;transition:all .15s}
-.turns button:hover{border-color:var(--ink);color:var(--ink)}
-.turns button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
-.dialwrap{display:flex;justify-content:center;margin:4px 0 14px}
-svg.dial{width:100%;max-width:252px;height:auto}
-.zlab{font:500 11px "IBM Plex Sans",sans-serif;fill:var(--mute)}
-.band{fill:var(--free);fill-opacity:.17;stroke:var(--free);stroke-width:1.4;
-  transition:d .5s cubic-bezier(.4,0,.2,1)}
-.ring{fill:none;stroke:var(--line);stroke-width:1.5}
-.spoke{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
-.reads{display:flex;gap:10px;align-items:baseline;margin-bottom:10px}
-.reads .zn{font:600 .84rem/1 "IBM Plex Sans";color:var(--mute)}
-.reads .zn b{color:var(--ink);font-family:"IBM Plex Mono"}
-.mtr{margin-top:12px}
+.turns button:hover{border-color:var(--sun);color:var(--sun)}
+.turns button[aria-pressed=true]{background:var(--sun);border-color:var(--sun);color:#0C1020}
+.dialwrap{display:flex;justify-content:center;margin:2px 0 12px}
+svg.dial{width:100%;max-width:244px;height:auto}
+.zlab{font:500 11px "IBM Plex Sans",sans-serif;fill:#8E98B2}
+.band{fill:var(--sun);fill-opacity:.38;stroke:#FFD166;stroke-width:2;
+  transition:d .55s cubic-bezier(.34,1.26,.64,1)}
+.ring{fill:none;stroke:var(--line2);stroke-width:1.5}
+.spoke{stroke:var(--line2);stroke-width:1;stroke-dasharray:3 4}
+.reads{font:600 .84rem/1 "IBM Plex Sans";color:#8E98B2;margin-bottom:11px}
+.reads b{color:#fff;font-family:"IBM Plex Mono"}
 .mtr .row{display:flex;align-items:center;gap:11px;margin-bottom:7px}
-.mtr .lbl{width:92px;flex:none;font-size:.82rem;color:var(--mute);font-weight:500}
-.mtr .bar2{flex:1;height:13px;background:var(--paper);border-radius:7px;overflow:hidden;
-  border:1px solid var(--line)}
-.mtr .bar2 i{display:block;height:100%;border-radius:7px;
-  transition:width .55s cubic-bezier(.4,0,.2,1)}
-.mtr .f i{background:var(--free)} .mtr .e i{background:var(--earn)}
-.mtr .pc{width:54px;text-align:right;font-family:"IBM Plex Mono";font-weight:600;font-size:.9rem}
-.verdict{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);
-  font-size:.92rem;color:var(--mute)}
-.verdict b{color:var(--ink)}
-.verdict.thin b{color:var(--miss)}
+.mtr .lbl{width:88px;flex:none;font-size:.81rem;color:#8E98B2;font-weight:500}
+.mtr .bar2{flex:1;height:14px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden}
+.mtr .bar2 i{display:block;height:100%;border-radius:8px;transition:width .6s cubic-bezier(.34,1.26,.64,1)}
+.mtr .f i{background:linear-gradient(90deg,#FFB703,#FFD166)}
+.mtr .e i{background:linear-gradient(90deg,#00B386,#3DDCAD)}
+.mtr .pc{width:52px;text-align:right;font-family:"IBM Plex Mono";font-weight:600;font-size:.9rem;color:#fff}
+.verdict{margin-top:13px;padding-top:12px;border-top:1px solid var(--line2);font-size:.92rem;color:#AEB8D0}
+.verdict b{color:var(--jade);font-family:"IBM Plex Mono"}
+.verdict.thin b{color:var(--coral)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-@media(max-width:860px){
-  .hero .wrap{grid-template-columns:1fr;gap:34px}
-  .hero{padding:40px 0 44px}
-}
-/* ── the five turns ───────────────────────────── */
+/* ── five turns ───────────────────────────────── */
 .five{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
-.tk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 12px 13px;
-  text-align:center;position:relative}
-.tk.hard{border-color:var(--miss)}
-.tk .ang{font-family:"Space Grotesk";font-weight:700;font-size:1.26rem;letter-spacing:-.03em}
-.tk .stack{height:108px;display:flex;align-items:flex-end;justify-content:center;gap:5px;margin:11px 0 9px}
-.tk .stack i{width:19px;border-radius:4px 4px 0 0;display:block}
-.tk .stack .f{background:var(--free)} .tk .stack .e{background:var(--earn)}
-.tk .gn{font-family:"IBM Plex Mono";font-weight:600;font-size:1rem}
-.tk.hard .gn{color:var(--miss)}
-.tk .sub{display:block;font-size:.74rem;color:var(--mute);margin-top:3px;line-height:1.3}
-@media(max-width:760px){.five{grid-template-columns:repeat(2,1fr)}.tk .stack{height:86px}}
+.tk{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:17px 12px 14px;text-align:center}
+.tk.hard{border-color:var(--coral);background:linear-gradient(180deg,#FFF3F0,#fff)}
+.tk .ang{font-family:"Space Grotesk";font-weight:700;font-size:1.3rem}
+.tk .stack{height:116px;display:flex;align-items:flex-end;justify-content:center;gap:6px;margin:12px 0 10px}
+.tk .stack i{width:21px;border-radius:5px 5px 0 0;display:block;transition:height .6s cubic-bezier(.34,1.26,.64,1)}
+.tk .stack .f{background:linear-gradient(180deg,#FFD166,#FFB703)}
+.tk .stack .e{background:linear-gradient(180deg,#3DDCAD,#00B386)}
+.tk .gn{font-family:"IBM Plex Mono";font-weight:600;font-size:1.05rem;color:var(--jade)}
+.tk.hard .gn{color:var(--coral)}
+.tk .sub{display:block;font-size:.73rem;color:var(--mute);margin-top:4px;line-height:1.35}
+.key{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px;font-size:.88rem;color:var(--mute)}
+.key i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:0}
+@media(max-width:780px){.five{grid-template-columns:repeat(2,1fr)}.tk .stack{height:92px}}
 
-/* ── tasks ────────────────────────────────────── */
-.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
-.tcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:19px 18px}
-.tcard .tag{font-family:"IBM Plex Mono";font-weight:600;font-size:.78rem;color:var(--earn)}
-.tcard h3{margin:.35em 0 .3em;font-size:1.02rem}
-.tcard p{font-size:.92rem;color:var(--mute);margin:0}
-.tcard.key{border-color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
-@media(max-width:760px){.three{grid-template-columns:1fr}}
-figure{margin:30px 0 0}
-figure img{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-figcaption{font-size:.86rem;color:var(--mute);margin-top:10px;max-width:72ch}
+/* ── play it ──────────────────────────────────── */
+.play{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;margin-top:30px}
+.shot{position:relative;border-radius:16px;overflow:hidden;border:2px solid var(--line);background:#000}
+.shot img{display:block;width:100%}
+.shot .cap{position:absolute;left:0;right:0;bottom:0;padding:9px 13px;font-size:.82rem;color:#fff;
+  background:linear-gradient(0deg,rgba(0,0,0,.78),transparent)}
+.ask{font-family:"Space Grotesk";font-weight:600;font-size:1.12rem;margin-bottom:14px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:16px}
+.opts button{padding:14px 10px;border:2px solid var(--line);border-radius:12px;background:#fff;
+  font:600 .95rem "IBM Plex Sans";cursor:pointer;transition:all .15s;color:#10131C}
+.opts button:hover:not([disabled]){border-color:var(--violet);color:var(--violet);transform:translateY(-2px)}
+.opts button.right{border-color:var(--jade);background:#E8FBF4;color:#00754F}
+.opts button.wrong{border-color:var(--coral);background:#FFF0ED;color:#C2301A}
+.opts button[disabled]{cursor:default}
+.reveal{border-left:3px solid var(--violet);padding:12px 0 12px 15px;font-size:.95rem;color:#333A4D}
+.reveal b{color:#10131C}
+.reveal .sc{color:var(--coral);font-weight:600}
+@media(max-width:780px){.play{grid-template-columns:1fr;gap:24px}}
 
-/* ── leaderboard ──────────────────────────────── */
-.lbhead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
-#toggle{padding:8px 15px;border:1px solid var(--line);border-radius:9px;background:var(--card);
-  font:600 .85rem "IBM Plex Sans";color:var(--mute);cursor:pointer}
-#toggle:hover{border-color:var(--ink);color:var(--ink)}
-.lb{width:100%;border-collapse:collapse;margin-top:18px;font-size:.92rem}
-.lb th{text-align:right;font-weight:600;font-size:.78rem;color:var(--mute);padding:0 9px 9px;
-  border-bottom:1px solid var(--line);white-space:nowrap}
+/* ── task C switcher ──────────────────────────── */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:26px}
+.tcard{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:18px 17px}
+.tcard .tag{font-family:"IBM Plex Mono";font-weight:600;font-size:.76rem;color:var(--jade)}
+.tcard.key2{border-color:#10131C;box-shadow:5px 5px 0 #10131C}
+.tcard.key2 .tag{color:var(--violet)}
+.tcard h3{margin:.3em 0 .25em;font-size:1.03rem}
+.tcard p{font-size:.91rem;color:var(--mute);margin:0}
+@media(max-width:780px){.three{grid-template-columns:1fr}}
+.cswitch{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;margin-top:34px}
+.tabs{display:flex;gap:7px;margin-bottom:13px;flex-wrap:wrap}
+.tabs button{padding:9px 15px;border:2px solid var(--line);border-radius:999px;background:#fff;
+  font:600 .88rem "IBM Plex Sans";cursor:pointer;color:var(--mute);transition:all .15s}
+.tabs button:hover{border-color:#10131C;color:#10131C}
+.tabs button[aria-pressed=true]{background:#10131C;border-color:#10131C;color:#fff}
+.cnote{font-size:.93rem;color:var(--mute);margin-top:12px;min-height:3.1em}
+@media(max-width:780px){.cswitch{grid-template-columns:1fr}}
+
+/* ── leaderboard (dark) ───────────────────────── */
+.dark .lbhead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+#toggle{padding:9px 16px;border:1px solid var(--line2);border-radius:10px;background:rgba(255,255,255,.05);
+  font:600 .85rem "IBM Plex Sans";color:#C3CBDE;cursor:pointer}
+#toggle:hover{border-color:var(--sun);color:var(--sun)}
+.lb{width:100%;border-collapse:collapse;margin-top:20px;font-size:.92rem}
+.lb th{text-align:right;font-weight:600;font-size:.77rem;color:#8E98B2;padding:0 9px 10px;
+  border-bottom:1px solid var(--line2);white-space:nowrap}
 .lb th.l{text-align:left}
 .lb th button{background:none;border:0;font:inherit;color:inherit;cursor:pointer;padding:0}
-.lb th button:hover{color:var(--ink)}
-.lb th[aria-sort] button{color:var(--ink)}
-.lb td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:right}
-.lb td.rk{width:30px;text-align:right;color:var(--mute);font-family:"IBM Plex Mono";font-size:.84rem}
+.lb th button:hover{color:var(--sun)}
+.lb th[aria-sort] button{color:var(--sun)}
+.lb td{padding:8px 9px;border-bottom:1px solid rgba(255,255,255,.06);text-align:right;color:#D6DCEC}
+.lb td.rk{width:30px;color:#737E99;font-family:"IBM Plex Mono";font-size:.84rem}
 .lb td.mdl{text-align:left;white-space:nowrap}
 .lb .n{font-family:"IBM Plex Mono";font-weight:600;font-variant-numeric:tabular-nums}
-.lb tr.under .n.hi{color:var(--miss)}
-.sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;vertical-align:1px}
-.sw.g{background:#4285F4} .sw.a{background:#C2683F} .sw.o{background:#0B8F6E} .sw.w{background:#AEB6C2}
-.track{width:34%}
-.track span{display:block;height:7px;border-radius:4px;background:var(--earn);opacity:.72}
-.lb tfoot td{border-top:2px solid var(--ink);border-bottom:0;padding-top:10px;
-  color:var(--mute);font-size:.88rem}
-.lb tfoot .mdl{font-weight:600;color:var(--ink)}
-.lb tfoot .n{color:var(--ink)}
-.lb tfoot .track span{opacity:1}
-.lb tfoot .hum{background:var(--ink)}
-.lb tfoot .cl{background:var(--free)}
-.lb tfoot .ceilrow td{border-top:1px solid var(--line);padding-top:7px}
-#hint{margin-top:11px;font-size:.86rem;color:var(--mute)}
-@media(max-width:760px){.track{display:none}.lb td,.lb th{padding:6px 5px}.lb{font-size:.84rem}
-  .lb td.mdl{white-space:normal;max-width:148px}}
+.lb .n.hi{color:#fff}
+.lb tr.under .n.hi{color:var(--coral)}
+.sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:9px;vertical-align:1px}
+.sw.g{background:#5B9CFF} .sw.a{background:#FF8A5B} .sw.o{background:var(--jade)} .sw.w{background:#6B7694}
+.track{width:32%}
+.track span{display:block;height:8px;border-radius:5px;background:linear-gradient(90deg,#00B386,#3DDCAD)}
+.lb tfoot td{border-top:2px solid var(--sun);border-bottom:0;padding-top:11px;color:#AEB8D0;font-size:.88rem}
+.lb tfoot .mdl{font-weight:600;color:#fff}
+.lb tfoot .n{color:#fff}
+.lb tfoot .hum{background:#fff}
+.lb tfoot .cl{background:linear-gradient(90deg,#FFB703,#FFD166)}
+.lb tfoot .ceilrow td{border-top:1px solid rgba(255,255,255,.08);padding-top:8px}
+#hint{margin-top:12px;font-size:.86rem;color:#8E98B2}
+@media(max-width:780px){.track{display:none}.lb td,.lb th{padding:6px 5px}.lb{font-size:.84rem}
+  .lb td.mdl{white-space:normal;max-width:146px}}
 
 /* ── misc ─────────────────────────────────────── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:26px}
-@media(max-width:760px){.g2{grid-template-columns:1fr}}
-pre{background:var(--ink);color:#E8EAE6;border-radius:12px;padding:17px 19px;overflow-x:auto;
-  font:500 .85rem/1.6 "IBM Plex Mono",monospace;margin:14px 0}
+@media(max-width:780px){.g2{grid-template-columns:1fr}}
+figure{margin:30px 0 0}
+figure img{width:100%;border:2px solid var(--line);border-radius:14px;background:#fff}
+figcaption{font-size:.86rem;color:var(--mute);margin-top:10px;max-width:72ch}
+pre{background:#0C1020;color:#E8EAF2;border-radius:14px;padding:18px 20px;overflow-x:auto;
+  font:500 .85rem/1.6 "IBM Plex Mono",monospace;margin:14px 0;border:1px solid var(--line2)}
 pre code{background:none;border:0;padding:0;color:inherit;border-radius:0}
-code{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:1px 5px;
   font:500 .88em "IBM Plex Mono",monospace}
-ul{margin:0 0 1em 1.1em} li{margin-bottom:.4em;max-width:66ch}
-a:focus-visible,button:focus-visible{outline:2.5px solid var(--earn);outline-offset:3px;border-radius:4px}
-footer{border-top:1px solid var(--line);background:var(--card);padding:34px 0;
-  font-size:.9rem;color:var(--mute)}
+ul{margin:0 0 1em 1.1em} li{margin-bottom:.4em;max-width:64ch}
+a:focus-visible,button:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:5px}
+.dark a:focus-visible,.dark button:focus-visible{outline-color:var(--sun)}
+footer{background:var(--ink);color:#8E98B2;padding:40px 0;font-size:.9rem;border-top:1px solid var(--line2)}
 footer .wrap{display:flex;gap:18px;justify-content:space-between;flex-wrap:wrap;align-items:center}
-footer a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line)}
-footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(--earn)}
+footer a{color:#C3CBDE;text-decoration:none;border-bottom:1px solid var(--line2)}
+footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(--sun)}
 </style>
 </head>
 <body>
 
 <div class="bar"><div class="wrap">
-  <a class="back" href="https://utsa-virlab.github.io/" title="Vision and Immersive Realities Lab, UTSA"><span class="ar">&#8592;</span>VIRLab</a>
+  <a class="back" href="https://utsa-virlab.github.io/" title="Vision and Immersive Realities Lab, UTSA"><span aria-hidden="true">&#8592;</span>VIRLab</a>
   <span class="brand">EgoShift</span>
   <span class="sp"></span>
   <span class="vn">WACV 2027, Evaluation &amp; Datasets</span>
 </div></div>
 <header class="hero"><div class="wrap">
   <div>
-    <h1>A stated turn gives the answer <span class="hl">away.</span></h1>
+    <h1>A stated turn gives the answer <em>away.</em></h1>
     <p class="say">Ask where an object lands after a 90&deg; turn and the turn alone has
-    already ruled out some answers. EgoShift computes how much is given away &mdash;
-    from camera geometry, before any model runs &mdash; and builds every question to
-    sit exactly on that bound.</p>
+    already ruled out some answers. EgoShift computes how much is given away &mdash; from
+    camera geometry, before any model runs &mdash; and builds every question to sit
+    exactly on that bound.</p>
     <div class="cta">
       <a class="pri" href="assets/EgoShift_WACV2027.pdf">Read the paper</a>
+      <a href="#play">Try it</a>
       <a href="#leaderboard">Leaderboard</a>
       <a href="https://github.com/UTSA-VIRLab/EgoShift">Code</a>
       <a href="https://huggingface.co/datasets/utsavirlab/EgoShift">Data</a>
@@ -205,32 +237,29 @@ footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(
 
   <div class="inst">
     <div class="turns" role="group" aria-label="Choose a stated turn">
-      <button data-t="30"  aria-pressed="false">30&deg;</button>
-      <button data-t="60"  aria-pressed="false">60&deg;</button>
-      <button data-t="90"  aria-pressed="true">90&deg;</button>
+      <button data-t="30" aria-pressed="false">30&deg;</button>
+      <button data-t="60" aria-pressed="false">60&deg;</button>
+      <button data-t="90" aria-pressed="true">90&deg;</button>
       <button data-t="120" aria-pressed="false">120&deg;</button>
       <button data-t="180" aria-pressed="false">180&deg;</button>
     </div>
-
     <div class="dialwrap">
       <svg class="dial" viewBox="0 0 220 220" role="img" aria-labelledby="dialttl">
-        <title id="dialttl">Where the object can land after the stated turn</title>
+        <title id="dialttl">Which answers the stated turn leaves reachable</title>
         <path id="band" class="band" d=""></path>
         <circle class="ring" cx="110" cy="110" r="78"></circle>
         <line class="spoke" x1="110" y1="110" x2="165" y2="55"></line>
         <line class="spoke" x1="110" y1="110" x2="165" y2="165"></line>
-        <line class="spoke" x1="110" y1="110" x2="55"  y2="165"></line>
-        <line class="spoke" x1="110" y1="110" x2="55"  y2="55"></line>
-        <text class="zlab" x="110" y="22"  text-anchor="middle">in front</text>
+        <line class="spoke" x1="110" y1="110" x2="55" y2="165"></line>
+        <line class="spoke" x1="110" y1="110" x2="55" y2="55"></line>
+        <text class="zlab" x="110" y="22" text-anchor="middle">in front</text>
         <text class="zlab" x="205" y="114" text-anchor="end">right</text>
         <text class="zlab" x="110" y="208" text-anchor="middle">behind</text>
-        <text class="zlab" x="15"  y="114">left</text>
-        <circle cx="110" cy="110" r="3.4" fill="#11151C"></circle>
+        <text class="zlab" x="15" y="114">left</text>
+        <circle cx="110" cy="110" r="3.4" fill="#fff"></circle>
       </svg>
     </div>
-
-    <div class="reads"><span class="zn">the turn leaves <b id="zn">3</b> of 4 answers reachable</span></div>
-
+    <p class="reads">the turn leaves <b id="zn">3</b> of 4 answers reachable</p>
     <div class="mtr">
       <div class="row f"><span class="lbl">free</span>
         <span class="bar2"><i id="bf" style="width:33.3%"></i></span>
@@ -239,61 +268,56 @@ footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(
         <span class="bar2"><i id="be" style="width:38.3%"></i></span>
         <span class="pc num" id="pe">38.3</span></div>
     </div>
-
-    <p class="verdict thin" id="vd">At 90&deg; the best model earns <b>+5.0</b> points
-    beyond what the turn already gave away.</p>
+    <p class="verdict thin" id="vd">At 90&deg; the best model earns <b>+5.0</b> beyond what the turn gave away.</p>
   </div>
 </div></header>
 
 <section><div class="wrap">
-  <h2>The contribution is the construction, not the scores</h2>
-  <p class="lede">The bound above is not measured from model behaviour. It is computed
-  from the camera geometry before any model runs, so it cannot be tuned to suit a
-  result &mdash; and every question in the benchmark is built to sit on it.</p>
-  <div class="g2">
-    <div>
-      <h3>What the test does</h3>
-      <p>For each stated turn we derive the highest score a predictor can reach from the
-      turn alone, with no image. Five angles and two directions give ten groups, and each
-      one is built to match that value exactly.</p>
-      <p>We release the derivation, an independent checker and a record of which scenes
-      were ever used during development.</p>
-    </div>
-    <div>
-      <h3>Why balancing is not enough</h3>
-      <p>An earlier build of our data passed every conventional balance check, yet a
-      system that saw only the stated turn scored <span class="num">72.3%</span> on it.
-      The imbalance sits inside each turn, not across the whole question set.</p>
-      <p>That build differs from the released one in other ways, so the number shows what
-      the test catches &mdash; not a controlled measure of what the construction changed.</p>
-    </div>
-  </div>
-</div></section>
-
-<section><div class="wrap">
   <h2>Difficulty does not grow with the turn</h2>
-  <p class="lede">Each column pairs what the turn gives away with what the strongest
+  <p class="lede">Each column pairs what the stated turn gives away with what the strongest
   configuration actually reaches. At 90&deg; and 180&deg; the gap nearly closes.</p>
   <div class="five">
     <div class="tk"><span class="ang">30&deg;</span>
       <div class="stack"><i class="f" style="height:50.4%"></i><i class="e" style="height:86.8%"></i></div>
-      <span class="gn">+36.4</span><span class="sub"><b class="num">86.8</b> reached against <b class="num">50.4</b> free<br>2 answers reachable</span></div>
+      <span class="gn">+36.4</span><span class="sub"><b class="num">86.8</b> against <b class="num">50.4</b> free<br>2 answers reachable</span></div>
     <div class="tk"><span class="ang">60&deg;</span>
       <div class="stack"><i class="f" style="height:50.4%"></i><i class="e" style="height:82.1%"></i></div>
-      <span class="gn">+31.7</span><span class="sub"><b class="num">82.1</b> reached against <b class="num">50.4</b> free<br>2 answers reachable</span></div>
+      <span class="gn">+31.7</span><span class="sub"><b class="num">82.1</b> against <b class="num">50.4</b> free<br>2 answers reachable</span></div>
     <div class="tk hard"><span class="ang">90&deg;</span>
       <div class="stack"><i class="f" style="height:33.3%"></i><i class="e" style="height:38.3%"></i></div>
-      <span class="gn">+5.0</span><span class="sub"><b class="num">38.3</b> reached against <b class="num">33.3</b> free<br>3 answers reachable</span></div>
+      <span class="gn">+5.0</span><span class="sub"><b class="num">38.3</b> against <b class="num">33.3</b> free<br>3 answers reachable</span></div>
     <div class="tk"><span class="ang">120&deg;</span>
       <div class="stack"><i class="f" style="height:50.0%"></i><i class="e" style="height:84.3%"></i></div>
-      <span class="gn">+34.3</span><span class="sub"><b class="num">84.3</b> reached against <b class="num">50.0</b> free<br>2 answers reachable</span></div>
+      <span class="gn">+34.3</span><span class="sub"><b class="num">84.3</b> against <b class="num">50.0</b> free<br>2 answers reachable</span></div>
     <div class="tk hard"><span class="ang">180&deg;</span>
       <div class="stack"><i class="f" style="height:35.7%"></i><i class="e" style="height:36.8%"></i></div>
-      <span class="gn">+1.1</span><span class="sub"><b class="num">36.8</b> reached against <b class="num">35.7</b> free<br>3 answers reachable</span></div>
+      <span class="gn">+1.1</span><span class="sub"><b class="num">36.8</b> against <b class="num">35.7</b> free<br>3 answers reachable</span></div>
   </div>
-  <p style="margin-top:22px;color:var(--mute);font-size:.92rem">Gold is what the stated
-  turn reaches with no image. Teal is the best of twelve frontier configurations.
-  Trained annotators find the same two turns harder, yet stay far above the no-image score.</p>
+  <p class="key"><span><i style="background:linear-gradient(180deg,#FFD166,#FFB703)"></i>what the turn reaches with no image</span>
+  <span><i style="background:linear-gradient(180deg,#3DDCAD,#00B386)"></i>best of twelve frontier configurations</span>
+  <span>Trained annotators find the same two turns harder, yet stay far above the no-image score.</span></p>
+</div></section>
+
+<section id="play" class="tintv"><div class="wrap">
+  <h2>Try it yourself</h2>
+  <p class="lede">A real item from the development split. You see one view and the stated
+  turn &mdash; exactly what the model gets. Where does the cart end up?</p>
+  <div class="play">
+    <div class="shot">
+      <img src="assets/frames/b_view1.jpg" alt="A rendered interior: a sofa and doorway ahead, and on the right of the view a metal cart with a yellow seat." loading="lazy">
+      <div class="cap">The only view you get. Now turn 90&deg; to your right.</div>
+    </div>
+    <div>
+      <p class="ask">After the turn, where is the cart?</p>
+      <div class="opts" id="opts">
+        <button data-o="in front">in front</button>
+        <button data-o="to the right">to the right</button>
+        <button data-o="behind">behind</button>
+        <button data-o="to the left">to the left</button>
+      </div>
+      <div class="reveal" id="reveal" hidden></div>
+    </div>
+  </div>
 </div></section>
 <section><div class="wrap">
   <h2>Three tasks, one shared geometry</h2>
@@ -301,33 +325,51 @@ footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(
     <div class="tcard"><span class="tag">Task A</span>
       <h3>Is it the same object?</h3>
       <p>Two views of one room, a box drawn in each. A control, not a difficulty claim.</p></div>
-    <div class="tcard key"><span class="tag">Task B &mdash; primary</span>
+    <div class="tcard key2"><span class="tag">Task B &mdash; primary</span>
       <h3>Where is it after you turn?</h3>
-      <p>One view, a stated in-place turn, and the question of where the object lands.
-      The only task whose question names an action.</p></div>
+      <p>One view and a stated in-place turn. The only task whose question names an action.</p></div>
     <div class="tcard"><span class="tag">Task C</span>
       <h3>Can you still see it?</h3>
       <p>Visible, out of view, or occluded, after the camera has moved.</p></div>
   </div>
+
+  <div class="cswitch">
+    <div>
+      <h3 style="margin-top:0">Task C, switched live</h3>
+      <p style="font-size:.95rem;color:var(--mute)">The first view boxes the target. Pick
+      what happens next &mdash; each is a real second view from the same room.</p>
+      <div class="tabs" role="group" aria-label="Task C outcome">
+        <button data-c="visible" aria-pressed="true">visible</button>
+        <button data-c="occluded" aria-pressed="false">occluded</button>
+        <button data-c="outofview" aria-pressed="false">out of view</button>
+      </div>
+      <p class="cnote" id="cnote">The chair is still drawn in the second view, so the
+      answer is <b>visible</b>.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="shot"><img src="assets/frames/c_view1.jpg" alt="First view of a grey-walled lounge. A pink armchair is marked with a red box, beside a framed picture and a television." loading="lazy"><div class="cap">View 1 &mdash; target boxed</div></div>
+      <div class="shot"><img id="cimg" src="assets/frames/c_visible.jpg" alt="Second view of the same lounge: the pink armchair is still drawn." loading="lazy"><div class="cap" id="ccap">View 2 &mdash; visible</div></div>
+    </div>
+  </div>
+
   <figure>
-    <img src="assets/tasks.png" alt="Eight example panels from EgoShift showing the three tasks: cross-view object matching, direction after a stated 90 degree turn shown on a compass dial, and the three visibility classes.">
+    <img src="assets/tasks.png" alt="Eight example panels from EgoShift showing the three tasks: cross-view object matching, direction after a stated 90 degree turn on a compass dial, and the three visibility classes." loading="lazy">
     <figcaption>Examples from the development split. The red rectangle marks the object in
     question. On the Task-B dial, teal is the correct answer and red is what a model gets
     by assuming the object started straight ahead.</figcaption>
   </figure>
 </div></section>
 
-<section id="leaderboard"><div class="wrap">
+<section class="dark" id="leaderboard"><div class="wrap">
   <div class="lbhead">
-    <div><h2 style="margin-bottom:.25em">Leaderboard</h2>
+    <div><h2 style="margin-bottom:.2em">Leaderboard</h2>
       <p class="lede" style="margin:0">Task B is the primary task. Sort by any column.</p></div>
     <button id="toggle" hidden>Show all 36</button>
   </div>
   <table class="lb" id="board">
     <thead><tr>
       <th class="l" style="width:30px"></th>
-      <th class="l">Model</th>
-      <th class="l"></th>
+      <th class="l">Model</th><th class="l"></th>
       <th><button data-k="a">A</button></th>
       <th aria-sort="descending"><button data-k="b">B</button></th>
       <th><button data-k="c">C</button></th>
@@ -383,27 +425,38 @@ footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(
 </div></section>
 
 <section><div class="wrap">
-  <h2>Where the bound comes from</h2>
+  <h2>The contribution is the construction</h2>
+  <p class="lede">The bound is not measured from model behaviour. It is computed from the
+  camera geometry before any model runs, so it cannot be tuned to suit a result.</p>
   <div class="g2">
     <div>
+      <h3>Where the bound comes from</h3>
       <p>Every Task-B image is taken at standing height with a fixed tilt and field of
-      view, and the stated turn is a rotation about the vertical axis from that same
-      spot. Only the heading changes.</p>
-      <p>Because the geometry is declared, the set of answers a turn can produce is
-      finite and can be computed exactly. The construction requires the object's centre
-      to start within <span class="num">66.5868&deg;</span> of straight ahead &mdash; the
-      horizontal half-angle of a 640&times;480 frame at a 120&deg; vertical field of
-      view, written into the build before any pose was replayed.</p>
-      <p>Two independent implementations compute that answer set and agree on all ten
-      cells. The held-out set meets the bound in every one, holding the shortcut to
-      <span class="num">45.90%</span>.</p>
+      view, and the stated turn is a rotation about the vertical axis from that same spot.
+      Only the heading changes, so the set of answers a turn can produce is finite and can
+      be computed exactly.</p>
+      <p>The construction requires the object's centre to start within
+      <span class="num">66.5868&deg;</span> of straight ahead &mdash; the horizontal
+      half-angle of a 640&times;480 frame at a 120&deg; vertical field of view, written
+      into the build before any pose was replayed. Two independent implementations agree
+      on all ten cells, and the held-out set meets the bound in every one, holding the
+      shortcut to <span class="num">45.90%</span>.</p>
+      <h3>Why balancing is not enough</h3>
+      <p>An earlier build passed every conventional balance check, yet a system that saw
+      only the stated turn scored <span class="num">72.3%</span>. That build differs from
+      the released one in other ways, so the number shows what the test catches, not a
+      controlled measure of what the construction changed.</p>
     </div>
     <div>
       <figure style="margin:0">
-        <img src="assets/geometry.png" alt="Diagram showing, for each stated turn, the band of directions the object can occupy afterwards, and how many of the four answers that band covers.">
-        <figcaption>A turn shifts the whole band of starting directions around the
-        circle. The band covers three answers only at 90&deg; and 180&deg;; a larger turn
-        does not widen it, so a larger turn is not a harder question.</figcaption>
+        <img src="assets/geometry.png" alt="Diagram showing, for each stated turn, the band of directions the object can occupy afterwards and how many of the four answers that band covers." loading="lazy">
+        <figcaption>A turn shifts the whole band of starting directions around the circle.
+        The band covers three answers only at 90&deg; and 180&deg;; a larger turn does not
+        widen it, so a larger turn is not a harder question.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/rotation_collapse.png" alt="Two plots: Task-B accuracy against stated rotation, and the percentage of answers identical to the same model's no-image answer." loading="lazy">
+        <figcaption>Models fall to the no-image ceiling at 90&deg; and 180&deg;; people do not.</figcaption>
       </figure>
     </div>
   </div>
@@ -411,26 +464,19 @@ footer a:hover,footer a:focus-visible{color:var(--earn);border-bottom-color:var(
 
 <section><div class="wrap">
   <h2>Run it</h2>
-  <p>The public artifact holds the questions for every split, the development answers,
-  the construction and audit tools, and every raw model response behind the paper's
-  tables. Only the held-out answer key is withheld.</p>
+  <p>The public artifact holds the questions for every split, the development answers, the
+  construction and audit tools, and every raw model response behind the paper's tables.
+  Only the held-out answer key is withheld.</p>
 <pre><code>git clone https://github.com/UTSA-VIRLab/EgoShift.git
 cd EgoShift &amp;&amp; pip install -e ".[full]"
 egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
   <h3>If you report results</h3>
   <ul>
     <li>Report Task B one turn at a time and Task C one answer class at a time.</li>
-    <li>Compare each score against the random rate, that turn's action-only bound, and
-    the trained-human reference.</li>
-    <li>A score above the bound is necessary but not sufficient &mdash; a system can
-    reach it without using the image.</li>
-    <li>Treat questions from the same room as dependent, and do not tune on the
-    held-out questions.</li>
+    <li>Compare each score against the random rate, that turn's action-only bound, and the trained-human reference.</li>
+    <li>A score above the bound is necessary but not sufficient &mdash; a system can reach it without using the image.</li>
+    <li>Treat questions from the same room as dependent, and do not tune on the held-out questions.</li>
   </ul>
-</div></section>
-
-<section><div class="wrap">
-  <h2>Cite</h2>
 <pre><code>@inproceedings{ahmed2027egoshift,
   title     = {EgoShift: Bounding the Action-Only Shortcut in Egocentric
                Spatial Updating for Vision-Language Models},
@@ -447,100 +493,121 @@ egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
   <span>Supported by the National Science Foundation under award IIS-2316240</span>
 </div></footer>
 <script>
-/* ── the dial: band of reachable directions after a stated turn ──
-   Geometry is the paper's own: the object starts within +/-66.5868 deg of
-   straight ahead, and answer zones are split at +/-45 and +/-135 deg.      */
+/* ── dial: the band of reachable directions after a stated turn ──────────
+   Geometry is the paper's: the object starts within +/-66.5868 deg of
+   straight ahead; answer zones split at +/-45 and +/-135 deg.            */
 (function(){
-  var HALF = 66.5868, R = 78, CX = 110, CY = 110;
-  var DATA = {
-    30 :{free:50.4, earn:86.8, gain:"+36.4"},
-    60 :{free:50.4, earn:82.1, gain:"+31.7"},
-    90 :{free:33.3, earn:38.3, gain:"+5.0"},
-    120:{free:50.0, earn:84.3, gain:"+34.3"},
-    180:{free:35.7, earn:36.8, gain:"+1.1"}
-  };
-  var band = document.getElementById("band");
-  if(!band) return;
-  var pf=document.getElementById("pf"), pe=document.getElementById("pe"),
-      bf=document.getElementById("bf"), be=document.getElementById("be"),
-      zn=document.getElementById("zn"), vd=document.getElementById("vd"),
+  var HALF=66.5868, R=78, CX=110, CY=110;
+  var D={30:{f:50.4,e:86.8,g:"+36.4"},60:{f:50.4,e:82.1,g:"+31.7"},
+         90:{f:33.3,e:38.3,g:"+5.0"},120:{f:50.0,e:84.3,g:"+34.3"},
+         180:{f:35.7,e:36.8,g:"+1.1"}};
+  var band=document.getElementById("band"); if(!band) return;
+  var pf=document.getElementById("pf"),pe=document.getElementById("pe"),
+      bf=document.getElementById("bf"),be=document.getElementById("be"),
+      zn=document.getElementById("zn"),vd=document.getElementById("vd"),
       btns=[].slice.call(document.querySelectorAll(".turns button"));
-
-  function pt(deg){                      /* 0 deg = straight ahead = up */
-    var r = (deg-90)*Math.PI/180;
-    return [CX+R*Math.cos(r), CY+R*Math.sin(r)];
-  }
-  function wedge(a0,a1){
-    var p0=pt(a0), p1=pt(a1), big=(a1-a0)>180?1:0;
-    return "M"+CX+" "+CY+" L"+p0[0].toFixed(1)+" "+p0[1].toFixed(1)+
-           " A"+R+" "+R+" 0 "+big+" 1 "+p1[0].toFixed(1)+" "+p1[1].toFixed(1)+" Z";
-  }
-  function zonesCovered(lo,hi){          /* how many of the four answers the band meets */
-    var edges=[-180,-135,-45,45,135,180], seen={}, step=0.5;
-    for(var a=lo;a<=hi;a+=step){
-      var w=((a+180)%360+360)%360-180, z;
-      if(w>=-45&&w<45) z="front"; else if(w>=45&&w<135) z="right";
-      else if(w>=-135&&w<-45) z="left"; else z="behind";
-      seen[z]=1;
-    }
-    return Object.keys(seen).length;
-  }
+  function pt(d){var r=(d-90)*Math.PI/180;return [CX+R*Math.cos(r),CY+R*Math.sin(r)];}
+  function wedge(a,b){var p=pt(a),q=pt(b),big=(b-a)>180?1:0;
+    return "M"+CX+" "+CY+" L"+p[0].toFixed(1)+" "+p[1].toFixed(1)+" A"+R+" "+R+" 0 "+big+" 1 "+q[0].toFixed(1)+" "+q[1].toFixed(1)+" Z";}
+  function zones(lo,hi){var s={};
+    for(var a=lo;a<=hi;a+=0.5){var w=((a+180)%360+360)%360-180;
+      s[(w>=-45&&w<45)?"front":(w>=45&&w<135)?"right":(w>=-135&&w<-45)?"left":"behind"]=1;}
+    return Object.keys(s).length;}
   function set(t){
-    var d=DATA[t], lo=-HALF+t, hi=HALF+t;
-    band.setAttribute("d", wedge(lo,hi));
-    pf.textContent=d.free.toFixed(1); pe.textContent=d.earn.toFixed(1);
-    bf.style.width=d.free+"%";        be.style.width=d.earn+"%";
-    var n=zonesCovered(lo,hi);
-    zn.textContent=n;
+    var d=D[t],lo=-HALF+t,hi=HALF+t;
+    band.setAttribute("d",wedge(lo,hi));
+    pf.textContent=d.f.toFixed(1); pe.textContent=d.e.toFixed(1);
+    bf.style.width=d.f+"%"; be.style.width=d.e+"%";
+    zn.textContent=zones(lo,hi);
     var thin=(t==90||t==180);
     vd.className="verdict"+(thin?" thin":"");
-    vd.innerHTML="At "+t+"&deg; the best model earns <b>"+d.gain+
-      "</b> points beyond what the turn already gave away.";
-    btns.forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.t==t ? "true":"false"); });
+    vd.innerHTML="At "+t+"&deg; the best model earns <b>"+d.g+"</b> beyond what the turn gave away.";
+    btns.forEach(function(b){b.setAttribute("aria-pressed",b.dataset.t==t?"true":"false");});
   }
-  btns.forEach(function(b){ b.addEventListener("click", function(){ set(+b.dataset.t); }); });
+  btns.forEach(function(b){b.addEventListener("click",function(){set(+b.dataset.t);});});
   set(90);
 })();
 
-/* ── leaderboard sorting ─────────────────────────────────────────── */
+/* ── try it: a real development-split Task-B item ───────────────────────
+   Figure 1 of the paper: a 90 deg right turn moves the cart from the
+   right of the view to straight ahead. Assuming it started straight
+   ahead instead yields "to the left" -- the assumed-ahead substitution. */
 (function(){
-  var REF={a:[50.0,"the random rate"], b:[45.9,"what the turn alone reaches"], c:[33.3,"the random rate"]};
-  var tb=document.querySelector("#board tbody");
-  if(!tb) return;
-  var rows=[].slice.call(tb.rows), btn=document.getElementById("toggle"),
-      hint=document.getElementById("hint"), heads=[].slice.call(document.querySelectorAll(".lb th button"));
-  var key="b", desc=true, showAll=false;
-  btn.hidden=false;
-  function paint(){
-    var ref=REF[key][0], under=0;
-    rows.sort(function(x,y){ var a=+x.dataset[key], b=+y.dataset[key]; return desc?b-a:a-b; });
-    rows.forEach(function(tr,i){
-      tb.appendChild(tr);
-      tr.cells[0].textContent=i+1;
-      var v=+tr.dataset[key], lo=v<ref; if(lo) under++;
-      tr.classList.toggle("under", lo);
-      [].slice.call(tr.querySelectorAll(".n")).forEach(function(td){ td.classList.remove("hi"); });
-      var cell=tr.querySelector(".v-"+key); if(cell) cell.classList.add("hi");
-      var bar=tr.querySelector(".track span"); if(bar) bar.style.width=v+"%";
-      tr.hidden = (!showAll && i>=12);
+  var box=document.getElementById("opts"), rev=document.getElementById("reveal");
+  if(!box) return;
+  var CORRECT="in front", SHORTCUT="to the left";
+  box.addEventListener("click",function(ev){
+    var b=ev.target.closest("button"); if(!b||b.disabled) return;
+    var pick=b.dataset.o;
+    [].slice.call(box.querySelectorAll("button")).forEach(function(x){
+      x.disabled=true;
+      if(x.dataset.o===CORRECT) x.classList.add("right");
+      else if(x.dataset.o===pick) x.classList.add("wrong");
     });
-    heads.forEach(function(h){
-      h.parentNode.removeAttribute("aria-sort");
-      if(h.dataset.k===key) h.parentNode.setAttribute("aria-sort", desc?"descending":"ascending");
-    });
-    var rn=document.getElementById("refname");
-    if(rn) rn.textContent = (key==="b") ? "What the turn alone reaches" : "Random rate";
-    hint.innerHTML="Sorted by Task "+key.toUpperCase()+". <b>"+under+"</b> of "+rows.length+
-      " systems fall below "+REF[key][0].toFixed(1)+"%, "+REF[key][1]+".";
-    btn.textContent = showAll ? "Show top 12" : "Show all "+rows.length;
-  }
-  heads.forEach(function(h){
-    h.addEventListener("click", function(){
-      if(key===h.dataset.k) desc=!desc; else { key=h.dataset.k; desc=true; }
-      paint();
+    var head = pick===CORRECT
+      ? "<b>Correct.</b> The cart was to the right of the view, so a 90&deg; right turn brings it to the front."
+      : (pick===SHORTCUT
+         ? "<b>That is the shortcut's answer.</b> It is what you get by assuming the cart started straight ahead and then turning."
+         : "<b>Not quite.</b> The cart was to the right of the view, so the turn brings it to the front.");
+    rev.innerHTML = head +
+      " The five strongest frontier configurations answer <span class=\"sc\">" + SHORTCUT +
+      "</span> on this item &mdash; and on <b>127</b> held-out questions at 90&deg; and 180&deg; they all give that same substitution.";
+    rev.hidden=false;
+  });
+})();
+
+/* ── Task C: swap the second view ───────────────────────────────────── */
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll(".tabs button")),
+      img=document.getElementById("cimg"), cap=document.getElementById("ccap"),
+      note=document.getElementById("cnote");
+  if(!tabs.length||!img) return;
+  var M={visible:["assets/frames/c_visible.jpg","visible",
+          "The chair is still drawn in the second view, so the answer is <b>visible</b>."],
+         occluded:["assets/frames/c_occluded.jpg","occluded",
+          "A desk lamp 0.80&nbsp;m from the camera covers the chair. Walls, doors and windows are never allowed to be the covering object, so the answer is <b>occluded</b>."],
+         outofview:["assets/frames/c_outofview.jpg","out of view",
+          "The chair's whole extent now lies outside the region the camera can see, so the answer is <b>out of view</b>."]};
+  tabs.forEach(function(t){
+    t.addEventListener("click",function(){
+      var m=M[t.dataset.c]; if(!m) return;
+      img.src=m[0]; img.alt="Second view of the same lounge, where the target is "+m[1]+".";
+      cap.textContent="View 2 — "+m[1]; note.innerHTML=m[2];
+      tabs.forEach(function(x){x.setAttribute("aria-pressed",x===t?"true":"false");});
     });
   });
-  btn.addEventListener("click", function(){ showAll=!showAll; paint(); });
+})();
+
+/* ── leaderboard ────────────────────────────────────────────────────── */
+(function(){
+  var REF={a:[50.0,"the random rate"],b:[45.9,"what the turn alone reaches"],c:[33.3,"the random rate"]};
+  var tb=document.querySelector("#board tbody"); if(!tb) return;
+  var rows=[].slice.call(tb.rows),btn=document.getElementById("toggle"),
+      hint=document.getElementById("hint"),heads=[].slice.call(document.querySelectorAll(".lb th button"));
+  var key="b",desc=true,showAll=false; btn.hidden=false;
+  function paint(){
+    var ref=REF[key][0],under=0;
+    rows.sort(function(x,y){var a=+x.dataset[key],b=+y.dataset[key];return desc?b-a:a-b;});
+    rows.forEach(function(tr,i){
+      tb.appendChild(tr); tr.cells[0].textContent=i+1;
+      var v=+tr.dataset[key],lo=v<ref; if(lo) under++;
+      tr.classList.toggle("under",lo);
+      [].slice.call(tr.querySelectorAll(".n")).forEach(function(td){td.classList.remove("hi");});
+      var c=tr.querySelector(".v-"+key); if(c) c.classList.add("hi");
+      var bar=tr.querySelector(".track span"); if(bar) bar.style.width=v+"%";
+      tr.hidden=(!showAll&&i>=12);
+    });
+    heads.forEach(function(h){h.parentNode.removeAttribute("aria-sort");
+      if(h.dataset.k===key) h.parentNode.setAttribute("aria-sort",desc?"descending":"ascending");});
+    var rn=document.getElementById("refname");
+    if(rn) rn.textContent=(key==="b")?"What the turn alone reaches":"Random rate";
+    hint.innerHTML="Sorted by Task "+key.toUpperCase()+". <b>"+under+"</b> of "+rows.length+
+      " systems fall below "+REF[key][0].toFixed(1)+"%, "+REF[key][1]+".";
+    btn.textContent=showAll?"Show top 12":"Show all "+rows.length;
+  }
+  heads.forEach(function(h){h.addEventListener("click",function(){
+    if(key===h.dataset.k) desc=!desc; else {key=h.dataset.k;desc=true;} paint();});});
+  btn.addEventListener("click",function(){showAll=!showAll;paint();});
   paint();
 })();
 </script>
