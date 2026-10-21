@@ -41,12 +41,14 @@ b,strong{font-weight:600}
 .top .wrap{display:flex;align-items:baseline;justify-content:space-between;
   padding-top:16px;padding-bottom:16px;gap:16px;flex-wrap:wrap}
 .mark{font-family:Archivo;font-weight:800;font-size:1.22rem;letter-spacing:-.03em}
-.crumb{display:flex;align-items:baseline;gap:9px;min-width:0}
-.home{font-family:Archivo;font-weight:700;font-size:1.22rem;letter-spacing:-.03em;
-  color:var(--mute);text-decoration:none;border-bottom:2px solid transparent;
-  transition:color .15s,border-color .15s}
-.home:hover,.home:focus-visible{color:var(--geo);border-bottom-color:var(--geo)}
-.sep{color:var(--line);font-size:1.22rem;font-weight:300}
+.crumb{display:flex;align-items:center;gap:12px;min-width:0}
+.home{display:inline-flex;align-items:center;gap:7px;flex:none;
+  padding:6px 13px;border:1px solid var(--line);border-radius:999px;
+  background:var(--paper);color:var(--mute);
+  font-size:.85rem;font-weight:600;text-decoration:none;white-space:nowrap;
+  transition:color .15s,border-color .15s,background .15s}
+.home .ar{font-size:1.02em;line-height:1}
+.home:hover,.home:focus-visible{color:var(--geo);border-color:var(--geo);background:#fff}
 .venue{color:var(--mute);font-size:.9rem}
 
 /* ── hero ── */
@@ -182,8 +184,8 @@ footer .lab:hover,footer .lab:focus-visible{color:var(--geo);border-bottom-color
 
 <div class="top"><div class="wrap">
   <span class="crumb">
-    <a class="home" href="https://utsa-virlab.github.io/">VIRLab</a>
-    <span class="sep">/</span>
+    <a class="home" href="https://utsa-virlab.github.io/"
+       title="Vision and Immersive Realities Lab, UTSA"><span class="ar">&#8592;</span>VIRLab</a>
     <span class="mark">EgoShift</span>
   </span>
   <span class="venue">WACV 2027, Evaluation &amp; Datasets</span>
