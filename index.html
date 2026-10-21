@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EgoShift — egocentric spatial updating under a stated camera turn</title>
-<meta name="description" content="At 90 and 180 degrees, frontier vision-language models answer as if they never saw the image. EgoShift measures spatial updating one stated turn at a time, against a shortcut bound computed from camera geometry before any model runs. WACV 2027.">
+<title>EgoShift — a benchmark for egocentric spatial updating</title>
+<meta name="description" content="When the camera moves, does a vision-language model still know where things are? EgoShift asks three questions across 12,786 held-out questions and 36 systems, and finds one failure that pooled scores hide. WACV 2027.">
 <link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:title" content="EgoShift">
-<meta property="og:description" content="At 90 and 180 degrees, frontier vision-language models answer as if they never saw the image. A benchmark that reads spatial updating one stated turn at a time.">
+<meta property="og:description" content="When the camera moves, does a vision-language model still know where things are? Three tasks, 12,786 held-out questions, 36 systems, and one failure the pooled scores hide.">
 <meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -68,7 +68,11 @@ section{padding:82px 0;scroll-margin-top:72px}
 h1{font-size:clamp(2.1rem,4.5vw,3.25rem);color:#fff;text-wrap:balance}
 .hero p.say{font-size:1.1rem;color:#AEB8D0;margin-top:1.05em;max-width:48ch}
 .hero p.say b{color:#fff;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
-.cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:30px}
+.q3{list-style:none;margin:24px 0 0;padding:0;border-left:2px solid var(--line2)}
+.q3 li{margin:0 0 7px;padding:0 0 0 15px;font-size:.96rem;color:#C3CBDE;max-width:48ch}
+.q3 b{font-family:"IBM Plex Mono",monospace;color:var(--sun);margin-right:9px}
+.q3 i{font-style:normal;font-size:.76rem;color:#737E99;margin-left:7px}
+.cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}
 .cta a{display:inline-block;padding:11px 20px;border-radius:11px;font-weight:600;font-size:.93rem;
   text-decoration:none;border:1px solid var(--line2);color:#D6DCEC;background:rgba(255,255,255,.04);
   transition:all .16s}
@@ -80,6 +84,7 @@ h1{font-size:clamp(2.1rem,4.5vw,3.25rem);color:#fff;text-wrap:balance}
 /* ── the instrument ───────────────────────────── */
 .inst{background:rgba(255,255,255,.045);border:1px solid var(--line2);border-radius:22px;
   padding:22px;backdrop-filter:blur(6px)}
+.instlbl{font:600 .75rem/1.3 "IBM Plex Mono",monospace;color:var(--sun);margin-bottom:12px}
 .turns{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px}
 .turns button{padding:10px 2px;border:1px solid var(--line2);border-radius:10px;
   background:rgba(255,255,255,.04);font:600 .92rem/1 "IBM Plex Mono",monospace;color:#AEB8D0;
@@ -120,6 +125,22 @@ svg.dial{width:100%;max-width:244px;height:auto}
 @media(max-width:520px){.facts{grid-template-columns:repeat(2,1fr)}
   .facts div{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .facts div:nth-child(2n){border-right:0}}
+
+/* ── per-task results ─────────────────────────── */
+.tsk3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.rc{border:2px solid var(--line);border-radius:16px;padding:20px 19px;background:var(--card);
+  display:flex;flex-direction:column}
+.rc.prim{border-color:#10131C;box-shadow:5px 5px 0 #10131C}
+.rc .tg{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.76rem;color:var(--jade)}
+.rc.prim .tg{color:var(--violet)}
+.rc h3{margin:.4em 0 .15em;font-size:1.02rem}
+.rc .sc{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.85rem;
+  letter-spacing:-.03em;display:block;margin-top:.3em}
+.rc .scl{font-size:.75rem;color:var(--mute);display:block;margin-bottom:1em}
+.rc p{font-size:.91rem;color:var(--mute);margin:0 0 .85em}
+.rc .blind{margin:auto 0 0;padding-top:13px;border-top:1px solid var(--line);font-size:.84rem}
+.rc .blind b{color:#10131C}
+@media(max-width:880px){.tsk3{grid-template-columns:1fr}}
 
 /* ── five turns ───────────────────────────────── */
 .five{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
@@ -284,11 +305,15 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
 
 <header class="hero"><div class="wrap">
   <div>
-    <h1>Turn 90&deg;, and the model answers as if it never saw the image.</h1>
-    <p class="say">Pooled benchmark scores say vision&ndash;language models have nearly
-    solved egocentric spatial updating. Read one turn at a time, and twelve frontier
-    configurations average <b>38.3%</b> at 90&deg; and <b>36.8%</b> at 180&deg; &mdash; where
-    <b>94.8%</b> of their answers match what the same model gives with no image at all.</p>
+    <h1>The camera moves. Does the model still know where things are?</h1>
+    <p class="say">EgoShift asks a vision&ndash;language model three questions about a room it
+    has already seen. Across <b>12,786</b> held-out questions and <b>36</b> systems the pooled
+    scores look close to solved &mdash; and hide one failure completely.</p>
+    <ul class="q3">
+      <li><b>A</b> Is this the same object? <i>control</i></li>
+      <li><b>B</b> Where is it after you turn? <i>primary</i></li>
+      <li><b>C</b> Can you still see it, or is it hidden?</li>
+    </ul>
     <div class="cta">
       <a class="pri" href="assets/EgoShift_WACV2027.pdf">Read the paper</a>
       <a href="#play">Try it</a>
@@ -301,6 +326,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   </div>
 
   <div class="inst">
+    <p class="instlbl">Task B &mdash; where the failure is</p>
     <div class="turns" role="group" aria-label="Choose a stated turn">
       <button data-t="30" aria-pressed="false">30&deg;</button>
       <button data-t="60" aria-pressed="false">60&deg;</button>
@@ -403,12 +429,57 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   </figure>
 </div></section>
 
-<!-- ───────── 3. difficulty does not grow with the turn ───────── -->
+<!-- ───────── 3. results for all three tasks ───────── -->
+<section><div class="wrap">
+  <h2>What the three tasks show</h2>
+  <p class="lede">Each task answers a different question and the three are never combined
+  into one score. Two of them come out well, and they are what make the third one readable.</p>
+
+  <div class="tsk3">
+    <div class="rc"><span class="tg">Task A &mdash; control</span>
+      <h3>Is it the same object?</h3>
+      <span class="sc">96.6%</span><span class="scl">strongest of 36 systems</span>
+      <p>Models find a boxed object and match it across two views under this renderer. That
+      is the whole job of a control: a low Task-B score cannot be blamed on the imagery.
+      The task carries no difficulty claim of its own, and it is provisional.</p>
+      <p class="blind"><b>Blinded.</b> With both images withheld the twelve frontier
+      configurations average 46.1% against a 50.0% random rate, and none exceeds 53.3%. One
+      view alone leaves the open models at the chance rate.</p></div>
+
+    <div class="rc prim"><span class="tg">Task B &mdash; primary</span>
+      <h3>Where is it after you turn?</h3>
+      <span class="sc">83.6%</span><span class="scl">strongest; frontier spread 42.0&ndash;83.6%</span>
+      <p>Pooled, this reads as nearly matching the trained panel's 84.6%. Read one turn at a
+      time, it splits in two: high at 30&deg;, 60&deg; and 120&deg;, and down at the action-only
+      bound at 90&deg; and 180&deg;. The rest of this page is about that split.</p>
+      <p class="blind"><b>Blinded.</b> All twelve frontier configurations score 42.5 to
+      44.2%, mean 43.4% &mdash; this subset's action-only bound. A spread of 1.7 points
+      across twelve systems makes that a property of the questions, not of any model.</p></div>
+
+    <div class="rc"><span class="tg">Task C</span>
+      <h3>Can you still see it?</h3>
+      <span class="sc">89.3%</span><span class="scl">strongest of 36 systems</span>
+      <p>The difficulty sits in the occluded class, not in visible or out of view. The best
+      model reaches 88.0% on occluded questions, above the trained panel's 74.4%, so the
+      human number is not treated as a bound there either. Every target appears once with
+      each answer, so recalling an object's usual answer scores one in three.</p>
+      <p class="blind"><b>Blinded.</b> 29.7% against a 33.3% random rate, and no system
+      exceeds 35.8%. A model cannot answer Tasks A and C from the wording or a single
+      view.</p></div>
+  </div>
+
+  <p class="fine">Tasks A and C state no action, so no stated turn can narrow their answers;
+  the answer balancing described further down protects them instead. Only Task B names an
+  action, which is why only Task B has a bound to be read against &mdash; and why the
+  sections that follow are about what happens there.</p>
+</div></section>
+
+<!-- ───────── 4. difficulty does not grow with the turn ───────── -->
 <section class="tintw"><div class="wrap">
   <h2>Difficulty does not grow with the turn</h2>
-  <p class="lede">Accuracy is high at 30&deg;, 60&deg; and 120&deg; and drops sharply at
-  90&deg; and 180&deg;. A 120&deg; turn is answered correctly more than twice as often as a
-  90&deg; one, so a pooled score hides the difference.</p>
+  <p class="lede">Task-B accuracy is high at 30&deg;, 60&deg; and 120&deg; and drops sharply
+  at 90&deg; and 180&deg;. A 120&deg; turn is answered correctly more than twice as often as
+  a 90&deg; one, so a pooled score hides the difference.</p>
   <div class="five">
     <div class="tk"><span class="ang">30&deg;</span>
       <div class="stack"><i class="f" style="height:50.4%"></i><i class="e" style="height:86.8%"></i></div>
@@ -435,7 +506,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   also reported together: 38.0% over 290 questions, interval [32.9,&nbsp;43.1].</p>
 </div></section>
 
-<!-- ───────── 4. one rule ───────── -->
+<!-- ───────── 5. one rule ───────── -->
 <section><div class="wrap">
   <h2>One rule covers almost every frontier error</h2>
   <p class="lede">The failure is not many different spatial mistakes. It is one mistake made
@@ -494,7 +565,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   reason would produce the same evidence.</p>
 </div></section>
 
-<!-- ───────── 5. try it ───────── -->
+<!-- ───────── 6. try it ───────── -->
 <section id="play" class="tintv"><div class="wrap">
   <h2>Try it yourself</h2>
   <p class="lede">A real item from the development split. You see one view and the stated
@@ -517,7 +588,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   </div>
 </div></section>
 
-<!-- ───────── 6. people ───────── -->
+<!-- ───────── 7. people ───────── -->
 <section><div class="wrap">
   <h2>People find those turns harder too, and never fall that far</h2>
   <p class="lede">Nine paid lab annotators per task returned 27 sessions, scoring 98.1%,
@@ -577,7 +648,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   human subjects research requiring oversight.</p>
 </div></section>
 
-<!-- ───────── 7. leaderboard ───────── -->
+<!-- ───────── 8. leaderboard ───────── -->
 <section class="dark" id="leaderboard"><div class="wrap">
   <div class="lbhead">
     <div><h2 style="margin-bottom:.2em">Leaderboard</h2>
@@ -651,7 +722,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   into one score.</p>
 </div></section>
 
-<!-- ───────── 8. the construction ───────── -->
+<!-- ───────── 9. the construction ───────── -->
 <section><div class="wrap">
   <h2>Why you can believe the finding</h2>
   <p class="lede">A question that states how far the camera turned can be answered from that
@@ -697,7 +768,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   </div>
 </div></section>
 
-<!-- ───────── 9. limits ───────── -->
+<!-- ───────── 10. limits ───────── -->
 <section id="limits" class="tintw"><div class="wrap">
   <h2>Scope and limits</h2>
   <p class="lede">What the benchmark does not establish, stated plainly, because a result is
@@ -741,7 +812,7 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
   </div>
 </div></section>
 
-<!-- ───────── 10. run it ───────── -->
+<!-- ───────── 11. run it ───────── -->
 <section><div class="wrap">
   <h2>Run it</h2>
   <p>The public artifact holds the questions for every split, the development answers, the

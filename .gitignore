@@ -31,6 +31,8 @@ cache/
 outputs/
 ai2thor/
 frames/
+# ...but the five page frames are page assets, not a render dump.
+!assets/frames/
 *.pt
 *.pth
 *.ckpt
