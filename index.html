@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EgoShift — a benchmark for egocentric spatial updating</title>
-<meta name="description" content="When the camera moves, does a vision-language model still know where things are? EgoShift asks three questions across 12,786 held-out questions and 36 systems, and finds one failure that pooled scores hide. WACV 2027.">
+<meta name="description" content="Turn 90 degrees and the picture stops changing the answer: 94.8% of frontier answers match what the same model gives with no image at all. EgoShift reads egocentric spatial updating one stated turn at a time. WACV 2027.">
 <link rel="canonical" href="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:title" content="EgoShift">
-<meta property="og:description" content="When the camera moves, does a vision-language model still know where things are? Three tasks, 12,786 held-out questions, 36 systems, and one failure the pooled scores hide.">
+<meta property="og:description" content="Turn 90 degrees and the picture stops changing the answer. 94.8% of frontier answers match what the same model gives with no image at all, and the pooled score hides it.">
 <meta property="og:url" content="https://utsa-virlab.github.io/EgoShift/">
 <meta property="og:image" content="https://utsa-virlab.github.io/EgoShift/assets/tasks.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -193,6 +193,14 @@ svg.dial{width:100%;max-width:244px;height:auto}
 .opts button.wrong{border-color:var(--coral);background:#FFF0ED;color:#C2301A}
 .opts button[disabled]{cursor:default}
 .reveal{border-left:3px solid var(--violet);padding:12px 0 12px 15px;font-size:.95rem;color:#333A4D}
+.qfoot{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+#qnext{padding:10px 18px;border:2px solid #10131C;border-radius:11px;background:#10131C;
+  color:#fff;font:600 .9rem "IBM Plex Sans";cursor:pointer;transition:all .15s}
+#qnext:hover{background:var(--violet);border-color:var(--violet)}
+#qscore{font:600 .85rem "IBM Plex Mono",monospace;color:var(--mute)}
+.bar3{flex:1;min-width:64px;height:4px;background:#E4DFD2;border-radius:3px;overflow:hidden}
+.bar3 i{display:block;height:100%;width:100%;background:var(--violet)}
+@media (prefers-reduced-motion:reduce){.bar3{display:none}}
 .reveal b{color:#10131C}
 .reveal .sc{color:var(--coral);font-weight:600}
 @media(max-width:780px){.play{grid-template-columns:1fr;gap:24px}}
@@ -305,10 +313,10 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
 
 <header class="hero"><div class="wrap">
   <div>
-    <h1>The camera moves. Does the model still know where things are?</h1>
-    <p class="say">EgoShift asks a vision&ndash;language model three questions about a room it
-    has already seen. Across <b>12,786</b> held-out questions and <b>36</b> systems the pooled
-    scores look close to solved &mdash; and hide one failure completely.</p>
+    <h1>Turn 90&deg;. The picture stops changing the answer.</h1>
+    <p class="say">At 90&deg;, <b>94.8%</b> of frontier answers are identical to what the same
+    model gives with no image at all. At 180&deg; it is <b>89.9%</b>. The pooled score hides
+    both.</p>
     <ul class="q3">
       <li><b>A</b> Is this the same object? <i>control</i></li>
       <li><b>B</b> Where is it after you turn? <i>primary</i></li>
@@ -538,9 +546,10 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
       <h3>The image stops changing the answer</h3>
       <span class="big">94.8% <s>against 59&ndash;66%</s></span>
       <p>Each model is compared with its own no-image answer on identical questions. The two
-      agree on 59.4%, 63.0% and 65.6% of questions at 30&deg;, 60&deg; and 120&deg; &mdash;
-      against 94.8% at 90&deg; and 89.9% at 180&deg;. Neither model ranking nor question
-      difficulty explains that gap.</p>
+      agree on 59.4%, 63.0% and 65.6% at 30&deg;, 60&deg; and 120&deg; &mdash; against 94.8%
+      at 90&deg; and 89.9% at 180&deg;, over 24 questions per turn per model, intervals
+      [91.3,&nbsp;97.9] and [86.5,&nbsp;93.2]. Neither model ranking nor question difficulty
+      explains the gap, because this compares a model with itself.</p>
     </div>
     <div class="evc">
       <h3>More reasoning does not help</h3>
@@ -568,15 +577,16 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
 <!-- ───────── 6. try it ───────── -->
 <section id="play" class="tintv"><div class="wrap">
   <h2>Try it yourself</h2>
-  <p class="lede">A real item from the development split. You see one view and the stated
-  turn &mdash; exactly what the model gets. Where does the cart end up?</p>
+  <p class="lede">Real questions from the development split, drawn at random and never
+  ending. You get one view and the stated turn, which is exactly what the model gets. No box
+  is drawn on the object, because the benchmark draws none.</p>
   <div class="play">
     <div class="shot">
-      <img src="assets/frames/b_view1.jpg" alt="A rendered interior: a sofa and doorway ahead, and on the right of the view a metal cart with a yellow seat." loading="lazy">
-      <div class="cap">The only view you get. Now turn 90&deg; to your right.</div>
+      <img id="qimg" src="assets/quiz/q01.jpg" alt="A rendered interior from the EgoShift development split. The question names one object in the room." width="653" height="490">
+      <div class="cap" id="qcap">The only view you get. Now turn 30&deg; to your left.</div>
     </div>
     <div>
-      <p class="ask">After the turn, where is the cart?</p>
+      <p class="ask" id="qask">After the turn, where is the washing machine?</p>
       <div class="opts" id="opts">
         <button data-o="in front">in front</button>
         <button data-o="to the right">to the right</button>
@@ -584,6 +594,11 @@ footer a:hover,footer a:focus-visible{color:var(--sun);border-bottom-color:var(-
         <button data-o="to the left">to the left</button>
       </div>
       <div class="reveal" id="reveal" hidden></div>
+      <div class="qfoot" id="qfoot" hidden>
+        <button id="qnext">Next question</button>
+        <span id="qscore"></span>
+        <span class="bar3" aria-hidden="true"><i id="qtick"></i></span>
+      </div>
     </div>
   </div>
 </div></section>
@@ -885,34 +900,97 @@ egoshift audit-taskb --questions taskb_questions.jsonl</code></pre>
   set(90);
 })();
 
-/* ── try it: a real development-split Task-B item ───────────────────────
-   Figure 1 of the paper: a 90 deg right turn moves the cart from the
-   right of the view to straight ahead. Assuming it started straight
-   ahead instead yields "to the left" -- the straight-ahead substitution.
-   The 127 figure is a held-out-set statistic and is stated as one; we
-   make no per-item claim about which models answered this item.        */
+/* ── try it: an endless run of real development-split Task-B items ──────
+   Every item is a public development-split question with its released
+   answer. "off"/"side" are the object's true bearing in the source view
+   from the build provenance, and "sa" is the straight-ahead answer: what
+   you get by assuming the object started dead ahead and applying the turn.
+   Items are kept to those where sa differs from the right answer, which is
+   the substitution Sec. 4 of the paper measures.                        */
 (function(){
-  var box=document.getElementById("opts"), rev=document.getElementById("reveal");
-  if(!box) return;
-  var CORRECT="in front", SHORTCUT="to the left";
-  box.addEventListener("click",function(ev){
-    var b=ev.target.closest("button"); if(!b||b.disabled) return;
-    var pick=b.dataset.o;
-    [].slice.call(box.querySelectorAll("button")).forEach(function(x){
-      x.disabled=true;
-      if(x.dataset.o===CORRECT) x.classList.add("right");
-      else if(x.dataset.o===pick) x.classList.add("wrong");
+  var Q = [{"img":"assets/quiz/q01.jpg","obj":"washing machine","deg":30,"dir":"left","ok":"to the right","sa":"in front","off":58,"side":"right"},{"img":"assets/quiz/q02.jpg","obj":"shelving unit","deg":30,"dir":"right","ok":"to the left","sa":"in front","off":61,"side":"left"},{"img":"assets/quiz/q03.jpg","obj":"toilet","deg":60,"dir":"left","ok":"in front","sa":"to the right","off":61,"side":"left"},{"img":"assets/quiz/q04.jpg","obj":"coffee machine","deg":60,"dir":"right","ok":"in front","sa":"to the left","off":60,"side":"right"},{"img":"assets/quiz/q05.jpg","obj":"countertop","deg":90,"dir":"left","ok":"in front","sa":"to the right","off":66,"side":"left"},{"img":"assets/quiz/q06.jpg","obj":"desk","deg":90,"dir":"left","ok":"in front","sa":"to the right","off":66,"side":"left"},{"img":"assets/quiz/q07.jpg","obj":"dresser","deg":90,"dir":"right","ok":"behind","sa":"to the left","off":66,"side":"left"},{"img":"assets/quiz/q08.jpg","obj":"arm chair","deg":90,"dir":"right","ok":"in front","sa":"to the left","off":66,"side":"right"},{"img":"assets/quiz/q09.jpg","obj":"safe","deg":120,"dir":"left","ok":"behind","sa":"to the right","off":60,"side":"right"},{"img":"assets/quiz/q10.jpg","obj":"clothes dryer","deg":120,"dir":"right","ok":"behind","sa":"to the left","off":62,"side":"left"},{"img":"assets/quiz/q11.jpg","obj":"side table","deg":180,"dir":"left","ok":"to the left","sa":"behind","off":65,"side":"right"},{"img":"assets/quiz/q12.jpg","obj":"garbage can","deg":180,"dir":"right","ok":"to the left","sa":"behind","off":65,"side":"right"}];
+  var img=document.getElementById("qimg"), cap=document.getElementById("qcap"),
+      ask=document.getElementById("qask"), box=document.getElementById("opts"),
+      rev=document.getElementById("reveal"), foot=document.getElementById("qfoot"),
+      next=document.getElementById("qnext"), score=document.getElementById("qscore"),
+      tick=document.getElementById("qtick");
+  if(!box||!img) return;
+  var DWELL=11000, order=[], at=0, cur=null, asked=0, right=0, timer=null,
+      left=0, started=0;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+  function shuffle(){ order=Q.map(function(_,i){return i;});
+    for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));
+      var s=order[i];order[i]=order[j];order[j]=s;} at=0; }
+  function preload(n){ if(n<order.length){ var p=new Image(); p.src=Q[order[n]].img; } }
+
+  function show(){
+    if(at>=order.length) shuffle();
+    cur=Q[order[at++]]; preload(at);
+    img.src=cur.img;
+    img.alt="A rendered interior from the EgoShift development split. The question asks where the "
+      +cur.obj+" ends up after the stated turn.";
+    cap.innerHTML="The only view you get. Now turn "+cur.deg+"&deg; to your "+cur.dir+".";
+    ask.textContent="After the turn, where is the "+cur.obj+"?";
+    [].slice.call(box.querySelectorAll("button")).forEach(function(b){
+      b.disabled=false; b.classList.remove("right","wrong"); });
+    rev.hidden=true; foot.hidden=true; clearTimeout(timer);
+  }
+
+  function answer(pick){
+    [].slice.call(box.querySelectorAll("button")).forEach(function(b){
+      b.disabled=true;
+      if(b.dataset.o===cur.ok) b.classList.add("right");
+      else if(b.dataset.o===pick) b.classList.add("wrong");
     });
-    var head = pick===CORRECT
-      ? "<b>Correct.</b> The cart was to the right of the view, so a 90&deg; right turn brings it to the front."
-      : (pick===SHORTCUT
-         ? "<b>That is the straight-ahead answer.</b> It is what you get by assuming the cart started straight ahead and then turning &mdash; the substitution behind 82.0% of frontier errors."
-         : "<b>Not quite.</b> The cart was to the right of the view, so the turn brings it to the front.");
-    rev.innerHTML = head +
-      " Across the held-out set there are <b>127</b> questions at 90&deg; and 180&deg; where the" +
-      " five strongest configurations all give the <span class=\"sc\">straight-ahead</span> answer.";
-    rev.hidden=false;
+    asked++; if(pick===cur.ok) right++;
+    var truth = "The "+cur.obj+" was <b>"+cur.off+"&deg; to your "+cur.side+"</b> in that view, so a "
+      +cur.deg+"&deg; "+cur.dir+" turn puts it <b>"+cur.ok+"</b>.";
+    var head = pick===cur.ok ? "<b>Correct.</b> "
+      : pick===cur.sa
+        ? "<b>That is the straight-ahead answer.</b> Assume the "+cur.obj+" started dead ahead, apply the turn, and you get <span class=\"sc\">"+cur.sa+"</span> \u2014 the substitution behind 82.0% of frontier errors. "
+        : "<b>Not quite.</b> ";
+    rev.innerHTML=head+truth;
+    rev.hidden=false; foot.hidden=false;
+    score.textContent="you: "+right+"/"+asked;
+    run(DWELL);
+  }
+
+  /* the dwell clock, pausable. Freezing without a matching resume would
+     strand the loop on the first hover, so every pause has a resume.   */
+  function run(ms){
+    left=ms; started=Date.now();
+    if(!reduce){
+      tick.style.transition="none"; tick.style.width=(100*ms/DWELL)+"%";
+      void tick.offsetWidth;
+      tick.style.transition="width "+ms+"ms linear"; tick.style.width="0%";
+    }
+    clearTimeout(timer); timer=setTimeout(show, ms);
+  }
+  function pause(){
+    if(foot.hidden||!started) return;
+    clearTimeout(timer);
+    left=Math.max(900, left-(Date.now()-started)); started=0;
+    if(!reduce){
+      var w=tick.getBoundingClientRect().width, p=tick.parentNode.getBoundingClientRect().width;
+      tick.style.transition="none"; tick.style.width=(p?100*w/p:0)+"%";
+    }
+  }
+  function resume(){ if(!foot.hidden && !started) run(left); }
+
+  box.addEventListener("click",function(ev){
+    var b=ev.target.closest("button"); if(b&&!b.disabled) answer(b.dataset.o); });
+  next.addEventListener("click",function(){ clearTimeout(timer); show(); });
+  [rev,foot].forEach(function(el){
+    el.addEventListener("mouseenter",pause);
+    el.addEventListener("mouseleave",resume);
   });
+  next.addEventListener("focus",pause);
+  next.addEventListener("blur",resume);
+  document.addEventListener("visibilitychange",function(){
+    document.hidden ? pause() : resume(); });
+
+  shuffle(); show();
 })();
 
 /* ── Task C: swap the second view ───────────────────────────────────── */
